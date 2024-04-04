@@ -1,5 +1,5 @@
 ## Complete rethinking of the Old project
-project -> [`crm-service`]([https://nextjs.org/docs/basic-features/font-optimization](https://github.com/FxFurEN/crm-service))
+project -> [`crm-service`](https://github.com/FxFurEN/crm-service))
 
 ## Getting Started
 
