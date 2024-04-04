@@ -13,22 +13,23 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { Toaster, toast } from 'sonner'
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
 
 const FormSchema = z
   .object({
-    username: z.string().min(1, 'Имя обязательно').max(100),
-    email: z.string().min(1, 'Почта обязательна').email('Invalid email'),
+    username: z.string().min(1, 'Обязательное поле').max(100),
+    email: z.string().min(1, 'Обязательное поле').email('Invalid email'),
     password: z
       .string()
-      .min(1, 'Пароль обязателен')
+      .min(1, 'Обязательное поле')
       .min(8, 'Пароль должен содержать не менее 8 символов'),
     confirmPassword: z.string().min(1, 'Подтвержения пароля обязателена'),
   })
   .refine((data) => data.password === data.confirmPassword, {
     path: ['confirmPassword'],
-    message: 'Парольы не совпадают',
+    message: 'Пароли не совпадают',
   });
 
 export default function SignUpForm() {
@@ -56,14 +57,18 @@ export default function SignUpForm() {
             })
         })
         if(response.ok) {
-            router.push('/sign-in');
+            toast.success("Регистрация прошла успешно");
+            setTimeout(() => {
+                router.push("/sign-in");
+              }, 1000); 
         }else{
-            console.error('Registration failed');
+            toast.error('Ошибка при регистрации')
         }
     };
 
     return (
         <main className="flex justify-center items-center h-screen p-5">
+            <Toaster richColors  />
             <Card className="w-full max-w-sm ">
                 <CardHeader>
                     <CardTitle className="text-2xl">Регистрация</CardTitle>
