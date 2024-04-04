@@ -30,7 +30,7 @@ const FormSchema = z
     message: 'Парольы не совпадают',
   });
 
-export function SignUpForm() {
+export default function SignUpForm() {
     const router = useRouter();
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
