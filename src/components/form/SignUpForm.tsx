@@ -66,7 +66,7 @@ export default function SignUpForm() {
         <main className="flex justify-center items-center h-screen p-5">
             <Card className="w-full max-w-sm ">
                 <CardHeader>
-                    <CardTitle className="text-2xl">Войти в систему</CardTitle>
+                    <CardTitle className="text-2xl">Регистрация</CardTitle>
                 </CardHeader>
                 <CardContent className="grid gap-4">
                     <Form {...form}>
@@ -134,7 +134,7 @@ export default function SignUpForm() {
                             />
                             </div>
                             <Button className='w-full mt-6' type='submit'>
-                                Войти в систему
+                                Зарегистрироваться в системе
                             </Button>
                         </form>
                     </Form>
