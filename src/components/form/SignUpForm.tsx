@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { useRouter } from "next/navigation"
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
 
 const FormSchema = z
   .object({
@@ -62,74 +63,84 @@ export default function SignUpForm() {
     };
 
     return (
-        <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className='w-full'>
-                <div className='space-y-2'>
-                <FormField
-                    control={form.control}
-                    name='username'
-                    render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Имя</FormLabel>
-                        <FormControl>
-                        <Input placeholder='johndoe' {...field} />
-                        </FormControl>
-                        <FormMessage />
-                    </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name='email'
-                    render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Email</FormLabel>
-                        <FormControl>
-                        <Input placeholder='mail@example.com' {...field} />
-                        </FormControl>
-                        <FormMessage />
-                    </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name='password'
-                    render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Пароль</FormLabel>
-                        <FormControl>
-                        <Input
-                            type='password'
-                            placeholder='Введите пароль'
-                            {...field}
-                        />
-                        </FormControl>
-                        <FormMessage />
-                    </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name='confirmPassword'
-                    render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Подтвержение пароля</FormLabel>
-                        <FormControl>
-                        <Input
-                            placeholder='Введите подтвержение пароля'
-                            type='password'
-                            {...field}
-                        />
-                        </FormControl>
-                        <FormMessage />
-                    </FormItem>
-                    )}
-                />
-                </div>
-                <Button className='w-full mt-6' type='submit'>
-                    Войти в систему
-                </Button>
-            </form>
-        </Form>
+        <main className="flex justify-center items-center h-screen p-5">
+            <Card className="w-full max-w-sm ">
+                <CardHeader>
+                    <CardTitle className="text-2xl">Войти в систему</CardTitle>
+                </CardHeader>
+                <CardContent className="grid gap-4">
+                    <Form {...form}>
+                        <form onSubmit={form.handleSubmit(onSubmit)} className='w-full'>
+                            <div className='space-y-2'>
+                            <FormField
+                                control={form.control}
+                                name='username'
+                                render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Имя</FormLabel>
+                                    <FormControl>
+                                    <Input placeholder='johndoe' {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name='email'
+                                render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Email</FormLabel>
+                                    <FormControl>
+                                    <Input placeholder='mail@example.com' {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name='password'
+                                render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Пароль</FormLabel>
+                                    <FormControl>
+                                    <Input
+                                        type='password'
+                                        placeholder='Введите пароль'
+                                        {...field}
+                                    />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name='confirmPassword'
+                                render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Подтвержение пароля</FormLabel>
+                                    <FormControl>
+                                    <Input
+                                        placeholder='Введите подтвержение пароля'
+                                        type='password'
+                                        {...field}
+                                    />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                                )}
+                            />
+                            </div>
+                            <Button className='w-full mt-6' type='submit'>
+                                Войти в систему
+                            </Button>
+                        </form>
+                    </Form>
+                </CardContent>
+            </Card>
+        </main>
+      
     )
 }
