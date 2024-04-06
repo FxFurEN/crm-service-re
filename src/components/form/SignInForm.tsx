@@ -14,8 +14,9 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Toaster, toast } from 'sonner'
-import { useRouter } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
+import { useRouter } from "next/navigation"
+import { signIn } from "next-auth/react"
 
 const FormSchema = z
   .object({
@@ -37,24 +38,15 @@ export default function SignInForm() {
       });
       
     const onSubmit =  async (values: z.infer<typeof FormSchema>) => {
-        const response = await fetch('/api/user', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                email: values.email,
-                password: values.password
-            })
-        })
-        if(response.ok) {
-            toast.success("Авторизация прошла успешно прошла успешно");
-            setTimeout(() => {
-                router.push("/");
-              }, 1000); 
-        }else{
-            toast.error('Ошибка при авторизации')
-        }
+        const signInData = await signIn('credentials', {
+            email: values.email,
+            password: values.password,
+        });
+        
+        if(signInData?.error)
+            console.log(signInData.error);
+        else
+            router.push('/');
     };
 
     return (
