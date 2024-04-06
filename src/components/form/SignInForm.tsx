@@ -17,6 +17,8 @@ import { Toaster, toast } from 'sonner'
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
 import { useRouter } from "next/navigation"
 import { signIn } from "next-auth/react"
+import { Label } from "@/components/ui/label"
+import Link from "next/link"
 
 const FormSchema = z
   .object({
@@ -99,6 +101,7 @@ export default function SignInForm() {
                                 Войти в систему
                             </Button>
                         </form>
+                        <Label>Нет аккаунта? - <Link href="/sign-up" style={{color: 'blue'}}>Зарегистрируйтесь</Link></Label>
                     </Form>
                 </CardContent>
             </Card>

@@ -16,6 +16,8 @@ import { Input } from "@/components/ui/input"
 import { Toaster, toast } from 'sonner'
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
+import { Label } from "@/components/ui/label"
+import Link from "next/link"
 
 const FormSchema = z
   .object({
@@ -143,6 +145,7 @@ export default function SignUpForm() {
                             </Button>
                         </form>
                     </Form>
+                    <Label>Есть аккаунта? - <Link href="/sign-in" style={{color: 'blue'}}>Авторизуйтесь</Link></Label>
                 </CardContent>
             </Card>
         </main>
