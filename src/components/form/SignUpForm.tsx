@@ -70,7 +70,6 @@ export default function SignUpForm() {
             toast.error('Ошибка при регистрации');
         }
         } catch (error) {
-            console.error('Ошибка:', error);
             toast.error('Ошибка при отправке формы');
         } finally {
             setLoading(false); 
