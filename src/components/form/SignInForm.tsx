@@ -41,12 +41,16 @@ export default function SignInForm() {
         const signInData = await signIn('credentials', {
             email: values.email,
             password: values.password,
+            redirect: false,
         });
         
         if(signInData?.error)
-            console.log(signInData.error);
-        else
+            toast.error("Ошибка: " + signInData.error);
+        else{
+            toast.success("Авторизация прошла успешно");
             router.push('/');
+        }
+            
     };
 
     return (
