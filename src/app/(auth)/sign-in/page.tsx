@@ -1,9 +1,10 @@
+import SignInForm from "@/components/form/SignInForm";
 
 
 const page = () => {
   return (
     <div className='w-full'>
-        123123
+        <SignInForm/>
     </div>
   );
 };
