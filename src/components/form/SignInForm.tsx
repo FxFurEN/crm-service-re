@@ -56,7 +56,7 @@ export default function SignInForm() {
                 toast.error("Ошибка: " + signInData.error);
             } else {
                 toast.success("Авторизация прошла успешно");
-                router.push('/');
+                router.push('/home');
             }
         } catch (error) {
             toast.error('Ошибка при отправке формы');
