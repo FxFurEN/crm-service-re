@@ -19,6 +19,8 @@ import { useRouter } from "next/navigation"
 import { signIn } from "next-auth/react"
 import { Label } from "@/components/ui/label"
 import Link from "next/link"
+import { useState } from 'react'; 
+import { Loader2 } from 'lucide-react';
 
 const FormSchema = z
   .object({
@@ -30,6 +32,8 @@ const FormSchema = z
   })
 
 export default function SignInForm() {
+    const [loading, setLoading] = useState(false); 
+
     const router = useRouter();
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
@@ -40,17 +44,24 @@ export default function SignInForm() {
       });
       
     const onSubmit =  async (values: z.infer<typeof FormSchema>) => {
-        const signInData = await signIn('credentials', {
-            email: values.email,
-            password: values.password,
-            redirect: false,
-        });
-        
-        if(signInData?.error)
-            toast.error("Ошибка: " + signInData.error);
-        else{
-            toast.success("Авторизация прошла успешно");
-            router.push('/');
+        setLoading(true); // Устанавливаем состояние загрузки в true
+        try {
+            const signInData = await signIn('credentials', {
+                email: values.email,
+                password: values.password,
+                redirect: false,
+            });
+
+            if (signInData?.error) {
+                toast.error("Ошибка: " + signInData.error);
+            } else {
+                toast.success("Авторизация прошла успешно");
+                router.push('/home');
+            }
+        } catch (error) {
+            toast.error('Ошибка при отправке формы');
+        } finally {
+            setLoading(false); 
         }
             
     };
@@ -97,9 +108,16 @@ export default function SignInForm() {
                                 )}
                             />
                             </div>
-                            <Button className='w-full mt-6' type='submit'>
-                                Войти в систему
-                            </Button>
+                            {loading ? (
+                                <Button disabled className='w-full mt-6'>
+                                    <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+                                    Загрузка...
+                                </Button>
+                            ) : (
+                                <Button className='w-full mt-6' type='submit'>
+                                    Войти в систему
+                                </Button>
+                            )}
                         </form>
                         <Label>Нет аккаунта? - <Link href="/sign-up" style={{color: 'blue'}}>Зарегистрируйтесь</Link></Label>
                     </Form>
