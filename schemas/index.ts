@@ -44,22 +44,22 @@ export const ResetSchema = z.object({
 
 export const LoginSchema = z.object({
   email: z.string().email({
-    message: "Email is required",
+    message: "Почта не может быть пустым!",
   }),
   password: z.string().min(1, {
-    message: "Password is required",
+    message: "Пароль не может быть пустым!",
   }),
   code: z.optional(z.string()),
 });
 
 export const RegisterSchema = z.object({
   email: z.string().email({
-    message: "Email is required",
+    message: "Почта не может быть пустым!",
   }),
   password: z.string().min(6, {
-    message: "Minimum 6 characters required",
+    message: "Минимальное количество символов: 6",
   }),
   name: z.string().min(1, {
-    message: "Name is required",
+    message: "Имя не может быть пустым!",
   }),
 });
