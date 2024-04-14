@@ -50,8 +50,8 @@ export const RegisterForm = () => {
 
   return (
     <CardWrapper
-      headerLabel="Create an account"
-      backButtonLabel="Already have an account?"
+      headerLabel="Создать аккант"
+      backButtonLabel="Уже есть аккаунт?"
       backButtonHref="/auth/login"
       showSocial
     >
@@ -66,12 +66,12 @@ export const RegisterForm = () => {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>Имя</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       disabled={isPending}
-                      placeholder="John Doe"
+                      placeholder="Иван Иванов"
                     />
                   </FormControl>
                   <FormMessage />
@@ -83,12 +83,12 @@ export const RegisterForm = () => {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>Почта</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       disabled={isPending}
-                      placeholder="john.doe@example.com"
+                      placeholder="example@mail.com"
                       type="email"
                     />
                   </FormControl>
@@ -101,7 +101,7 @@ export const RegisterForm = () => {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel>Пароль</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
@@ -122,7 +122,7 @@ export const RegisterForm = () => {
             type="submit"
             className="w-full"
           >
-            Create an account
+            Создать аккаунт
           </Button>
         </form>
       </Form>
