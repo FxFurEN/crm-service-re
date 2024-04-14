@@ -28,7 +28,7 @@ export const login = async (
   const validatedFields = LoginSchema.safeParse(values);
 
   if (!validatedFields.success) {
-    return { error: "Invalid fields!" };
+    return { error: "Недопустимые поля!" };
   }
 
   const { email, password, code } = validatedFields.data;
@@ -36,7 +36,7 @@ export const login = async (
   const existingUser = await getUserByEmail(email);
 
   if (!existingUser || !existingUser.email || !existingUser.password) {
-    return { error: "Email does not exist!" }
+    return { error: "Электронная почта не существует!" }
   }
 
   if (!existingUser.emailVerified) {
@@ -49,7 +49,7 @@ export const login = async (
       verificationToken.token,
     );
 
-    return { success: "Confirmation email sent!" };
+    return { success: "Подтверждающее письмо отправлено!" };
   }
 
   if (existingUser.isTwoFactorEnabled && existingUser.email) {
@@ -112,9 +112,9 @@ export const login = async (
     if (error instanceof AuthError) {
       switch (error.type) {
         case "CredentialsSignin":
-          return { error: "Invalid credentials!" }
+          return { error: "Недопустимые учетные данные!" }
         default:
-          return { error: "Something went wrong!" }
+          return { error: "Что-то пошло не так!" }
       }
     }
 
