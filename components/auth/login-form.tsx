@@ -70,8 +70,8 @@ export const LoginForm = () => {
 
   return (
     <CardWrapper
-      headerLabel="Welcome back"
-      backButtonLabel="Don't have an account?"
+      headerLabel=""
+      backButtonLabel="Нет аккаунта?"
       backButtonHref="/auth/register"
       showSocial
     >
@@ -87,7 +87,7 @@ export const LoginForm = () => {
                 name="code"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Two Factor Code</FormLabel>
+                    <FormLabel>Двухфакторный код</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
@@ -107,12 +107,12 @@ export const LoginForm = () => {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email</FormLabel>
+                      <FormLabel>Почта</FormLabel>
                       <FormControl>
                         <Input
                           {...field}
                           disabled={isPending}
-                          placeholder="john.doe@example.com"
+                          placeholder="example@mail.com"
                           type="email"
                         />
                       </FormControl>
@@ -125,7 +125,7 @@ export const LoginForm = () => {
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Password</FormLabel>
+                      <FormLabel>Пароль</FormLabel>
                       <FormControl>
                         <Input
                           {...field}
@@ -141,7 +141,7 @@ export const LoginForm = () => {
                         className="px-0 font-normal"
                       >
                         <Link href="/auth/reset">
-                          Forgot password?
+                          Забыли пароль?
                         </Link>
                       </Button>
                       <FormMessage />
@@ -158,7 +158,7 @@ export const LoginForm = () => {
             type="submit"
             className="w-full"
           >
-            {showTwoFactor ? "Confirm" : "Login"}
+            {showTwoFactor ? "Подтвердить" : "Войти"}
           </Button>
         </form>
       </Form>
