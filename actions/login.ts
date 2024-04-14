@@ -6,7 +6,7 @@ import { AuthError } from "next-auth";
 import { db } from "@/lib/db";
 import { signIn } from "@/auth";
 import { LoginSchema } from "@/schemas";
-import { getUserByEmail } from "@/data/user";
+import { getUserByEmail, isUserGoogleAccount } from "@/data/user";
 import { getTwoFactorTokenByEmail } from "@/data/two-factor-token";
 import { 
   sendVerificationEmail,
@@ -34,7 +34,11 @@ export const login = async (
   const { email, password, code } = validatedFields.data;
 
   const existingUser = await getUserByEmail(email);
+  const isGoogleUser = await isUserGoogleAccount(existingUser.id);
 
+  if (isGoogleUser) {
+    return { error: "Эта почта привязана к Google входу!" }
+  }
   if (!existingUser || !existingUser.email || !existingUser.password) {
     return { error: "Электронная почта не существует!" }
   }
