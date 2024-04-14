@@ -70,7 +70,7 @@ export const LoginForm = () => {
 
   return (
     <CardWrapper
-      headerLabel=""
+      headerLabel="Войти в систему"
       backButtonLabel="Нет аккаунта?"
       backButtonHref="/auth/register"
       showSocial
