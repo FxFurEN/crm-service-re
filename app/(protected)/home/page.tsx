@@ -1,5 +1,5 @@
 "use client";
-import BarChart from "@/components/BarChart";
+import BarChart from "@/components/bar-chart";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 const data = [
