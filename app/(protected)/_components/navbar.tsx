@@ -19,6 +19,8 @@ import {
     Users2,
 } from "lucide-react";
 
+import { usePathname } from "next/navigation";
+
 interface ButtonData {
     icon: React.ElementType;
     label: string;
@@ -36,6 +38,7 @@ const buttonsData: ButtonData[] = [
 
 export default function Navbar() {
     const [activeButton, setActiveButton] = useState<number | null>(null);
+    const pathname = usePathname();
 
     const handleButtonClick = (buttonIndex: number) => {
         setActiveButton((prevState) => (prevState === buttonIndex ? null : buttonIndex));
@@ -55,17 +58,17 @@ export default function Navbar() {
                         <Tooltip key={index}>
                             <TooltipTrigger asChild>
                                 <Link href={button.route} passHref>
-                                    <div
-                                        className={`flex h-9 w-9 items-center justify-center rounded-lg ${
-                                            activeButton === index
-                                                ? "bg-accent text-accent-foreground"
-                                                : "text-muted-foreground"
-                                        } transition-colors hover:text-foreground md:h-8 md:w-8`}
-                                        onClick={() => handleButtonClick(index)}
-                                    >
-                                        <button.icon className="h-5 w-5" />
-                                        <span className="sr-only">{button.label}</span>
-                                    </div>
+                                <div
+                                    className={`flex h-9 w-9 items-center justify-center rounded-lg ${
+                                    pathname === button.route
+                                        ? "bg-accent text-accent-foreground"
+                                        : "text-muted-foreground"
+                                    } transition-colors hover:text-foreground md:h-8 md:w-8`}
+                                    onClick={() => handleButtonClick(index)}
+                                >
+                                    <button.icon className="h-5 w-5" />
+                                    <span className="sr-only">{button.label}</span>
+                                </div>
                                 </Link>
                             </TooltipTrigger>
                             <TooltipContent side="right">{button.label}</TooltipContent>
@@ -80,7 +83,9 @@ export default function Navbar() {
                             <Link href="/settings" passHref>
                                 <div
                                     className={`flex h-9 w-9 items-center justify-center rounded-lg ${
-                                        activeButton === null ? "bg-accent text-accent-foreground" : "text-muted-foreground"
+                                    pathname === "/settings"
+                                        ? "bg-accent text-accent-foreground"
+                                        : "text-muted-foreground"
                                     } transition-colors hover:text-foreground md:h-8 md:w-8`}
                                     onClick={() => setActiveButton(null)}
                                 >
