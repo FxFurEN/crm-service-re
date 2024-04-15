@@ -1,5 +1,6 @@
 "use client";
 import BarChart from "@/components/bar-chart";
+import PieChart from "@/components/pie-chart"; 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 const data = [
@@ -69,7 +70,7 @@ const HomePage = () => {
           <CardTitle>Test chart</CardTitle>
         </CardHeader>
         <CardContent>
-          <BarChart data={data} xKey="month" yKey="total" />
+          <PieChart data={data} dataKey="total" />
         </CardContent>
       </Card>
     </div>
