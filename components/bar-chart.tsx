@@ -5,7 +5,8 @@ import {
   ResponsiveContainer,
   XAxis,
   YAxis,
-  Bar
+  Bar,
+  Legend
 } from "recharts";
 
 type DataItem = {
@@ -37,6 +38,7 @@ export default function BarChart({ data, xKey, yKey }: Props) {
           tickFormatter={(value) => `$${value}`}
         />
         <Bar dataKey={yKey} radius={[4, 4, 0, 0]} />
+        <Legend />
       </BarGraph>
     </ResponsiveContainer>
   );

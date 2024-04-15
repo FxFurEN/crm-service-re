@@ -4,7 +4,8 @@ import {
   PieChart,
   Pie,
   ResponsiveContainer,
-  Cell
+  Cell,
+  Legend
 } from "recharts";
 
 type DataItem = {
@@ -32,6 +33,7 @@ export default function PieChartComponent({ data, dataKey }: Props) {
             data.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)
           }
         </Pie>
+        <Legend />
       </PieChart>
     </ResponsiveContainer>
   );
