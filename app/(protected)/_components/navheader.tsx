@@ -10,7 +10,7 @@ export const Navheader = () => {
   const pathname = usePathname();
 
   return (
-    <nav className="bg-secondary flex justify-between items-center p-4  rounded-xl w-[100%] shadow-sm">
+    <nav className="fixed bg-secondary flex justify-between items-center p-4  rounded-xl w-[100%] shadow-sm">
       <div className="flex gap-x-2 ml-20">
         <Button 
           asChild
