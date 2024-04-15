@@ -61,7 +61,7 @@ export default function Navbar() {
                                 <div
                                     className={`flex h-9 w-9 items-center justify-center rounded-lg ${
                                     pathname === button.route
-                                        ? "bg-accent text-accent-foreground"
+                                        ? "bg-zinc-300 text-accent-foreground"
                                         : "text-muted-foreground"
                                     } transition-colors hover:text-foreground md:h-8 md:w-8`}
                                     onClick={() => handleButtonClick(index)}
@@ -84,7 +84,7 @@ export default function Navbar() {
                                 <div
                                     className={`flex h-9 w-9 items-center justify-center rounded-lg ${
                                     pathname === "/settings"
-                                        ? "bg-accent text-accent-foreground"
+                                        ? "bg-zinc-300  text-accent-foreground"
                                         : "text-muted-foreground"
                                     } transition-colors hover:text-foreground md:h-8 md:w-8`}
                                     onClick={() => setActiveButton(null)}
