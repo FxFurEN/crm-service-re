@@ -10,7 +10,9 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
     <div className="h-full w-full flex flex-col gap-y-10 items-center">
       <Navbar/>
       <Navheader />
-      {children}
+      <main  className="mt-20">
+        {children}
+      </main>
     </div>
    );
 }
