@@ -18,7 +18,6 @@ type Props = {
 };
 
 export default function PieChartComponent({ data, dataKey }: Props) {
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
   return (
     <ResponsiveContainer width={"100%"} height={350}>
@@ -26,12 +25,10 @@ export default function PieChartComponent({ data, dataKey }: Props) {
         <Pie
           data={data}
           dataKey={dataKey}
-          outerRadius={80}
-          fill="#8884d8"
+          outerRadius={120}
+          fill="black"
+          label
         >
-          {
-            data.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)
-          }
         </Pie>
         <Legend />
       </PieChart>
