@@ -55,8 +55,8 @@ const data = [
 
 const HomePage = () => {
   return (
-    <>
-      <Card className="w-[450px]">
+    <div className="flex flex-wrap justify-center items-start" >
+      <Card className="w-[450px] m-2">
         <CardHeader>
           <CardTitle>Test chart</CardTitle>
         </CardHeader>
@@ -64,7 +64,15 @@ const HomePage = () => {
           <BarChart data={data} xKey="month" yKey="total" />
         </CardContent>
       </Card>
-    </>
+      <Card className="w-[450px] m-2">
+        <CardHeader>
+          <CardTitle>Test chart</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <BarChart data={data} xKey="month" yKey="total" />
+        </CardContent>
+      </Card>
+    </div>
     
    );
 }
