@@ -27,7 +27,7 @@ export const LoginForm = () => {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl");
   const urlError = searchParams.get("error") === "OAuthAccountNotLinked"
-    ? "Email already in use with different provider!"
+    ? "Эта почта уже используется другим способом входа!"
     : "";
 
   const [showTwoFactor, setShowTwoFactor] = useState(false);
@@ -64,7 +64,7 @@ export const LoginForm = () => {
             setShowTwoFactor(true);
           }
         })
-        .catch(() => setError("Something went wrong"));
+        .catch(() => setError("Ошибка входа!"));
     });
   };
 
@@ -154,7 +154,7 @@ export const LoginForm = () => {
           <FormError message={error || urlError} />
           <FormSuccess message={success} />
           <Button
-            disabled={isPending}
+            isLoading={isPending}
             type="submit"
             className="w-full"
           >

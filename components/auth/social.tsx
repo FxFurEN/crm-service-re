@@ -25,7 +25,7 @@ export const Social = () => {
         variant="outline"
         onClick={() => onClick("google")}
       >
-        <FcGoogle className="h-5 w-5" />
+        <FcGoogle className="h-7 w-7" />
       </Button>
     </div>
   );

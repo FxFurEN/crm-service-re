@@ -19,3 +19,23 @@ export const getUserById = async (id: string) => {
     return null;
   }
 };
+
+export const isUserGoogleAccount = async (userId: string) => {
+  try {
+    const accounts = await db.account.findMany({
+      where: {
+        userId: userId,
+      },
+    });
+
+    for (let account of accounts) {
+      if (account.provider === 'google') {
+        return true;
+      }
+    }
+
+    return false;
+  } catch {
+    return null;
+  }
+};

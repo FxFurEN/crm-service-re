@@ -16,18 +16,27 @@ import {
 } from "@/components/ui/avatar";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { LogoutButton } from "@/components/auth/logout-button";
+import { stringToColor } from "@/lib/stringToColor";
 
 export const UserButton = () => {
   const user = useCurrentUser();
+
+  const getInitials = (name: string) => {
+    return name ? name.charAt(0).toUpperCase() : '';
+  };
+
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
         <Avatar>
-          <AvatarImage src={user?.image || ""} />
-          <AvatarFallback className="bg-sky-500">
-            <FaUser className="text-white" />
-          </AvatarFallback>
+          {user?.image ? (
+            <AvatarImage src={user.image} alt="User avatar" />
+          ) : (
+            <AvatarFallback style={{ backgroundColor: stringToColor(user?.name), color: 'white' }}>
+              {user?.name ? getInitials(user.name) : <FaUser className="text-white" />}
+            </AvatarFallback>
+          )}
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-40" align="end">
@@ -41,3 +50,4 @@ export const UserButton = () => {
     </DropdownMenu>
   );
 };
+

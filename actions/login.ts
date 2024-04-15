@@ -6,7 +6,7 @@ import { AuthError } from "next-auth";
 import { db } from "@/lib/db";
 import { signIn } from "@/auth";
 import { LoginSchema } from "@/schemas";
-import { getUserByEmail } from "@/data/user";
+import { getUserByEmail, isUserGoogleAccount } from "@/data/user";
 import { getTwoFactorTokenByEmail } from "@/data/two-factor-token";
 import { 
   sendVerificationEmail,
@@ -28,15 +28,19 @@ export const login = async (
   const validatedFields = LoginSchema.safeParse(values);
 
   if (!validatedFields.success) {
-    return { error: "Invalid fields!" };
+    return { error: "Недопустимые поля!" };
   }
 
   const { email, password, code } = validatedFields.data;
 
   const existingUser = await getUserByEmail(email);
+  const isGoogleUser = await isUserGoogleAccount(existingUser.id);
 
+  if (isGoogleUser) {
+    return { error: "Эта почта привязана к Google входу!" }
+  }
   if (!existingUser || !existingUser.email || !existingUser.password) {
-    return { error: "Email does not exist!" }
+    return { error: "Электронная почта не существует!" }
   }
 
   if (!existingUser.emailVerified) {
@@ -49,7 +53,7 @@ export const login = async (
       verificationToken.token,
     );
 
-    return { success: "Confirmation email sent!" };
+    return { success: "Подтверждающее письмо отправлено!" };
   }
 
   if (existingUser.isTwoFactorEnabled && existingUser.email) {
@@ -112,9 +116,9 @@ export const login = async (
     if (error instanceof AuthError) {
       switch (error.type) {
         case "CredentialsSignin":
-          return { error: "Invalid credentials!" }
+          return { error: "Недопустимые учетные данные!" }
         default:
-          return { error: "Something went wrong!" }
+          return { error: "Что-то пошло не так!" }
       }
     }
 
