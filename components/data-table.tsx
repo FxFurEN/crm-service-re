@@ -1,5 +1,6 @@
 import * as React from "react";
 import {
+
   ChevronDownIcon,
   DotsHorizontalIcon,
 } from "@radix-ui/react-icons";
@@ -121,7 +122,7 @@ function CustomTable<T>({
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        <div className="rounded-md border w-[400px]">
+        <div className="rounded-md border w-full lg:w-[100vh]">
           <Table>
             <TableHeader>
               <TableRow>
