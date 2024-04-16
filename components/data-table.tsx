@@ -1,6 +1,5 @@
 import * as React from "react";
 import {
-  CaretSortIcon,
   ChevronDownIcon,
   DotsHorizontalIcon,
 } from "@radix-ui/react-icons";
@@ -16,7 +15,6 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -25,7 +23,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
@@ -48,10 +45,18 @@ export type TableProps<T> = {
   searchableColumns?: string[];
 };
 
-function CustomTable<T>({ data, columns, searchableColumns = [] }: TableProps<T>) {
+function CustomTable<T>({
+  data,
+  columns,
+  searchableColumns = [],
+}: TableProps<T>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    []
+  );
+  const [columnVisibility, setColumnVisibility] = React.useState<
+    VisibilityState
+  >({});
   const [rowSelection, setRowSelection] = React.useState({});
 
   const table = useReactTable({
@@ -74,13 +79,15 @@ function CustomTable<T>({ data, columns, searchableColumns = [] }: TableProps<T>
   });
 
   return (
-    <main className="justify-between w-full">
+    <main className="justify-between">
       <div className="ml-20">
         <div className="flex py-4">
           {searchableColumns.length > 0 && (
             <Input
               placeholder="Filter emails..."
-              value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+              value={
+                (table.getColumn("email")?.getFilterValue() as string) ?? ""
+              }
               onChange={(event) =>
                 table.getColumn("email")?.setFilterValue(event.target.value)
               }
@@ -94,38 +101,58 @@ function CustomTable<T>({ data, columns, searchableColumns = [] }: TableProps<T>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              {table.getAllColumns().map((column) => (
-                <DropdownMenuCheckboxItem
-                  key={column.id}
-                  className="capitalize"
-                  checked={column.getIsVisible()}
-                  onCheckedChange={(value) =>
-                    column.toggleVisibility(!!value)
-                  }
-                >
-                  {column.id}
-                </DropdownMenuCheckboxItem>
-              ))}
+              {table
+                .getAllColumns()
+                .filter((column) => column.getCanHide())
+                .map((column) => {
+                  return (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className="capitalize"
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) =>
+                        column.toggleVisibility(!!value)
+                      }
+                    >
+                      {column.id}
+                    </DropdownMenuCheckboxItem>
+                  );
+                })}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        <div className="rounded-md border">
+        <div className="rounded-md border w-[400px]">
           <Table>
             <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                    </TableHead>
-                  ))}
-                </TableRow>
-              ))}
+              <TableRow>
+                <TableHead>
+                  <Checkbox
+                    checked={
+                      table.getIsAllPageRowsSelected() ||
+                      (table.getIsSomePageRowsSelected() && "indeterminate")
+                    }
+                    onCheckedChange={(value) =>
+                      table.toggleAllPageRowsSelected(!!value)
+                    }
+                    aria-label="Select all"
+                  />
+                </TableHead>
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <React.Fragment key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => (
+                      <TableHead key={header.id}>
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                      </TableHead>
+                    ))}
+                  </React.Fragment>
+                ))}
+                <TableHead>Actions</TableHead>
+              </TableRow>
             </TableHeader>
             <TableBody>
               {table.getRowModel().rows?.length ? (
@@ -134,6 +161,15 @@ function CustomTable<T>({ data, columns, searchableColumns = [] }: TableProps<T>
                     key={row.id}
                     data-state={row.getIsSelected() && "selected"}
                   >
+                    <TableCell>
+                      <Checkbox
+                        checked={row.getIsSelected()}
+                        onCheckedChange={(value) =>
+                          row.toggleSelected(!!value)
+                        }
+                        aria-label="Select row"
+                      />
+                    </TableCell>
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id}>
                         {flexRender(
@@ -142,14 +178,31 @@ function CustomTable<T>({ data, columns, searchableColumns = [] }: TableProps<T>
                         )}
                       </TableCell>
                     ))}
+                    <TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            className="h-8 w-8 p-0"
+                          >
+                            <span className="sr-only">Open menu</span>
+                            <DotsHorizontalIcon className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuLabel>
+                            Actions
+                          </DropdownMenuLabel>
+                            <DropdownMenuItem>View customer</DropdownMenuItem>
+                            <DropdownMenuItem>View payment details</DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="h-24 text-center"
-                  >
+                  <TableCell colSpan={columns.length + 2} className="h-24 text-center">
                     No results.
                   </TableCell>
                 </TableRow>
