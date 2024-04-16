@@ -29,7 +29,7 @@ export const login = async (
   const existingUser = await getUserByEmail(email);
   const isGoogleUser = await isUserGoogleAccount(existingUser.id);
 
-  if (isGoogleUser) {
+  if (!existingUser || isGoogleUser) {
     return { error: "Эта почта привязана к Google входу!" }
   }
   if (!existingUser || !existingUser.email || !existingUser.password) {
