@@ -66,7 +66,7 @@ const SettingsPage = () => {
             setSuccess(data.success);
           }
         })
-        .catch(() => setError("Something went wrong!"));
+        .catch(() => setError("Что-то пошло не так!"));
     });
   }
 
@@ -74,7 +74,7 @@ const SettingsPage = () => {
     <Card className="w-[600px]">
       <CardHeader>
         <p className="text-2xl font-semibold text-center">
-          ⚙️ Settings
+          ⚙️ Настройки
         </p>
       </CardHeader>
       <CardContent>
@@ -89,7 +89,7 @@ const SettingsPage = () => {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel>ФИО</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
@@ -108,11 +108,11 @@ const SettingsPage = () => {
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Email</FormLabel>
+                        <FormLabel>Почта</FormLabel>
                         <FormControl>
                           <Input
                             {...field}
-                            placeholder="john.doe@example.com"
+                            placeholder="example@gmail.com"
                             type="email"
                             disabled={isPending}
                           />
@@ -126,7 +126,7 @@ const SettingsPage = () => {
                     name="password"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Password</FormLabel>
+                        <FormLabel>Пароль</FormLabel>
                         <FormControl>
                           <Input
                             {...field}
@@ -144,7 +144,7 @@ const SettingsPage = () => {
                     name="newPassword"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>New Password</FormLabel>
+                        <FormLabel>Новый пароль</FormLabel>
                         <FormControl>
                           <Input
                             {...field}
@@ -164,7 +164,7 @@ const SettingsPage = () => {
                 name="role"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Role</FormLabel>
+                    <FormLabel>Роль</FormLabel>
                     <Select
                       disabled={isPending}
                       onValueChange={field.onChange}
@@ -172,15 +172,15 @@ const SettingsPage = () => {
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select a role" />
+                          <SelectValue placeholder="Выберите роль" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
                         <SelectItem value={UserRole.ADMIN}>
-                          Admin
+                          Администратор
                         </SelectItem>
                         <SelectItem value={UserRole.USER}>
-                          User
+                          Сотрудник
                         </SelectItem>
                       </SelectContent>
                     </Select>
@@ -192,10 +192,10 @@ const SettingsPage = () => {
             <FormError message={error} />
             <FormSuccess message={success} />
             <Button
-              disabled={isPending}
+              isLoading={isPending}
               type="submit"
             >
-              Save
+              Сохранить
             </Button>
           </form>
         </Form>
