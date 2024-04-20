@@ -63,7 +63,7 @@ model PasswordResetToken {
 }
 
 model Clients {
-  id        String    @id @default(uuid())
+  id        String    @id @default(cuid())
   email     String?   @db.VarChar(255)
   phone     String?   @db.VarChar(255)
   sign      Boolean   @default(false)
@@ -74,7 +74,7 @@ model Clients {
 }
 
 model Service {
-  id          String    @id @default(uuid())
+  id          String    @id @default(cuid())
   name        String?   @db.VarChar(255)
   price       Decimal?  @db.Decimal(10, 2)
   category    Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
@@ -83,13 +83,13 @@ model Service {
 }
 
 model Category {
-  id        String    @id @default(uuid())
+  id        String    @id @default(cuid())
   name      String?   @db.VarChar(255)
   service   Service[]
 }
 
 model Orders {
-  id          String    @id @default(uuid())
+  id          String    @id @default(cuid())
   createdAt   DateTime  @default(now())
   comments    String?   @db.VarChar(255)
   leadTime    DateTime  @default(now())
@@ -103,7 +103,7 @@ model Orders {
 }
 
 model Employee {
-  id          String    @id @default(uuid())
+  id          String    @id @default(cuid())
   initials    String    @db.VarChar(255)
   email       String    @db.VarChar(255) 
   sign        Boolean   @default(false)
@@ -116,20 +116,20 @@ model Employee {
 }
 
 model Position {
-  id         String    @id @default(uuid())
+  id         String    @id @default(cuid())
   name       String   @db.VarChar(255)
   employee   Employee[] 
 }
 
 model Stage {
-  id          String    @id @default(uuid())
+  id          String    @id @default(cuid())
   name        String   @db.VarChar(255)
   color       String    @db.VarChar(255)
   execution   Execution[] 
 }
 
 model Execution {
-  id              String    @id @default(uuid())
+  id              String    @id @default(cuid())
   name            String   @db.VarChar(255)
   executionDate   DateTime  @default(now())
   employee        Employee  @relation(fields: [employeeId], references: [id], onDelete: Cascade)
