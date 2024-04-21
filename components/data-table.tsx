@@ -35,6 +35,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import Link from "next/link";
 
 export type TableColumn<T> = ColumnDef<T> & {
   isSelectable?: boolean;
@@ -44,12 +45,14 @@ export type TableProps<T> = {
   data: T[];
   columns: TableColumn<T>[];
   searchableColumns?: string[];
+  routeInfo: { pathname: string; query: Record<string, string> };
 };
 
 function CustomTable<T>({
   data,
   columns,
   searchableColumns = [],
+  routeInfo,
 }: TableProps<T>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -194,7 +197,16 @@ function CustomTable<T>({
                           <DropdownMenuLabel>
                             Actions
                           </DropdownMenuLabel>
-                            <DropdownMenuItem>View customer</DropdownMenuItem>
+                            <DropdownMenuItem>
+                              <Link
+                                href={{
+                                  pathname: routeInfo.pathname, 
+                                  query: {...routeInfo.query},
+                                }}
+                              >
+                                View 
+                              </Link>
+                            </DropdownMenuItem>
                             <DropdownMenuItem>View payment details</DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
