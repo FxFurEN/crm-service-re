@@ -1,6 +1,7 @@
 "use client"
 
 import CustomTable, { TableColumn } from "@/components/data-table";
+import * as React from "react";
 
 export type Client = {
   id: string;
@@ -63,7 +64,19 @@ const clientData: Client[] = [
 ];
 
 export default function ClientsPage() {
+  const [selectedId, setSelectedId] = React.useState<string | null>(null);
+
+  const routeInfo = {
+    pathname: '/clients/{detail}',
+    query: { id: '2' },
+  };
+
+
   return (
-    <CustomTable<Client> data={clientData} columns={clientColumns} searchableColumns={["fullName", "email", "phone"]} />
+    <CustomTable<Client> 
+    data={clientData} 
+    columns={clientColumns} 
+    searchableColumns={["fullName", "email", "phone"]} 
+    routeInfo={routeInfo} />
   );
 }
