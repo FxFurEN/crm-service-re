@@ -59,10 +59,6 @@ export const LoginForm = () => {
             form.reset();
             setSuccess(data.success);
           }
-
-          if (data?.twoFactor) {
-            setShowTwoFactor(true);
-          }
         })
         .catch(() => setError("Ошибка входа!"));
     });
@@ -81,27 +77,6 @@ export const LoginForm = () => {
           className="space-y-6"
         >
           <div className="space-y-4">
-            {showTwoFactor && (
-              <FormField
-                control={form.control}
-                name="code"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Двухфакторный код</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        disabled={isPending}
-                        placeholder="123456"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            )}
-            {!showTwoFactor && (
-              <>
                 <FormField
                   control={form.control}
                   name="email"
@@ -148,8 +123,6 @@ export const LoginForm = () => {
                     </FormItem>
                   )}
                 />
-            </>
-          )}
           </div>
           <FormError message={error || urlError} />
           <FormSuccess message={success} />

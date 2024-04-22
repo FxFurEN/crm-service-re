@@ -5,8 +5,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTransition, useState } from "react";
 import { useSession } from "next-auth/react";
-
-import { Switch } from "@/components/ui/switch";
 import {
   Select,
   SelectContent,
@@ -28,7 +26,6 @@ import {
   FormControl,
   FormItem,
   FormLabel,
-  FormDescription,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -53,7 +50,6 @@ const SettingsPage = () => {
       name: user?.name || undefined,
       email: user?.email || undefined,
       role: user?.role || undefined,
-      isTwoFactorEnabled: user?.isTwoFactorEnabled || undefined,
     }
   });
 
@@ -70,7 +66,7 @@ const SettingsPage = () => {
             setSuccess(data.success);
           }
         })
-        .catch(() => setError("Something went wrong!"));
+        .catch(() => setError("Что-то пошло не так!"));
     });
   }
 
@@ -78,7 +74,7 @@ const SettingsPage = () => {
     <Card className="w-[600px]">
       <CardHeader>
         <p className="text-2xl font-semibold text-center">
-          ⚙️ Settings
+          ⚙️ Настройки
         </p>
       </CardHeader>
       <CardContent>
@@ -93,7 +89,7 @@ const SettingsPage = () => {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel>ФИО</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
@@ -112,11 +108,11 @@ const SettingsPage = () => {
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Email</FormLabel>
+                        <FormLabel>Почта</FormLabel>
                         <FormControl>
                           <Input
                             {...field}
-                            placeholder="john.doe@example.com"
+                            placeholder="example@gmail.com"
                             type="email"
                             disabled={isPending}
                           />
@@ -130,7 +126,7 @@ const SettingsPage = () => {
                     name="password"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Password</FormLabel>
+                        <FormLabel>Пароль</FormLabel>
                         <FormControl>
                           <Input
                             {...field}
@@ -148,7 +144,7 @@ const SettingsPage = () => {
                     name="newPassword"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>New Password</FormLabel>
+                        <FormLabel>Новый пароль</FormLabel>
                         <FormControl>
                           <Input
                             {...field}
@@ -168,7 +164,7 @@ const SettingsPage = () => {
                 name="role"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Role</FormLabel>
+                    <FormLabel>Роль</FormLabel>
                     <Select
                       disabled={isPending}
                       onValueChange={field.onChange}
@@ -176,15 +172,15 @@ const SettingsPage = () => {
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select a role" />
+                          <SelectValue placeholder="Выберите роль" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
                         <SelectItem value={UserRole.ADMIN}>
-                          Admin
+                          Администратор
                         </SelectItem>
                         <SelectItem value={UserRole.USER}>
-                          User
+                          Сотрудник
                         </SelectItem>
                       </SelectContent>
                     </Select>
@@ -192,37 +188,14 @@ const SettingsPage = () => {
                   </FormItem>
                 )}
               />
-              {user?.isOAuth === false && (
-                <FormField
-                  control={form.control}
-                  name="isTwoFactorEnabled"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                      <div className="space-y-0.5">
-                        <FormLabel>Two Factor Authentication</FormLabel>
-                        <FormDescription>
-                          Enable two factor authentication for your account
-                        </FormDescription>
-                      </div>
-                      <FormControl>
-                        <Switch
-                          disabled={isPending}
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-              )}
             </div>
             <FormError message={error} />
             <FormSuccess message={success} />
             <Button
-              disabled={isPending}
+              isLoading={isPending}
               type="submit"
             >
-              Save
+              Сохранить
             </Button>
           </form>
         </Form>
