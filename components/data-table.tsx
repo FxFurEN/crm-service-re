@@ -1,6 +1,7 @@
+"use client";
+
 import * as React from "react";
 import {
-
   ChevronDownIcon,
   DotsHorizontalIcon,
 } from "@radix-ui/react-icons";
@@ -17,13 +18,11 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
@@ -35,7 +34,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import Link from "next/link";
+import { Pencil, Trash2 } from "lucide-react";
 
 export type TableColumn<T> = ColumnDef<T> & {
   isSelectable?: boolean;
@@ -45,14 +44,14 @@ export type TableProps<T> = {
   data: T[];
   columns: TableColumn<T>[];
   searchableColumns?: string[];
-  routeInfo: { pathname: string; query: Record<string, string> };
+  onRowClick?: (id: string) => void;
 };
 
 function CustomTable<T>({
   data,
   columns,
   searchableColumns = [],
-  routeInfo,
+  onRowClick,
 }: TableProps<T>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -101,7 +100,7 @@ function CustomTable<T>({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="ml-auto">
-                Columns <ChevronDownIcon className="ml-2 h-4 w-4" />
+                Столбцы <ChevronDownIcon className="ml-2 h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -129,18 +128,6 @@ function CustomTable<T>({
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>
-                  <Checkbox
-                    checked={
-                      table.getIsAllPageRowsSelected() ||
-                      (table.getIsSomePageRowsSelected() && "indeterminate")
-                    }
-                    onCheckedChange={(value) =>
-                      table.toggleAllPageRowsSelected(!!value)
-                    }
-                    aria-label="Select all"
-                  />
-                </TableHead>
                 {table.getHeaderGroups().map((headerGroup) => (
                   <React.Fragment key={headerGroup.id}>
                     {headerGroup.headers.map((header) => (
@@ -155,7 +142,7 @@ function CustomTable<T>({
                     ))}
                   </React.Fragment>
                 ))}
-                <TableHead>Actions</TableHead>
+                <TableHead>Действия</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -164,16 +151,11 @@ function CustomTable<T>({
                   <TableRow
                     key={row.id}
                     data-state={row.getIsSelected() && "selected"}
+                    onClick={() => {
+                      onRowClick && onRowClick(row.original.id);
+                    }}
+                    style={{ cursor: "pointer" }}
                   >
-                    <TableCell>
-                      <Checkbox
-                        checked={row.getIsSelected()}
-                        onCheckedChange={(value) =>
-                          row.toggleSelected(!!value)
-                        }
-                        aria-label="Select row"
-                      />
-                    </TableCell>
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id}>
                         {flexRender(
@@ -194,20 +176,12 @@ function CustomTable<T>({
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuLabel>
-                            Actions
-                          </DropdownMenuLabel>
                             <DropdownMenuItem>
-                              <Link
-                                href={{
-                                  pathname: routeInfo.pathname, 
-                                  query: {...routeInfo.query},
-                                }}
-                              >
-                                View 
-                              </Link>
+                              <Pencil size={20} className="mr-2"/>Редактировать
                             </DropdownMenuItem>
-                            <DropdownMenuItem>View payment details</DropdownMenuItem>
+                            <DropdownMenuItem>
+                              <Trash2 size={20} color="#ff0000" className="mr-2"/>Удалить
+                            </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
@@ -216,7 +190,7 @@ function CustomTable<T>({
               ) : (
                 <TableRow>
                   <TableCell colSpan={columns.length + 2} className="h-24 text-center">
-                    No results.
+                    Нет результатов.
                   </TableCell>
                 </TableRow>
               )}
@@ -235,7 +209,7 @@ function CustomTable<T>({
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
             >
-              Previous
+              Назад
             </Button>
             <Button
               variant="outline"
@@ -243,7 +217,7 @@ function CustomTable<T>({
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
             >
-              Next
+              Вперед
             </Button>
           </div>
         </div>

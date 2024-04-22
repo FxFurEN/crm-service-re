@@ -1,7 +1,8 @@
-"use client"
+"use client";
 
 import CustomTable, { TableColumn } from "@/components/data-table";
 import * as React from "react";
+import { useRouter } from "next/navigation";
 
 export type Client = {
   id: string;
@@ -64,19 +65,18 @@ const clientData: Client[] = [
 ];
 
 export default function ClientsPage() {
-  const [selectedId, setSelectedId] = React.useState<string | null>(null);
+  const router = useRouter();
 
-  const routeInfo = {
-    pathname: '/clients/{detail}',
-    query: { id: '2' },
+  const handleRowClick = (id: string) => {
+    // Navigate to the dynamic [id] page with the selected id
+    router.push(`/clients/${id}`);
   };
-
 
   return (
     <CustomTable<Client> 
     data={clientData} 
     columns={clientColumns} 
     searchableColumns={["fullName", "email", "phone"]} 
-    routeInfo={routeInfo} />
+    onRowClick={handleRowClick} />
   );
 }
