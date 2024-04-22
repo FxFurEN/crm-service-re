@@ -2,6 +2,7 @@
 
 import { FaUser } from "react-icons/fa";
 import { ExitIcon } from "@radix-ui/react-icons"
+import { useRouter } from "next/navigation";
 
 import {
   DropdownMenu,
@@ -17,12 +18,18 @@ import {
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { LogoutButton } from "@/components/auth/logout-button";
 import { stringToColor } from "@/lib/stringToColor";
+import { User } from "lucide-react";
 
 export const UserButton = () => {
   const user = useCurrentUser();
+  const router = useRouter();
 
   const getInitials = (name: string) => {
     return name ? name.charAt(0).toUpperCase() : '';
+  };
+
+  const redirectToProfile = () => {
+    router.push("/settings/profile");
   };
 
 
@@ -40,6 +47,10 @@ export const UserButton = () => {
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-40" align="end">
+        <DropdownMenuItem onClick={redirectToProfile}>
+            <User className="h-4 w-4 mr-2"/>
+            Профиль
+        </DropdownMenuItem>
         <LogoutButton>
           <DropdownMenuItem>
             <ExitIcon className="h-4 w-4 mr-2" />
