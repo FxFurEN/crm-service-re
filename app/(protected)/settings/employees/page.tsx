@@ -4,23 +4,18 @@ import { useRouter } from 'next/navigation';
 import { UserRole } from "@prisma/client";
 import { useCurrentRole } from "@/hooks/use-current-role";
 import CustomTable, { TableColumn }  from '@/components/data-table';
-import { Client } from '@/types/client';
+import { Employee } from '@/types/employee';
 
-const clientColumns: TableColumn<Client>[] = [
+const employeeColumns: TableColumn<Employee>[] = [
   {
     accessorKey: "id",
     header: "ID",
     cell: ({ row }) => <div>{row.getValue("id")}</div>,
   },
   {
-    accessorKey: "fullName",
-    header: "Full Name",
-    cell: ({ row }) => <div>{row.getValue("fullName")}</div>,
-  },
-  {
-    accessorKey: "clientType",
-    header: "Client Type",
-    cell: ({ row }) => <div>{row.getValue("clientType")}</div>,
+    accessorKey: "initials",
+    header: "Initials",
+    cell: ({ row }) => <div>{row.getValue("initials")}</div>,
   },
   {
     accessorKey: "email",
@@ -28,33 +23,31 @@ const clientColumns: TableColumn<Client>[] = [
     cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
   },
   {
-    accessorKey: "phone",
-    header: "Phone",
-    cell: ({ row }) => <div>{row.getValue("phone")}</div>,
+    accessorKey: "sign",
+    header: "Sign",
+    cell: ({ row }) => <div>{row.getValue("sign") ? "Yes" : "No"}</div>,
+  },
+  {
+    accessorKey: "position",
+    header: "Position",
+    cell: ({ row }) => <div>{row.getValue("position")}</div>,
   },
 ];
 
-const clientData: Client[] = [
+const employeeData: Employee[] = [
   {
     id: "1",
-    fullName: "John Doe",
-    clientType: "individual",
+    initials: "JD",
     email: "john.doe@example.com",
-    phone: "+1234567890",
+    sign: false,
+    position: "Manager",
   },
   {
     id: "2",
-    fullName: "ABC Inc.",
-    clientType: "corporate",
-    email: "info@abcinc.com",
-    phone: "+9876543210",
-  },
-  {
-    id: "3",
-    fullName: "Jane Smith",
-    clientType: "individual",
-    email: "jane.smith@example.com",
-    phone: "+1987654321",
+    initials: "AS",
+    email: "alice.smith@example.com",
+    sign: true,
+    position: "Developer",
   },
 ];
 
@@ -74,9 +67,9 @@ const EmployeesPage = () => {
           Сотрудники
         </p>
         <div>
-          <CustomTable<Client> 
-            data={clientData} 
-            columns={clientColumns} 
+          <CustomTable<Employee> 
+            data={employeeData} 
+            columns={employeeColumns} 
             searchableColumns={["fullName", "email", "phone"]} 
           />
         </div>
