@@ -1,6 +1,8 @@
 "use client";
 
+import { RoleGate } from "@/components/auth/role-gate";
 import { Button } from "@/components/ui/button";
+import { UserRole } from "@prisma/client";
 import Link from "next/link";
 
 const SettingsPage = () => {
@@ -13,12 +15,15 @@ const SettingsPage = () => {
           <Link href="/settings/profile">
             <Button className="mr-4">Профиль</Button>
           </Link>
-          <Link href="/settings//employees">
-            <Button className="mr-4">Сотрудники</Button>
-          </Link>
-          <Link href="/settings//position">
-            <Button className="mr-4">Должность</Button>
-          </Link>
+          <RoleGate allowedRole={UserRole.ADMIN}>
+            <Link href="/settings/employees">
+              <Button className="mr-4">Сотрудники</Button>
+            </Link>
+            <Link href="/settings/position">
+              <Button className="mr-4">Должность</Button>
+            </Link>
+          </RoleGate>
+         
         </div>
     </>
    );
