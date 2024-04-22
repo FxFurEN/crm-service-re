@@ -1,4 +1,5 @@
 "use client";
+import { SkeletonCard } from '@/components/skeleton-card';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -104,7 +105,7 @@ export default function ClientDetailPage() {
           </div>
         </Card>
       ) : (
-        <p><Loader2 className="mr-2 h-4 w-4 animate-spin" /></p>
+        <SkeletonCard/>
       )}
     </div>
   );
