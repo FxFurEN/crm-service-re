@@ -1,5 +1,9 @@
 "use client";
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Client } from '@/types/client'; 
+import { Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 export default function ClientDetailPage() {
@@ -56,14 +60,51 @@ export default function ClientDetailPage() {
   return (
     <div>
       {client ? (
-        <div>
-          <h1>{client.fullName}</h1>
-          <p>{client.clientType}</p>
-          <p>{client.email}</p>
-          <p>{client.phone}</p>
-        </div>
+        <Card className="flex flex-col md:flex-row md:w-[700px] w-[400px]">
+          <div className="md:w-[50%]">
+            <CardHeader>
+              <p className="text-2xl font-semibold text-center">
+                Информация  о клиенте
+              </p>
+            </CardHeader>
+            <CardContent>
+              <div>
+                <Label htmlFor="fullName">Полное имя: {client.fullName}</Label>
+              </div>
+              <div>
+                <Label htmlFor="clientType">Тип клиента: {client.clientType}</Label>
+              </div>
+              <div>
+                <Label htmlFor="email">Email: {client.email}</Label>
+              </div>
+              <div>
+                <Label htmlFor="phone">Телефон: {client.phone}</Label>
+              </div>
+            </CardContent>
+          </div>
+          <div className="md:w-[50%]">
+            <CardHeader>
+              <p className="text-2xl font-semibold text-center">
+                Заказы клиента
+              </p>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                  <TableCaption>Нет данных.</TableCaption>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Номер заказа</TableHead>
+                      <TableHead>Дата заказа</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                  </TableBody>
+              </Table>
+            </CardContent>
+          </div>
+        </Card>
       ) : (
-        <p>Loading...</p>
+        <p><Loader2 className="mr-2 h-4 w-4 animate-spin" /></p>
       )}
     </div>
   );
