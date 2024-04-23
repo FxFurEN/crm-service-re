@@ -8,6 +8,13 @@ interface FloatButtonProps {
 
 const FloatButton: React.FC<FloatButtonProps> = ({ onClick }) => {
   return (
+    <div
+      style={{
+        position: 'fixed',
+        bottom: '20px',
+        right: '20px',
+      }}
+    >
       <Button
         onClick={onClick}
         style={{
@@ -17,7 +24,7 @@ const FloatButton: React.FC<FloatButtonProps> = ({ onClick }) => {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          backgroundColor: 'blue',
+          backgroundColor: 'black',
           color: 'white',
           border: 'none',
           boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
@@ -25,6 +32,7 @@ const FloatButton: React.FC<FloatButtonProps> = ({ onClick }) => {
       >
         <Plus size={24} />
       </Button>
+    </div>
   );
 };
 
