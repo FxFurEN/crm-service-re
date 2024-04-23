@@ -3,6 +3,7 @@
 import CustomTable, { TableColumn } from "@/components/data-table";
 import * as React from "react";
 import { useRouter } from "next/navigation";
+import FloatButton from "@/components/float-button";
 
 export type Client = {
   id: string;
@@ -73,10 +74,14 @@ export default function ClientsPage() {
   };
 
   return (
-    <CustomTable<Client> 
-    data={clientData} 
-    columns={clientColumns} 
-    searchableColumns={["fullName", "email", "phone"]} 
-    onRowClick={handleRowClick} />
+    <>
+      <CustomTable<Client> 
+        data={clientData} 
+        columns={clientColumns} 
+        searchableColumns={["fullName", "email", "phone"]} 
+        onRowClick={handleRowClick} />
+      <FloatButton onClick={() => console.log('Button clicked!')} />
+    </>
+    
   );
 }
