@@ -16,7 +16,7 @@ const FloatButton: React.FC<FloatButtonProps> = ({ onClick }) => {
       }}
     >
       <Button
-        onClick={onClick}
+        variant="outline"
         style={{
           width: '50px',
           height: '50px',
@@ -24,9 +24,6 @@ const FloatButton: React.FC<FloatButtonProps> = ({ onClick }) => {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          backgroundColor: 'black',
-          color: 'white',
-          border: 'none',
           boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
         }}
       >
