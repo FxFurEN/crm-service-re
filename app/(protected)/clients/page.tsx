@@ -9,13 +9,10 @@ import { Client } from "@/types/client";
 import { getAllClients } from "@/data/data-load";
 
 const clientColumns: TableColumn<Client>[] = [
-  { accessorKey: "id",header: "ID",cell: ({ row }) => <div>{row.getValue("id")}</div>,},
-  { accessorKey: "name",header: "Name",cell: ({ row }) => <div>{row.getValue("name")}</div>,},
-  { accessorKey: "email",header: "Email",cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,},
-  { accessorKey: "phone",header: "Phone",cell: ({ row }) => <div>{row.getValue("phone")}</div>,},
-  { accessorKey: "sign",header: "Sign",cell: ({ row }) => <div>{row.getValue("sign") ? "Yes" : "No"}</div>,},
-  { accessorKey: "initials",header: "Initials",cell: ({ row }) => <div>{row.getValue("initials") || "-"}</div>,},
-  { accessorKey: "unp",header: "UNP",cell: ({ row }) => <div>{row.getValue("unp") || "-"}</div>,},
+  { accessorKey: "name", header: "Имя", cell: ({ row }) => <div>{row.getValue("name")}{row.getValue("initials") ? ` ${row.getValue("initials")}` : ''}</div> },
+  { accessorKey: "email", header: "Почта", cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div> },
+  { accessorKey: "phone", header: "Телефон", cell: ({ row }) => <div>{row.getValue("phone")}</div> },
+  { accessorKey: "sign", header: "Тип клиента", cell: ({ row }) => <div>{row.getValue("sign") ? "Юр лицо" : "Физ лицо"}</div> },
 ];
 export default function ClientsPage() {
   const router = useRouter();
