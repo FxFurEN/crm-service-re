@@ -2,6 +2,7 @@
 
 import { FaUser } from "react-icons/fa";
 import { ExitIcon } from "@radix-ui/react-icons"
+import { useRouter } from "next/navigation";
 
 import {
   DropdownMenu,
@@ -16,13 +17,25 @@ import {
 } from "@/components/ui/avatar";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { LogoutButton } from "@/components/auth/logout-button";
-import { stringToColor } from "@/lib/stringToColor";
+import { User } from "lucide-react";
 
 export const UserButton = () => {
   const user = useCurrentUser();
+  const router = useRouter();
 
   const getInitials = (name: string) => {
-    return name ? name.charAt(0).toUpperCase() : '';
+    if (!name) return '';
+    const names = name.split(' ');
+    if (names.length === 1) {
+      return names[0].charAt(0).toUpperCase();
+    } else {
+      return names[0].charAt(0).toUpperCase() + names[1].charAt(0).toUpperCase();
+    }
+  };
+  
+
+  const redirectToProfile = () => {
+    router.push("/settings/profile");
   };
 
 
@@ -33,13 +46,15 @@ export const UserButton = () => {
           {user?.image ? (
             <AvatarImage src={user.image} alt="User avatar" />
           ) : (
-            <AvatarFallback style={{ backgroundColor: stringToColor(user?.name), color: 'white' }}>
-              {user?.name ? getInitials(user.name) : <FaUser className="text-white" />}
-            </AvatarFallback>
+            <AvatarFallback style={{ backgroundColor: 'white' }}>{getInitials(user.name)}</AvatarFallback>
           )}
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-40" align="end">
+        <DropdownMenuItem onClick={redirectToProfile}>
+            <User className="h-4 w-4 mr-2"/>
+            Профиль
+        </DropdownMenuItem>
         <LogoutButton>
           <DropdownMenuItem>
             <ExitIcon className="h-4 w-4 mr-2" />

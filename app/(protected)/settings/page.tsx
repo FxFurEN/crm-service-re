@@ -1,206 +1,31 @@
 "use client";
 
-import * as z from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useTransition, useState } from "react";
-import { useSession } from "next-auth/react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { SettingsSchema } from "@/schemas";
-import {
-  Card,
-  CardHeader,
-  CardContent,
-} from "@/components/ui/card";
+import { RoleGate } from "@/components/auth/role-gate";
 import { Button } from "@/components/ui/button";
-import { settings } from "@/actions/settings";
-import {
-  Form,
-  FormField,
-  FormControl,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { useCurrentUser } from "@/hooks/use-current-user";
-import { FormError } from "@/components/form-error";
-import { FormSuccess } from "@/components/form-success";
 import { UserRole } from "@prisma/client";
+import Link from "next/link";
 
 const SettingsPage = () => {
-  const user = useCurrentUser();
-
-  const [error, setError] = useState<string | undefined>();
-  const [success, setSuccess] = useState<string | undefined>();
-  const { update } = useSession();
-  const [isPending, startTransition] = useTransition();
-
-  const form = useForm<z.infer<typeof SettingsSchema>>({
-    resolver: zodResolver(SettingsSchema),
-    defaultValues: {
-      password: undefined,
-      newPassword: undefined,
-      name: user?.name || undefined,
-      email: user?.email || undefined,
-      role: user?.role || undefined,
-    }
-  });
-
-  const onSubmit = (values: z.infer<typeof SettingsSchema>) => {
-    startTransition(() => {
-      settings(values)
-        .then((data) => {
-          if (data.error) {
-            setError(data.error);
-          }
-
-          if (data.success) {
-            update();
-            setSuccess(data.success);
-          }
-        })
-        .catch(() => setError("Что-то пошло не так!"));
-    });
-  }
-
   return ( 
-    <Card className="w-[600px]">
-      <CardHeader>
+    <>
         <p className="text-2xl font-semibold text-center">
           ⚙️ Настройки
         </p>
-      </CardHeader>
-      <CardContent>
-        <Form {...form}>
-          <form 
-            className="space-y-6" 
-            onSubmit={form.handleSubmit(onSubmit)}
-          >
-            <div className="space-y-4">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>ФИО</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="John Doe"
-                        disabled={isPending}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              {user?.isOAuth === false && (
-                <>
-                  <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Почта</FormLabel>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            placeholder="example@gmail.com"
-                            type="email"
-                            disabled={isPending}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="password"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Пароль</FormLabel>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            placeholder="******"
-                            type="password"
-                            disabled={isPending}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="newPassword"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Новый пароль</FormLabel>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            placeholder="******"
-                            type="password"
-                            disabled={isPending}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </>
-              )}
-              <FormField
-                control={form.control}
-                name="role"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Роль</FormLabel>
-                    <Select
-                      disabled={isPending}
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Выберите роль" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value={UserRole.ADMIN}>
-                          Администратор
-                        </SelectItem>
-                        <SelectItem value={UserRole.USER}>
-                          Сотрудник
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <FormError message={error} />
-            <FormSuccess message={success} />
-            <Button
-              isLoading={isPending}
-              type="submit"
-            >
-              Сохранить
-            </Button>
-          </form>
-        </Form>
-      </CardContent>
-    </Card>
+        <div className="flex justify-center mt-8">
+          <Link href="/settings/profile">
+            <Button className="mr-4">Профиль</Button>
+          </Link>
+          <RoleGate allowedRole={UserRole.ADMIN}>
+            <Link href="/settings/employees">
+              <Button className="mr-4">Сотрудники</Button>
+            </Link>
+            <Link href="/settings/position">
+              <Button className="mr-4">Должность</Button>
+            </Link>
+          </RoleGate>
+         
+        </div>
+    </>
    );
 }
  
