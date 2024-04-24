@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useTransition } from 'react';
 import { Button } from "@/components/ui/button";
 import {
@@ -67,6 +69,7 @@ export function DialogModal({ open, onOpenChange }) {
         <Dialog open={open} onOpenChange={onOpenChange}>
           <Form {...form}>
             <form 
+                id="clientForm"
                 onSubmit={form.handleSubmit(onSubmit)}
                 className="space-y-6"
             >
@@ -195,10 +198,12 @@ export function DialogModal({ open, onOpenChange }) {
                   <Button
                     isLoading={isPending}
                     type="submit"
+                    form="clientForm" // указываем id формы
                     className="w-full"
                   >
                     Добавить
                   </Button>
+
                 </DialogFooter>
               </DialogContent>
           </form>
