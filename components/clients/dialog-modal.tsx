@@ -34,8 +34,10 @@ export function DialogModal({ open, onOpenChange }) {
   const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
 
-  const form = useForm<z.infer<typeof ClientSchema>>({
-    resolver: zodResolver(ClientSchema),
+  const formSchema = clientType === "individual" ? ClientSchema.individual() : ClientSchema.corporate();
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
       email: "",
@@ -47,18 +49,19 @@ export function DialogModal({ open, onOpenChange }) {
   });
 
   const onSubmit = (values: z.infer<typeof ClientSchema>) => {
-    console.log(values)
     setError("");
     setSuccess("");
-
+  
     startTransition(() => {
-      addClient(values)
+      const signValue = clientType === "individual" ? false : true;
+      addClient({ ...values, sign: signValue })
         .then((data) => {
           setError(data.error);
           setSuccess(data.success);
         });
     });
   };
+  
 
   
   const handleClientTypeChange = (value: any) => {
