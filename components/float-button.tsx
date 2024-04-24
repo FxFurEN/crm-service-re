@@ -26,6 +26,7 @@ const FloatButton: React.FC<FloatButtonProps> = ({ onClick }) => {
           alignItems: 'center',
           boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
         }}
+        onClick={onClick}
       >
         <Plus size={24} />
       </Button>
