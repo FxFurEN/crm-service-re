@@ -4,6 +4,7 @@ import CustomTable, { TableColumn } from "@/components/data-table";
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import FloatButton from "@/components/float-button";
+import { DialogModal } from "@/components/clients/dialog-modal";
 
 export type Client = {
   id: string;
@@ -67,10 +68,14 @@ const clientData: Client[] = [
 
 export default function ClientsPage() {
   const router = useRouter();
+  const [open, setOpen] = React.useState(false);
 
   const handleRowClick = (id: string) => {
-    // Navigate to the dynamic [id] page with the selected id
     router.push(`/clients/${id}`);
+  };
+
+  const handleFloatButtonClick = () => {
+    setOpen(true);
   };
 
   return (
@@ -80,7 +85,8 @@ export default function ClientsPage() {
         columns={clientColumns} 
         searchableColumns={["fullName", "email", "phone"]} 
         onRowClick={handleRowClick} />
-      <FloatButton onClick={() => console.log('Button clicked!')} />
+      <FloatButton onClick={handleFloatButtonClick} />
+      <DialogModal open={open} onOpenChange={setOpen}/>
     </>
     
   );
