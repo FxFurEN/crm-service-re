@@ -9,10 +9,9 @@ import { Client } from "@/types/client";
 import { getAllClients } from "@/data/data-load";
 
 const clientColumns: TableColumn<Client>[] = [
-  { accessorKey: "Имя", header: "Имя", cell: ({ row }) => <div>{row.getValue("name") ? row.getValue("name") : ''}{row.getValue("initials") ? ` ${row.getValue("initials")}` : ''}</div> },
-  { accessorKey: "Почта", header: "Почта", cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div> },
-  { accessorKey: "Телефон", header: "Телефон", cell: ({ row }) => <div>{row.getValue("phone")}</div> },
-  { accessorKey: "Тип клиента", header: "Тип клиента", cell: ({ row }) => <div>{row.getValue("sign") ? "Юр лицо" : "Физ лицо"}</div> },
+  { accessorKey: "email", header: "Почта", cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div> },
+  { accessorKey: "phone", header: "Телефон", cell: ({ row }) => <div>{row.getValue("phone")}</div> },
+  { accessorKey: "sign", header: "Тип клиента", cell: ({ row }) => <div>{row.getValue("sign") ? "Юр лицо" : "Физ лицо"}</div> },
 ];
 export default function ClientsPage() {
   const router = useRouter();
