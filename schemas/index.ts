@@ -63,3 +63,24 @@ export const RegisterSchema = z.object({
     message: "Имя не может быть пустым!",
   }),
 });
+
+
+export const ClientSchema = z.object({
+  email: z.string().email({
+    message: "Почта не может быть пустым!",
+  }),
+  phone: z.string().regex(/^\+375\s(29|44|25)\s\d{3}-\d{2}-\d{2}$/,{ 
+      message: "Неверный формат номера!" }).min(1, {
+      message: "Номер не может быть пустым!",
+  }).nullable(),
+  sign: z.boolean(),
+  initials: z.string().min(1, {
+    message: "ФИО не может быть пустым!",
+  }).nullable(),
+  unp: z.string().min(1, {
+    message: "УНП не может быть пустым!",
+  }).max(8).nullable(),
+  name: z.string().min(1, {
+    message: "Название компании не может быть пустым!",
+  }).nullable(),
+});
