@@ -7,7 +7,8 @@ import { checkClientExistsByEmail } from "@/data/client-validaton";
 
 export const addClient = async (values: z.infer<typeof ClientSchema>) => {
   try {
-    const validatedFields = ClientSchema.safeParse(values);
+    const formSchema = values.sign ? ClientSchema.corporate() : ClientSchema.individual();
+    const validatedFields = formSchema.safeParse(values);
 
     if (!validatedFields.success) {
       return { error: "Недопустимые поля!" };
