@@ -67,7 +67,7 @@ export default function ClientsPage() {
       setDeleteRowId(null);
       setDeleteDialogOpen(false);
     } catch (error) {
-      console.error("Error deleting client:", error);
+      toast.error("Что-то пошло не так"); 
     }
   };
 
