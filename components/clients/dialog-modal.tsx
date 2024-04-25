@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/form";
 import { FormError } from '../form-error';
 import { FormSuccess } from '../form-success';
+import { updateClient } from '@/actions/edit-data';
 
 export function DialogModal({ open, onOpenChange, mode = "add", clientData }) {
   const [clientType, setClientType] = useState("individual");
@@ -60,9 +61,13 @@ export function DialogModal({ open, onOpenChange, mode = "add", clientData }) {
             setError(data.error);
             setSuccess(data.success);
           });
-      } else if (mode === "edit") {
-        console.log("test");
-      }
+        } else if (mode === "edit") {
+          updateClient(clientData.id, { ...values, sign: signValue })
+            .then((data) => {
+              setError(data.error);
+              setSuccess(data.success);
+            });
+        }
     });
   };
   
