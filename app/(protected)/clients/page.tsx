@@ -8,6 +8,9 @@ import { DialogModal } from "@/components/clients/dialog-modal";
 import { Client } from "@/types/client";
 import { getAllClients } from "@/data/data-load";
 import DeleteConfirmationDialog from "@/components/alert-dialog-confirm";
+import { deleteClient } from "@/actions/del-data";
+import { Toaster } from "@/components/ui/sonner";
+import { toast } from "sonner";
 
 const clientColumns: TableColumn<Client>[] = [
   { accessorKey: "email", header: "Почта", cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div> },
@@ -53,13 +56,19 @@ export default function ClientsPage() {
     setDeleteDialogOpen(true);
   };
 
-  const handleDeleteConfirm = () => {
-    if (deleteRowId) {
-      // Perform delete operation here
-      console.log("Deleting row with id:", deleteRowId);
+  const handleDeleteConfirm = async () => {
+    try {
+      if (deleteRowId) {
+        const response = await deleteClient(deleteRowId);
+        if (response.success) {
+          toast.success(response.success); 
+        }
+      }
+      setDeleteRowId(null);
+      setDeleteDialogOpen(false);
+    } catch (error) {
+      console.error("Error deleting client:", error);
     }
-    setDeleteRowId(null);
-    setDeleteDialogOpen(false); 
   };
 
   const handleDeleteCancel = () => {
@@ -85,6 +94,7 @@ export default function ClientsPage() {
         onConfirm={handleDeleteConfirm}
         onCancel={handleDeleteCancel}
       />
+      <Toaster richColors  />
     </>
   );
 }
