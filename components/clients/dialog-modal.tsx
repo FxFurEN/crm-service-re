@@ -28,8 +28,18 @@ import {
 import { FormError } from '../form-error';
 import { FormSuccess } from '../form-success';
 import { updateClient } from '@/actions/edit-data';
+import { Client } from '@/types/client';
 
-export function DialogModal({ open, onOpenChange, mode = "add", clientData }) {
+type DialogModalProps = {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  mode?: "add" | "edit";
+  clientData?: Client | null;
+  onSuccess?: () => void; 
+};
+
+
+export function DialogModal({ open, onOpenChange, mode = "add", clientData, onSuccess }: DialogModalProps) {
   const [clientType, setClientType] = useState("individual");
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
@@ -58,16 +68,31 @@ export function DialogModal({ open, onOpenChange, mode = "add", clientData }) {
       if (mode === "add") {
         addClient({ ...values, sign: signValue })
           .then((data) => {
-            setError(data.error);
-            setSuccess(data.success);
-          });
-        } else if (mode === "edit") {
-          updateClient(clientData.id, { ...values, sign: signValue })
-            .then((data) => {
+            if (data.error) {
               setError(data.error);
+            } else {
               setSuccess(data.success);
-            });
-        }
+              onSuccess && onSuccess();
+            }
+          })
+          .catch((error) => {
+            setError("Что-то пошло не так");
+          });
+      } else if (mode === "edit") {
+        updateClient(clientData.id, { ...values, sign: signValue })
+          .then((data) => {
+            if (data.error) {
+              setError(data.error);
+            } else {
+              setSuccess(data.success);
+              onSuccess && onSuccess(); 
+            }
+          })
+          .catch((error) => {
+            console.error("Error updating client:", error);
+            setError("Что-то пошло не так");
+          });
+      }
     });
   };
   

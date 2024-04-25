@@ -27,14 +27,15 @@ export default function ClientsPage() {
   const [deleteRowId, setDeleteRowId] = React.useState<string | null>(null); 
 
   React.useEffect(() => {
-    const fetchData = async () => {
-      const data = await getAllClients();
-      if (data) {
-        setClients(data);
-      }
-    };
     fetchData();
   }, []); 
+
+  const fetchData = async () => {
+    const data = await getAllClients();
+    if (data) {
+      setClients(data);
+    }
+  };
 
   const handleRowClick = (id: string) => {
     router.push(`/clients/${id}`);
@@ -44,6 +45,7 @@ export default function ClientsPage() {
     setOpen(true);
     setMode("add");
   };
+
   const handleEdit = (id: string) => {
     const selectedClient = clients.find((client) => client.id === id);
     setOpen(true);
@@ -62,6 +64,7 @@ export default function ClientsPage() {
         const response = await deleteClient(deleteRowId);
         if (response.success) {
           toast.success(response.success); 
+          setClients(clients.filter(client => client.id !== deleteRowId)); // Filter out the deleted client
         }
       }
       setDeleteRowId(null);
@@ -76,6 +79,10 @@ export default function ClientsPage() {
     setDeleteDialogOpen(false); 
   };
 
+  const handleAddOrUpdateSuccess = () => {
+    fetchData(); 
+  };
+
   return (
     <>
       <CustomTable<Client>
@@ -87,7 +94,7 @@ export default function ClientsPage() {
         onDelete={handleDelete}
       />
       <FloatButton onClick={handleFloatButtonClick} />
-      <DialogModal open={open} onOpenChange={setOpen} mode={mode} clientData={clientData} />
+      <DialogModal open={open} onOpenChange={setOpen} mode={mode} clientData={clientData} onSuccess={handleAddOrUpdateSuccess} />
       <DeleteConfirmationDialog
         open={isDeleteDialogOpen}
         onOpenChange={setDeleteDialogOpen}
