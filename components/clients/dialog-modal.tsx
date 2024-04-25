@@ -28,37 +28,41 @@ import {
 import { FormError } from '../form-error';
 import { FormSuccess } from '../form-success';
 
-export function DialogModal({ open, onOpenChange }) {
+export function DialogModal({ open, onOpenChange, mode = "add", clientData }) {
   const [clientType, setClientType] = useState("individual");
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
 
   const formSchema = clientType === "individual" ? ClientSchema.individual() : ClientSchema.corporate();
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: "",
-      email: "",
-      phone: "",
-      sign: false,
-      initials: "",
-      unp: "",
+    values: {
+      initials: clientData?.initials ?? "",
+      name: clientData?.name ?? "",
+      unp: clientData?.unp ?? "",
+      phone: clientData?.phone ?? "",
+      email: clientData?.email ?? "",
+      sign: clientData?.sign ?? false,
     },
   });
+  
 
   const onSubmit = (values: z.infer<typeof ClientSchema>) => {
     setError("");
     setSuccess("");
-  
+
     startTransition(() => {
       const signValue = clientType === "individual" ? false : true;
-      addClient({ ...values, sign: signValue })
-        .then((data) => {
-          setError(data.error);
-          setSuccess(data.success);
-        });
+      if (mode === "add") {
+        addClient({ ...values, sign: signValue })
+          .then((data) => {
+            setError(data.error);
+            setSuccess(data.success);
+          });
+      } else if (mode === "edit") {
+        console.log("test");
+      }
     });
   };
   
@@ -78,7 +82,7 @@ export function DialogModal({ open, onOpenChange }) {
             >
               <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                  <DialogTitle>Добавить клиента</DialogTitle>
+                  <DialogTitle>{mode === "add" ? "Добавить клиента" : "Редактировать клиента"}</DialogTitle>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
                   <FormField
@@ -204,7 +208,7 @@ export function DialogModal({ open, onOpenChange }) {
                     form="clientForm" // указываем id формы
                     className="w-full"
                   >
-                    Добавить
+                    {mode === "add" ? "Добавить" : "Сохранить"}
                   </Button>
 
                 </DialogFooter>
