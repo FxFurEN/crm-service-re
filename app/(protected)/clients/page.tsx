@@ -17,6 +17,8 @@ export default function ClientsPage() {
   const router = useRouter();
   const [clients, setClients] = React.useState<Client[]>([]); 
   const [open, setOpen] = React.useState(false);
+  const [clientData, setClientData] = React.useState<Client | null>(null);
+  const [mode, setMode] = React.useState<"edit" | "add">("add");
 
   React.useEffect(() => {
     const fetchData = async () => {
@@ -34,11 +36,13 @@ export default function ClientsPage() {
 
   const handleFloatButtonClick = () => {
     setOpen(true);
+    setMode("add");
   };
   const handleEdit = (id: string) => {
-    // Open the dialog modal for editing with the selected client's data
+    const selectedClient = clients.find((client) => client.id === id);
     setOpen(true);
-    // You can fetch the client data based on the id and set it to the form fields
+    setClientData(selectedClient);
+    setMode("edit");
   };
 
   return (
@@ -51,7 +55,7 @@ export default function ClientsPage() {
         onEdit={handleEdit}
       />
       <FloatButton onClick={handleFloatButtonClick} />
-      <DialogModal open={open} onOpenChange={setOpen} />
+      <DialogModal open={open} onOpenChange={setOpen} mode={mode} clientData={clientData} />
     </>
   );
 }
