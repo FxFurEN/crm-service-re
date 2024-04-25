@@ -7,6 +7,7 @@ import FloatButton from "@/components/float-button";
 import { DialogModal } from "@/components/clients/dialog-modal";
 import { Client } from "@/types/client";
 import { getAllClients } from "@/data/data-load";
+import DeleteConfirmationDialog from "@/components/alert-dialog-confirm";
 
 const clientColumns: TableColumn<Client>[] = [
   { accessorKey: "email", header: "Почта", cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div> },
@@ -19,6 +20,8 @@ export default function ClientsPage() {
   const [open, setOpen] = React.useState(false);
   const [clientData, setClientData] = React.useState<Client | null>(null);
   const [mode, setMode] = React.useState<"edit" | "add">("add");
+  const [isDeleteDialogOpen, setDeleteDialogOpen] = React.useState(false); 
+  const [deleteRowId, setDeleteRowId] = React.useState<string | null>(null); 
 
   React.useEffect(() => {
     const fetchData = async () => {
@@ -45,6 +48,25 @@ export default function ClientsPage() {
     setMode("edit");
   };
 
+  const handleDelete = (id: string) => {
+    setDeleteRowId(id); 
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (deleteRowId) {
+      // Perform delete operation here
+      console.log("Deleting row with id:", deleteRowId);
+    }
+    setDeleteRowId(null);
+    setDeleteDialogOpen(false); 
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteRowId(null); 
+    setDeleteDialogOpen(false); 
+  };
+
   return (
     <>
       <CustomTable<Client>
@@ -53,9 +75,16 @@ export default function ClientsPage() {
         searchableColumns={["fullName", "email", "phone"]}
         onRowClick={handleRowClick}
         onEdit={handleEdit}
+        onDelete={handleDelete}
       />
       <FloatButton onClick={handleFloatButtonClick} />
       <DialogModal open={open} onOpenChange={setOpen} mode={mode} clientData={clientData} />
+      <DeleteConfirmationDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        onConfirm={handleDeleteConfirm}
+        onCancel={handleDeleteCancel}
+      />
     </>
   );
 }
