@@ -27,38 +27,72 @@ import {
 } from "@/components/ui/form";
 import { FormError } from '../form-error';
 import { FormSuccess } from '../form-success';
+import { updateClient } from '@/actions/edit-data';
+import { Client } from '@/types/client';
 
-export function DialogModal({ open, onOpenChange }) {
+type DialogModalProps = {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  mode?: "add" | "edit";
+  clientData?: Client | null;
+  onSuccess?: () => void; 
+};
+
+
+export function DialogModal({ open, onOpenChange, mode = "add", clientData, onSuccess }: DialogModalProps) {
   const [clientType, setClientType] = useState("individual");
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
 
   const formSchema = clientType === "individual" ? ClientSchema.individual() : ClientSchema.corporate();
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: "",
-      email: "",
-      phone: "",
-      sign: false,
-      initials: "",
-      unp: "",
+    values: {
+      initials: clientData?.initials ?? "",
+      name: clientData?.name ?? "",
+      unp: clientData?.unp ?? "",
+      phone: clientData?.phone ?? "",
+      email: clientData?.email ?? "",
+      sign: clientData?.sign ?? false,
     },
   });
+  
 
   const onSubmit = (values: z.infer<typeof ClientSchema>) => {
     setError("");
     setSuccess("");
-  
+
     startTransition(() => {
       const signValue = clientType === "individual" ? false : true;
-      addClient({ ...values, sign: signValue })
-        .then((data) => {
-          setError(data.error);
-          setSuccess(data.success);
-        });
+      if (mode === "add") {
+        addClient({ ...values, sign: signValue })
+          .then((data) => {
+            if (data.error) {
+              setError(data.error);
+            } else {
+              setSuccess(data.success);
+              onSuccess && onSuccess();
+            }
+          })
+          .catch((error) => {
+            setError("Что-то пошло не так");
+          });
+      } else if (mode === "edit") {
+        updateClient(clientData.id, { ...values, sign: signValue })
+          .then((data) => {
+            if (data.error) {
+              setError(data.error);
+            } else {
+              setSuccess(data.success);
+              onSuccess && onSuccess(); 
+            }
+          })
+          .catch((error) => {
+            console.error("Error updating client:", error);
+            setError("Что-то пошло не так");
+          });
+      }
     });
   };
   
@@ -78,7 +112,7 @@ export function DialogModal({ open, onOpenChange }) {
             >
               <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                  <DialogTitle>Добавить клиента</DialogTitle>
+                  <DialogTitle>{mode === "add" ? "Добавить клиента" : "Редактировать клиента"}</DialogTitle>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
                   <FormField
@@ -196,18 +230,18 @@ export function DialogModal({ open, onOpenChange }) {
                       />                     
                 </div>
                 <DialogFooter>
-                  <FormError message={error} />
-                  <FormSuccess message={success} />
                   <Button
                     isLoading={isPending}
                     type="submit"
                     form="clientForm" // указываем id формы
                     className="w-full"
                   >
-                    Добавить
+                    {mode === "add" ? "Добавить" : "Сохранить"}
                   </Button>
 
                 </DialogFooter>
+                <FormError message={error} />
+                  <FormSuccess message={success} />
               </DialogContent>
           </form>
         </Form>

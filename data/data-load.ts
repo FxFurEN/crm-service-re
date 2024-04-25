@@ -14,4 +14,19 @@ export const getAllClients = async () => {
     } finally {
       await db.$disconnect();
     }
-  };
+};
+
+export const getClientById = async (clientId: string) => {
+    try {
+        const client = await db.clients.findUnique({
+            where: {
+                id: clientId,
+            },
+        });
+
+        return client;
+    } catch (error) {
+        console.error('Error fetching client:', error);
+        return null;
+    }
+};
