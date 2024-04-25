@@ -35,6 +35,11 @@ export default function ClientsPage() {
   const handleFloatButtonClick = () => {
     setOpen(true);
   };
+  const handleEdit = (id: string) => {
+    // Open the dialog modal for editing with the selected client's data
+    setOpen(true);
+    // You can fetch the client data based on the id and set it to the form fields
+  };
 
   return (
     <>
@@ -43,6 +48,7 @@ export default function ClientsPage() {
         columns={clientColumns}
         searchableColumns={["fullName", "email", "phone"]}
         onRowClick={handleRowClick}
+        onEdit={handleEdit}
       />
       <FloatButton onClick={handleFloatButtonClick} />
       <DialogModal open={open} onOpenChange={setOpen} />

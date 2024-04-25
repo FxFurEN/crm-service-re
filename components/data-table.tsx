@@ -45,6 +45,7 @@ export type TableProps<T> = {
   columns: TableColumn<T>[];
   searchableColumns?: string[];
   onRowClick?: (id: string) => void;
+  onEdit?: (id: string) => void;
 };
 
 function CustomTable<T>({
@@ -52,6 +53,7 @@ function CustomTable<T>({
   columns,
   searchableColumns = [],
   onRowClick,
+  onEdit,
 }: TableProps<T>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -176,7 +178,7 @@ function CustomTable<T>({
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                            <DropdownMenuItem>
+                            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onEdit && onEdit(row.original.id); }}>
                               <Pencil size={20} className="mr-2"/>Редактировать
                             </DropdownMenuItem>
                             <DropdownMenuItem>
