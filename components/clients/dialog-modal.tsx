@@ -205,8 +205,6 @@ export function DialogModal({ open, onOpenChange, mode = "add", clientData }) {
                       />                     
                 </div>
                 <DialogFooter>
-                  <FormError message={error} />
-                  <FormSuccess message={success} />
                   <Button
                     isLoading={isPending}
                     type="submit"
@@ -217,6 +215,8 @@ export function DialogModal({ open, onOpenChange, mode = "add", clientData }) {
                   </Button>
 
                 </DialogFooter>
+                <FormError message={error} />
+                  <FormSuccess message={success} />
               </DialogContent>
           </form>
         </Form>
