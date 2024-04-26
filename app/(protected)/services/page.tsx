@@ -12,6 +12,9 @@ import { Separator } from '@/components/ui/separator';
 import FloatButton from '@/components/float-button';
 import { DialogModal } from '@/components/services/dialog-modal';
 import DeleteConfirmationDialog from '@/components/alert-dialog-confirm';
+import { deleteService } from '@/actions/del-data';
+import { toast } from 'sonner';
+import { Toaster } from '@/components/ui/sonner';
 
 const serviceColumns: TableColumn<Service>[] = [
   { accessorKey: "name", header: "Наименование", cell: ({ row }) => <div>{row.getValue("name")}</div> },
@@ -69,10 +72,17 @@ const ServicesPage = () => {
 
   const handleDeleteConfirm = async () => {
     try {
-      
+      if (deleteRowId) {
+        const response = await deleteService(deleteRowId);
+        if (response.success) {
+          toast.success(response.success); 
+          setServices(services.filter(services => services.id !== deleteRowId));
+        }
+      }
       setDeleteRowId(null);
       setDeleteDialogOpen(false);
     } catch (error) {
+      toast.error("Что-то пошло не так"); 
     }
   };
 
@@ -110,6 +120,7 @@ const ServicesPage = () => {
             columns={serviceColumns}
             searchableColumns={["name"]}
             onEdit={handleEdit}
+            onDelete={handleDelete}
         />
         <FloatButton onClick={handleFloatButtonClick} />
         <DialogModal open={open} onOpenChange={setOpen} mode={mode} serviceData={serviceData} onSuccess={handleAddOrUpdateSuccess} />
@@ -120,6 +131,7 @@ const ServicesPage = () => {
             onCancel={handleDeleteCancel}
         />
       </div>
+      <Toaster richColors  />
     </div>
   );
 }
