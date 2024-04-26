@@ -57,10 +57,8 @@ export function DialogModal({ open, onOpenChange, mode = "add", serviceData, onS
     setSuccess("");
   
     startTransition(() => {
-      const price = parseFloat(data.price); 
-  
       if (mode === "add") {
-        addService({ ...data, price }) 
+        addService({ ...data }) 
           .then(() => {
             setSuccess("Услуга успешно добавлена");
             onSuccess && onSuccess();
@@ -69,7 +67,7 @@ export function DialogModal({ open, onOpenChange, mode = "add", serviceData, onS
             setError("Ошибка при добавлении услуги");
           });
       } else if (mode === "edit" && serviceData) {
-        updateService(serviceData.id, { ...data, price })
+        updateService(serviceData.id, { ...data })
           .then(() => {
             setSuccess("Услуга успешно обновлена");
             onSuccess && onSuccess(); 

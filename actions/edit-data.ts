@@ -36,23 +36,42 @@ export const updateClient = async (clientId: string, updatedData: z.infer<typeof
   }
 };
 
-
 export const updateService = async (serviceId: string, updatedData: z.infer<typeof ServiceSchema>) => {
   try {
     const validatedFields = ServiceSchema.safeParse(updatedData);
     if (!validatedFields.success) {
-      return { error: "Недопустимые поля!" };
+      return { error: "Fields are not valid!" };
     }
-    const { name, price, category } = validatedFields.data;
+    const { name, category } = validatedFields.data;
+    const price = parseFloat(validatedFields.data.price); 
     
+    const existingService = await db.service.findUnique({ where: { id: serviceId } });
+    if (!existingService) {
+      return { error: 'Услуга не найдена' };
+    }
+
+    const existingCategory = await db.category.findFirst({
+      where: { id: category },
+    });
+
+    let categoryId;
+    if (existingCategory) {
+      categoryId = existingCategory.id;
+    } else {
+      const newCategory = await db.category.create({
+        data: {
+          name: category,
+        },
+      });
+      categoryId = newCategory.id;
+    }
+
     const updatedService = await db.service.update({
-      where: {
-        id: serviceId,
-      },
+      where: { id: serviceId },
       data: {
         name,
         price,
-        category,
+        category: { connect: { id: categoryId } },
       },
     });
 
