@@ -91,12 +91,12 @@ function CustomTable<T>({
         <div className="flex py-4">
           {searchableColumns.length > 0 && (
             <Input
-              placeholder="Filter emails..."
+              placeholder={`Поиск по ${searchableColumns[0]}`}
               value={
-                (table.getColumn("email")?.getFilterValue() as string) ?? ""
+                (table.getColumn(searchableColumns[0])?.getFilterValue() as string) ?? ""
               }
               onChange={(event) =>
-                table.getColumn("email")?.setFilterValue(event.target.value)
+                table.getColumn(searchableColumns[0])?.setFilterValue(event.target.value)
               }
               className="max-w-sm"
             />
