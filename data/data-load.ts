@@ -45,3 +45,18 @@ export const getAllServices = async () => {
     await db.$disconnect();
   }
 };
+
+
+export const getAllCategories = async () => {
+  try {
+    const services = await db.category.findMany();
+
+    return services;
+  } catch (error) {
+    console.error('Error fetching category:', error);
+    return null;
+    
+  } finally {
+    await db.$disconnect();
+  }
+};
