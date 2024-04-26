@@ -16,3 +16,20 @@ export const deleteClient = async (clientId: string) => {
     return { error: "Что-то пошло не так" };
   }
 };
+
+
+export const deleteService = async (serviceId: string) => {
+  try {
+    await db.service.delete({
+      where: {
+        id: serviceId,
+      },
+    });
+
+    return { success: "Услуга успешно удалена!" };
+  } catch (error) {
+    console.error("Error deleting service:", error);
+    return { error: "Что-то пошло не так" };
+  }
+};
+
