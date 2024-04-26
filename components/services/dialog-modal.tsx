@@ -32,7 +32,7 @@ export function DialogModal({ open, onOpenChange, mode = "add", serviceData, onS
 
   const form = useForm({
     resolver: zodResolver(ServiceSchema),
-    defaultValues: {
+    values: {
       name: serviceData?.name ?? "",
       price: serviceData?.price ?? "",
       categoryId: serviceData?.categoryId ?? "",
