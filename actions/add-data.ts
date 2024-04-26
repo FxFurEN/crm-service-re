@@ -2,7 +2,7 @@
 
 import * as z from "zod";
 import { db } from "@/lib/db";
-import { ClientSchema } from "@/schemas";
+import { ClientSchema, ServiceSchema } from "@/schemas";
 import { checkClientExistsByEmail } from "@/data/client-validaton"; 
 
 export const addClient = async (values: z.infer<typeof ClientSchema>) => {
@@ -36,3 +36,35 @@ export const addClient = async (values: z.infer<typeof ClientSchema>) => {
     return { error: "Что-то пошло не так" };
   }
 };
+
+
+export const addService = async ({ name, price, categoryId }) => {
+  try {
+    const existingCategory = await db.category.findFirst({
+      where: { id: categoryId },
+    });
+
+    let category;
+    if (!existingCategory) {
+      category = await db.category.create({
+        data: {
+          name: categoryId,
+        },
+      });
+    }
+
+    const service = await db.service.create({
+      data: {
+        name,
+        price,
+        category: { connect: { id: existingCategory ? categoryId : category.id } },
+      },
+    });
+
+    return { success: 'Услуга успешно добавлена!', service };
+  } catch (error) {
+    console.error('Error adding service:', error);
+    return { error: 'Что-то пошло не так' };
+  }
+};
+
