@@ -7,13 +7,19 @@ import CustomTable, { TableColumn } from '@/components/data-table';
 import { Service } from '@/types/services';
 import React from 'react';
 import { getAllServices } from '@/data/data-load';
-
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Separator } from '@/components/ui/separator';
+ 
 const serviceColumns: TableColumn<Service>[] = [
     { accessorKey: "name", header: "Наименование", cell: ({ row }) => <div>{row.getValue("name")}</div> },
     { accessorKey: "price", header: "Цена", cell: ({ row }) => <div>{row.getValue("price")}</div> },
     { accessorKey: "category", header: "Категория", cell: ({ row }) => <div>{row.getValue("category")}</div> },
   ];
 
+
+  const tags = Array.from({ length: 50 }).map(
+    (_, i, a) => `v1.2.0-beta.${a.length - i}`
+  )
 
 const ServicesPage = () => {
   const router = useRouter();
@@ -37,14 +43,31 @@ const ServicesPage = () => {
   };
 
   return ( 
-    <>
+    <div className="flex flex-col md:flex-row">
+      <div className="w-full md:w-48 md:flex-shrink-0">
+        <h4 className="mb-4 text-sm font-medium leading-none">Категории</h4>
+        <ScrollArea className="h-72 w-full md:w-48 rounded-md border">
+          <div className="p-4">
+            {tags.map((tag) => (
+              <>
+                <div key={tag} className="text-sm">
+                  {tag}
+                </div>
+                <Separator className="my-2" />
+              </>
+            ))}
+          </div>
+        </ScrollArea>
+      </div>
+      <div className="w-full">
         <CustomTable<Service>
-        data={services}
-        columns={serviceColumns}
-        searchableColumns={["name"]}
-      />
-    </>
-   );
+          data={services}
+          columns={serviceColumns}
+          searchableColumns={["name"]}
+        />
+      </div>
+    </div>
+  );
 }
  
 export default ServicesPage;
