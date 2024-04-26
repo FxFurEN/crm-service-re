@@ -44,7 +44,7 @@ const ServicesPage = () => {
 
   return ( 
     <div className="flex flex-col md:flex-row">
-      <div className="w-full md:w-48 md:flex-shrink-0">
+      <div className="w-full md:w-48 md:flex-shrink-0 mt-7">
         <h4 className="mb-4 text-sm font-medium leading-none">Категории</h4>
         <ScrollArea className="h-72 w-full md:w-48 rounded-md border">
           <div className="p-4">
