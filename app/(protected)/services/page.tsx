@@ -9,6 +9,9 @@ import React, { useEffect, useState } from 'react';
 import { getAllCategories, getAllServices } from '@/data/data-load';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
+import FloatButton from '@/components/float-button';
+import { DialogModal } from '@/components/services/dialog-modal';
+import DeleteConfirmationDialog from '@/components/alert-dialog-confirm';
 
 const serviceColumns: TableColumn<Service>[] = [
   { accessorKey: "name", header: "Наименование", cell: ({ row }) => <div>{row.getValue("name")}</div> },
@@ -21,6 +24,11 @@ const ServicesPage = () => {
   const role = useCurrentRole();
   const [services, setServices] = useState<Service[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
+  const [open, setOpen] = React.useState(false);
+  const [serviceData, setServiceData] = React.useState<Service | null>(null);
+  const [mode, setMode] = React.useState<"edit" | "add">("add");
+  const [isDeleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
+  const [deleteRowId, setDeleteRowId] = React.useState<string | null>(null);
 
   if (role === UserRole.USER) {
     router.back(); 
@@ -42,6 +50,42 @@ const ServicesPage = () => {
     }
   };
 
+  const handleFloatButtonClick = () => {
+    setOpen(true);
+    setMode("add");
+  };
+
+  const handleEdit = (id: string) => {
+    const selectedService = services.find((service) => service.id === id);
+    setOpen(true);
+    setServiceData(selectedService);
+    setMode("edit");
+  };
+
+  const handleDelete = (id: string) => {
+    setDeleteRowId(id); 
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    try {
+      
+      setDeleteRowId(null);
+      setDeleteDialogOpen(false);
+    } catch (error) {
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteRowId(null); 
+    setDeleteDialogOpen(false); 
+  };
+
+
+  const handleAddOrUpdateSuccess = () => {
+    fetchData(); 
+  };
+
   return ( 
     <div className="flex flex-col md:flex-row">
       <div className="w-full md:w-48 md:flex-shrink-0 mt-7">
@@ -49,14 +93,11 @@ const ServicesPage = () => {
         <ScrollArea className="h-72 w-full md:w-48 rounded-md border">
           {categories.length > 0 ? (
             <div className="p-4">
-              {categories.map((category) => (
-                <>
-                  <div key={category} className="text-sm">
-                    {category}
-                  </div>
-                  <Separator className="my-2" />
-                </>
-              ))}
+              {categories.map((category, index) => (
+                <div key={index} className="text-sm">
+                    {category.name}
+                </div>
+            ))}
             </div>
           ) : (
             <p className="text-center mt-5">Нет результатов</p>
@@ -65,9 +106,18 @@ const ServicesPage = () => {
       </div>
       <div className="w-full">
         <CustomTable<Service>
-          data={services}
-          columns={serviceColumns}
-          searchableColumns={["name"]}
+            data={services}
+            columns={serviceColumns}
+            searchableColumns={["name"]}
+            onEdit={handleEdit}
+        />
+        <FloatButton onClick={handleFloatButtonClick} />
+        <DialogModal open={open} onOpenChange={setOpen} mode={mode} serviceData={serviceData} onSuccess={handleAddOrUpdateSuccess} />
+        <DeleteConfirmationDialog
+            open={isDeleteDialogOpen}
+            onOpenChange={setDeleteDialogOpen}
+            onConfirm={handleDeleteConfirm}
+            onCancel={handleDeleteCancel}
         />
       </div>
     </div>
