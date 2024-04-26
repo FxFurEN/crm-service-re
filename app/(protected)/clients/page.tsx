@@ -88,7 +88,7 @@ export default function ClientsPage() {
       <CustomTable<Client>
         data={clients}
         columns={clientColumns}
-        searchableColumns={["fullName", "email", "phone"]}
+        searchableColumns={["email"]}
         onRowClick={handleRowClick}
         onEdit={handleEdit}
         onDelete={handleDelete}
