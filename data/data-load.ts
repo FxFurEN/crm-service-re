@@ -30,3 +30,18 @@ export const getClientById = async (clientId: string) => {
         return null;
     }
 };
+
+
+export const getAllServices = async () => {
+  try {
+    const services = await db.service.findMany();
+
+    return services;
+  } catch (error) {
+    console.error('Error fetching services:', error);
+    return null;
+    
+  } finally {
+    await db.$disconnect();
+  }
+};
