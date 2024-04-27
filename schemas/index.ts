@@ -113,3 +113,12 @@ export const ServiceSchema = z.object({
   }),
 });
 
+
+export const CategorySchema = z.object({
+  name: z.string().min(1, {
+    message: "Имя не может быть пустым!",
+  }).max(30, {
+    message: "Название слишком велико!",
+  }),
+});
+
