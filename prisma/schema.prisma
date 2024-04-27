@@ -23,6 +23,7 @@ model User {
   password      String?
   role          UserRole @default(USER)
   accounts      Account[]
+  empoloyee     Employee[] 
 }
 
 model Account {
@@ -104,13 +105,10 @@ model Orders {
 
 model Employee {
   id          String    @id @default(cuid())
-  initials    String    @db.VarChar(255)
-  email       String    @db.VarChar(255) 
-  sign        Boolean   @default(false)
-  login       String?    @db.VarChar(255) @unique
-  Password    String?    @db.VarChar(255)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String
   position    Position  @relation(fields: [positionId], references: [id], onDelete: Cascade)
-  positionId  String
+  positionId  String 
   orders      Orders[] 
   executions  Execution[] 
 }
