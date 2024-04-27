@@ -1,10 +1,8 @@
 "use client";
 
-import { useRouter } from 'next/navigation';
-import { UserRole } from "@prisma/client";
-import { useCurrentRole } from "@/hooks/use-current-role";
 import CustomTable, { TableColumn }  from '@/components/data-table';
 import { Employee } from '@/types/employee';
+import useRedirectIfUser from '@/hooks/use-redirect-User';
 
 const employeeColumns: TableColumn<Employee>[] = [
   {
@@ -54,12 +52,8 @@ const employeeData: Employee[] = [
 
 
 const EmployeesPage = () => {
-  const router = useRouter();
-  const role = useCurrentRole();
+  useRedirectIfUser();
 
-  if (role === UserRole.USER) {
-    router.back(); 
-  }
 
   return ( 
     <>

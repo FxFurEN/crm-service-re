@@ -3,14 +3,10 @@
 import { useRouter } from 'next/navigation';
 import { UserRole } from "@prisma/client";
 import { useCurrentRole } from "@/hooks/use-current-role";
+import useRedirectIfUser from '@/hooks/use-redirect-User';
 
 const PositionPage = () => {
-  const router = useRouter();
-  const role = useCurrentRole();
-
-  if (role === UserRole.USER) {
-    router.back(); 
-  }
+  useRedirectIfUser();
 
   return ( 
     <>
