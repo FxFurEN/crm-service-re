@@ -2,7 +2,7 @@
 
 import * as z from "zod";
 import { db } from "@/lib/db";
-import { ClientSchema, ServiceSchema } from "@/schemas";
+import { CategorySchema, ClientSchema, ServiceSchema } from "@/schemas";
 
 export const updateClient = async (clientId: string, updatedData: z.infer<typeof ClientSchema>) => {
   try {
@@ -79,5 +79,32 @@ export const updateService = async (serviceId: string, updatedData: z.infer<type
   } catch (error) {
     console.error("Error updating service:", error);
     return { error: "Что-то пошло не так" };
+  }
+};
+
+
+export const updateCategory = async (categoryId: string, updatedData: z.infer<typeof CategorySchema>) => {
+  try {
+    const validatedFields = CategorySchema.safeParse(updatedData);
+
+    if (!validatedFields.success) {
+      return { error: "Invalid fields!" };
+    }
+
+    const {  name } = validatedFields.data;
+
+    const updatedCategory = await db.category.update({
+      where: {
+        id: categoryId,
+      },
+      data: {
+        name,
+      },
+    });
+
+    return { success: "Category successfully updated!", category: updatedCategory };
+  } catch (error) {
+    console.error("Error updating client:", error);
+    return { error: "What went wrong" };
   }
 };

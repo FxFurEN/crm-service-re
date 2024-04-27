@@ -17,6 +17,7 @@ import { toast } from 'sonner';
 import { Toaster } from '@/components/ui/sonner';
 import { Button } from '@/components/ui/button';
 import { Pencil, Plus } from 'lucide-react';
+import { DialogModalCategory } from '@/components/services/dialog-modal-category';
 
 const serviceColumns: TableColumn<Service>[] = [
   { accessorKey: "name", header: "Наименование", cell: ({ row }) => <div>{row.getValue("name")}</div> },
@@ -30,7 +31,9 @@ const ServicesPage = () => {
   const [services, setServices] = useState<Service[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [open, setOpen] = React.useState(false);
+  const [openCategory, setOpenCategory] = React.useState(false);
   const [serviceData, setServiceData] = React.useState<Service | null>(null);
+  const [categoryData, setCategoryData] = React.useState<Service | null>(null);
   const [mode, setMode] = React.useState<"edit" | "add">("add");
   const [isDeleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
   const [deleteRowId, setDeleteRowId] = React.useState<string | null>(null);
@@ -60,10 +63,22 @@ const ServicesPage = () => {
     setMode("add");
   };
 
+  const handleCategoryButtonClick = () => {
+    setOpenCategory(true);
+    setMode("add");
+  };
+
   const handleEdit = (id: string) => {
     const selectedService = services.find((service) => service.id === id);
     setOpen(true);
     setServiceData(selectedService);
+    setMode("edit");
+  };
+
+  const handleEditCategory = (id: string) => {
+    const selectedCategory = categories.find((category) => category.id === id);
+    setOpenCategory(true);
+    setCategoryData(selectedCategory);
     setMode("edit");
   };
 
@@ -103,7 +118,7 @@ const ServicesPage = () => {
       <div className="w-full md:w-48 md:flex-shrink-0 mt-7">
         <h4 className="mb-4 text-md font-medium leading-none">
           Категории
-          <Button className="ml-2 rounded-full " variant="ghost" onClick={handleFloatButtonClick}>
+          <Button className="ml-2 rounded-full " variant="ghost" onClick={handleCategoryButtonClick}>
              <Plus size={24}/>
           </Button>
         </h4>
@@ -113,8 +128,8 @@ const ServicesPage = () => {
               {categories.map((category, index) => (
                 <div key={index} className="text-sm">
                     {category.name}
-                    <Button className="ml-2 rounded-full" variant="ghost" onClick={handleFloatButtonClick}>
-                      <Pencil />
+                    <Button className="ml-2 rounded-full" variant="ghost" onClick={() => handleEditCategory(category.id)}>
+                      <Pencil  />
                     </Button>
                 </div>
             ))}
@@ -134,6 +149,7 @@ const ServicesPage = () => {
         />
         <FloatButton onClick={handleFloatButtonClick} />
         <DialogModal open={open} onOpenChange={setOpen} mode={mode} serviceData={serviceData} onSuccess={handleAddOrUpdateSuccess} />
+        <DialogModalCategory open={openCategory} onOpenChange={setOpenCategory} mode={mode} categoryData={categoryData} onSuccess={handleAddOrUpdateSuccess} />
         <DeleteConfirmationDialog
             open={isDeleteDialogOpen}
             onOpenChange={setDeleteDialogOpen}

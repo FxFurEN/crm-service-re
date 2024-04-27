@@ -19,7 +19,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { DialogModalProps} from '@/types/dialog-props';
 import { CategorySchema } from '@/schemas';
 import { addCategory } from '@/actions/add-data';
-import { updateService } from '@/actions/edit-data';
+import { updateCategory, updateService } from '@/actions/edit-data';
 import { Category } from '@/types/category';
 
 export function DialogModalCategory({ open, onOpenChange, mode = "add", categoryData, onSuccess }:  DialogModalProps<Category>) {
@@ -30,7 +30,7 @@ export function DialogModalCategory({ open, onOpenChange, mode = "add", category
   const form = useForm({
     resolver: zodResolver(CategorySchema),
     values: {
-      name: categoryData?.name,
+      name: categoryData?.name ?? "",
     },
   });
 
@@ -50,6 +50,14 @@ export function DialogModalCategory({ open, onOpenChange, mode = "add", category
             setError("Ошибка при добавлении услуги");
           });
       } else if (mode === "edit" && categoryData) {
+        updateCategory(categoryData.id, { ...data })
+          .then(() => {
+            setSuccess("Категория успешно обновлена");
+            onSuccess && onSuccess(); 
+          })
+          .catch((error) => {
+            setError("Ошибка при обновлении категории");
+          });
       }
     });
   };
@@ -77,7 +85,7 @@ export function DialogModalCategory({ open, onOpenChange, mode = "add", category
                     <Input
                       {...field}
                       disabled={isPending}
-                      placeholder="Название услуги"
+                      placeholder="Название категории"
                       type="text"
                     />
                     <FormMessage />
