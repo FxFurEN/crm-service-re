@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import FloatButton from "@/components/float-button";
 import { DialogModal } from "@/components/clients/dialog-modal";
 import { Client } from "@/types/client";
-import { getAllClients } from "@/data/data-load";
+import { getAllClients } from "@/actions/data-load";
 import DeleteConfirmationDialog from "@/components/alert-dialog-confirm";
 import { deleteClient } from "@/actions/del-data";
 import { Toaster } from "@/components/ui/sonner";

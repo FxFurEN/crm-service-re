@@ -21,7 +21,7 @@ import { DialogModalProps} from '@/types/dialog-props';
 import { ServiceSchema } from '@/schemas';
 import { addService } from '@/actions/add-data';
 import { updateService } from '@/actions/edit-data';
-import { getAllCategories } from '@/data/data-load';
+import { getAllCategories } from '@/actions/data-load';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export function DialogModal({ open, onOpenChange, mode = "add", serviceData, onSuccess }:  DialogModalProps<Service>) {

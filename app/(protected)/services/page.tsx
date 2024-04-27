@@ -6,7 +6,7 @@ import { useCurrentRole } from "@/hooks/use-current-role";
 import CustomTable, { TableColumn } from '@/components/data-table';
 import { Service } from '@/types/services';
 import React, { useEffect, useState } from 'react';
-import { getAllCategories, getAllServices } from '@/data/data-load';
+import { getAllCategories, getAllServices } from '@/actions/data-load';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import FloatButton from '@/components/float-button';

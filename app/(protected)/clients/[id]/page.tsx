@@ -5,7 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation'; // Import usePathname from next/navigation
-import { getClientById } from '@/data/data-load';
+import { getClientById } from '@/actions/data-load';
 
 export default function ClientDetailPage() {
   const pathname = usePathname(); 
