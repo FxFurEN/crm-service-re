@@ -19,8 +19,8 @@ const SettingsPage = () => {
             <Link href="/settings/employees">
               <Button className="mr-4">Сотрудники</Button>
             </Link>
-            <Link href="/settings/position">
-              <Button className="mr-4">Должность</Button>
+            <Link href="/settings/documents">
+              <Button className="mr-4">Документы</Button>
             </Link>
           </RoleGate>
          
