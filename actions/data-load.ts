@@ -60,3 +60,19 @@ export const getAllCategories = async () => {
     await db.$disconnect();
   }
 };
+
+
+
+export const getAllEmployees = async () => {
+  try {
+    const employees = await db.employee.findMany();
+    console.log(employees);
+    return employees;
+  } catch (error) {
+    console.error('Error fetching employees:', error);
+    return null;
+    
+  } finally {
+    await db.$disconnect();
+  }
+};

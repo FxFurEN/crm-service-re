@@ -25,8 +25,8 @@ model User {
   position      Position  @relation(fields: [positionId], references: [id], onDelete: Cascade)
   positionId    String 
   accounts      Account[]
-  execution   Execution[] 
-  orders      Orders[]  
+  execution     Execution[] 
+  orders        Orders[]  
 }
 
 model Account {
