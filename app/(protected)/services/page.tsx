@@ -18,6 +18,7 @@ import { Toaster } from '@/components/ui/sonner';
 import { Button } from '@/components/ui/button';
 import { Pencil, Plus } from 'lucide-react';
 import { DialogModalCategory } from '@/components/services/dialog-modal-category';
+import CategoryList from './_components/category-list';
 
 const serviceColumns: TableColumn<Service>[] = [
   { accessorKey: "name", header: "Наименование", cell: ({ row }) => <div>{row.getValue("name")}</div> },
@@ -115,30 +116,7 @@ const ServicesPage = () => {
 
   return ( 
     <div className="flex flex-col md:flex-row">
-      <div className="w-full md:w-48 md:flex-shrink-0 mt-7">
-        <h4 className="mb-4 text-md font-medium leading-none">
-          Категории
-          <Button className="ml-2 rounded-full " variant="ghost" onClick={handleCategoryButtonClick}>
-             <Plus size={24}/>
-          </Button>
-        </h4>
-        <ScrollArea className="h-72 w-full md:w-48 rounded-md border">
-          {categories.length > 0 ? (
-            <div className="p-4">
-              {categories.map((category, index) => (
-                <div key={index} className="text-sm">
-                    {category.name}
-                    <Button className="ml-2 rounded-full" variant="ghost" onClick={() => handleEditCategory(category.id)}>
-                      <Pencil  />
-                    </Button>
-                </div>
-            ))}
-            </div>
-          ) : (
-            <p className="text-center mt-5">Нет результатов</p>
-          )}
-        </ScrollArea>
-      </div>
+          <CategoryList categories={categories} onEditCategory={handleEditCategory} onCategoryButtonClick={handleCategoryButtonClick} />
       <div className="w-full">
         <CustomTable<Service>
             data={services}
