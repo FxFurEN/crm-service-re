@@ -10,7 +10,7 @@ import { getAllCategories, getAllServices } from '@/actions/data-load';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import FloatButton from '@/components/float-button';
-import { DialogModal } from '@/components/services/dialog-modal';
+import { DialogModal } from '@/components/services/dialog-modal-service';
 import DeleteConfirmationDialog from '@/components/alert-dialog-confirm';
 import { deleteService } from '@/actions/del-data';
 import { toast } from 'sonner';
