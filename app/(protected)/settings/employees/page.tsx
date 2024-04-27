@@ -70,7 +70,7 @@ const EmployeesPage = () => {
           <CustomTable<Employee> 
             data={employeeData} 
             columns={employeeColumns} 
-            searchableColumns={["fullName", "email", "phone"]} 
+            searchableColumns={["email"]} 
           />
         </div>
         
