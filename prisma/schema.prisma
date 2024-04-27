@@ -22,8 +22,6 @@ model User {
   image         String?
   password      String?
   role          UserRole @default(USER)
-  position      Position  @relation(fields: [positionId], references: [id], onDelete: Cascade)
-  positionId    String 
   accounts      Account[]
   execution     Execution[] 
   orders        Orders[]  
@@ -104,12 +102,6 @@ model Orders {
   clientId    String
   serviceId   String
   execution   Execution[] 
-}
-
-model Position {
-  id         String    @id @default(cuid())
-  name       String   @db.VarChar(255)
-  user        User[] 
 }
 
 model Stage {
