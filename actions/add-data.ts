@@ -2,7 +2,7 @@
 
 import * as z from "zod";
 import { db } from "@/lib/db";
-import { ClientSchema, ServiceSchema } from "@/schemas";
+import { CategorySchema, ClientSchema, ServiceSchema } from "@/schemas";
 import { checkClientExistsByEmail } from "@/data/client-validaton"; 
 
 export const addClient = async (values: z.infer<typeof ClientSchema>) => {
@@ -68,3 +68,24 @@ export const addService = async ({ name, price, categoryId }) => {
   }
 };
 
+
+export const addCategory = async (values: z.infer<typeof CategorySchema>) => {
+  try {
+    const validatedFields = CategorySchema.safeParse(values);
+
+    if (!validatedFields.success) {
+      return { error: "Invalid fields!" };
+    }
+    const { name } = validatedFields.data;
+    const newCategory = await db.category.create({
+      data: {
+        name,
+      },
+    });
+
+    return { success: "Category added!", client: newCategory };
+  } catch (error) {
+    console.error("Error adding client:", error);
+    return { error: "What's wrong" };
+  }
+};
