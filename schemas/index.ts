@@ -98,3 +98,27 @@ export const ClientSchema = {
       }).max(8).nullable(),
     }),
 };
+
+
+
+export const ServiceSchema = z.object({
+  name: z.string().min(1, {
+    message: "Имя не может быть пустым!",
+  }),
+  price: z.string().min(1, {
+    message: "Цена не может быть пустым!",
+  }),
+  categoryId: z.string().min(1, {
+    message: "Категория не может быть пустой!",
+  }),
+});
+
+
+export const CategorySchema = z.object({
+  name: z.string().min(1, {
+    message: "Имя не может быть пустым!",
+  }).max(30, {
+    message: "Название слишком велико!",
+  }),
+});
+

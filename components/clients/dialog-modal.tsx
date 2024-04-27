@@ -29,17 +29,10 @@ import { FormError } from '../form-error';
 import { FormSuccess } from '../form-success';
 import { updateClient } from '@/actions/edit-data';
 import { Client } from '@/types/client';
-
-type DialogModalProps = {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  mode?: "add" | "edit";
-  clientData?: Client | null;
-  onSuccess?: () => void; 
-};
+import { DialogModalProps} from '@/types/dialog-props';
 
 
-export function DialogModal({ open, onOpenChange, mode = "add", clientData, onSuccess }: DialogModalProps) {
+export function DialogModal({ open, onOpenChange, mode = "add", clientData, onSuccess }: DialogModalProps<Client>) {
   const [clientType, setClientType] = useState("individual");
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");

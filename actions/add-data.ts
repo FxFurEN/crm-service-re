@@ -2,7 +2,7 @@
 
 import * as z from "zod";
 import { db } from "@/lib/db";
-import { ClientSchema } from "@/schemas";
+import { CategorySchema, ClientSchema, ServiceSchema } from "@/schemas";
 import { checkClientExistsByEmail } from "@/data/client-validaton"; 
 
 export const addClient = async (values: z.infer<typeof ClientSchema>) => {
@@ -34,5 +34,58 @@ export const addClient = async (values: z.infer<typeof ClientSchema>) => {
   } catch (error) {
     console.error("Error adding client:", error);
     return { error: "Что-то пошло не так" };
+  }
+};
+
+
+export const addService = async ({ name, price, categoryId }) => {
+  try {
+    const existingCategory = await db.category.findFirst({
+      where: { id: categoryId },
+    });
+
+    let category;
+    if (!existingCategory) {
+      category = await db.category.create({
+        data: {
+          name: categoryId,
+        },
+      });
+    }
+
+    const service = await db.service.create({
+      data: {
+        name,
+        price,
+        category: { connect: { id: existingCategory ? categoryId : category.id } },
+      },
+    });
+
+    return { success: 'Услуга успешно добавлена!', service };
+  } catch (error) {
+    console.error('Error adding service:', error);
+    return { error: 'Что-то пошло не так' };
+  }
+};
+
+
+export const addCategory = async (values: z.infer<typeof CategorySchema>) => {
+  try {
+    const validatedFields = CategorySchema.safeParse(values);
+
+    if (!validatedFields.success) {
+      return { error: "Invalid fields!" };
+    }
+    const { name } = validatedFields.data;
+    const newCategory = await db.category.create({
+      data: {
+        name,
+      },
+    });
+
+    return { success: "Category added!", client: newCategory };
+  } catch (error) {
+    console.error("Error adding client:", error);
+    return { error: "What's wrong" };
   }
 };

@@ -17,6 +17,7 @@ import {
     ShoppingBag,
     ShoppingCart,
     Users2,
+    Wrench,
 } from "lucide-react";
 
 import { usePathname } from "next/navigation";
@@ -31,8 +32,9 @@ const buttonsData: ButtonData[] = [
     { icon: Home, label: "Главная", route: "/home" }, 
     { icon: ShoppingBag, label: "Заказы", route: "/orders" }, 
     { icon: Users2, label: "Клиенты", route: "/clients" }, 
-    { icon: Package, label: "Склад", route: "/warehouse" }, 
-    { icon: ShoppingCart, label: "Магазин", route: "/shop" }, 
+    { icon: Wrench, label: "Услуги", route: "/services" },
+    //{ icon: Package, label: "Склад", route: "/warehouse" }, 
+    //{ icon: ShoppingCart, label: "Магазин", route: "/shop" }, 
     { icon: LineChart, label: "Отчет", route: "/reports" }, 
 ];
 

@@ -91,12 +91,12 @@ function CustomTable<T>({
         <div className="flex py-4">
           {searchableColumns.length > 0 && (
             <Input
-              placeholder="Filter emails..."
+              placeholder={`Поиск по ${searchableColumns[0]}`}
               value={
-                (table.getColumn("email")?.getFilterValue() as string) ?? ""
+                (table.getColumn(searchableColumns[0])?.getFilterValue() as string) ?? ""
               }
               onChange={(event) =>
-                table.getColumn("email")?.setFilterValue(event.target.value)
+                table.getColumn(searchableColumns[0])?.setFilterValue(event.target.value)
               }
               className="max-w-sm"
             />
@@ -202,10 +202,6 @@ function CustomTable<T>({
           </Table>
         </div>
         <div className="flex items-center justify-end space-x-2 py-4">
-          <div className="flex-1 text-sm text-muted-foreground">
-            {table.getFilteredSelectedRowModel().rows.length} of{" "}
-            {table.getFilteredRowModel().rows.length} row(s) selected.
-          </div>
           <div className="space-x-2">
             <Button
               variant="outline"
