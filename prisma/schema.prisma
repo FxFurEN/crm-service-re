@@ -22,8 +22,11 @@ model User {
   image         String?
   password      String?
   role          UserRole @default(USER)
+  position      Position  @relation(fields: [positionId], references: [id], onDelete: Cascade)
+  positionId    String 
   accounts      Account[]
-  empoloyee     Employee[] 
+  execution   Execution[] 
+  orders      Orders[]  
 }
 
 model Account {
@@ -94,29 +97,19 @@ model Orders {
   createdAt   DateTime  @default(now())
   comments    String?   @db.VarChar(255)
   leadTime    DateTime  @default(now())
-  employee    Employee  @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String
   service     Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
   client      Clients  @relation(fields: [clientId], references: [id], onDelete: Cascade)
   clientId    String
   serviceId   String
-  employeeId  String
   execution   Execution[] 
-}
-
-model Employee {
-  id          String    @id @default(cuid())
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId      String
-  position    Position  @relation(fields: [positionId], references: [id], onDelete: Cascade)
-  positionId  String 
-  orders      Orders[] 
-  executions  Execution[] 
 }
 
 model Position {
   id         String    @id @default(cuid())
   name       String   @db.VarChar(255)
-  employee   Employee[] 
+  user        User[] 
 }
 
 model Stage {
@@ -130,8 +123,8 @@ model Execution {
   id              String    @id @default(cuid())
   name            String   @db.VarChar(255)
   executionDate   DateTime  @default(now())
-  employee        Employee  @relation(fields: [employeeId], references: [id], onDelete: Cascade)
-  employeeId      String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId          String
   order           Orders  @relation(fields: [orderId], references: [id], onDelete: Cascade)
   orderId         String
   stage           Stage  @relation(fields: [stageId], references: [id], onDelete: Cascade)
