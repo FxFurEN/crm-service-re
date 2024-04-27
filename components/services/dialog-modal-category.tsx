@@ -21,6 +21,8 @@ import { CategorySchema } from '@/schemas';
 import { addCategory } from '@/actions/add-data';
 import { updateCategory, updateService } from '@/actions/edit-data';
 import { Category } from '@/types/category';
+import { deleteCategory } from '@/actions/del-data';
+import { toast } from 'sonner';
 
 export function DialogModalCategory({ open, onOpenChange, mode = "add", categoryData, onSuccess }:  DialogModalProps<Category>) {
   const [error, setError] = useState<string | undefined>("");
@@ -34,6 +36,24 @@ export function DialogModalCategory({ open, onOpenChange, mode = "add", category
     },
   });
 
+  const handleDelete = async () => {
+    setError("");
+    setSuccess("");
+    if (categoryData && categoryData.id) {
+      try {
+        const response = await deleteCategory(categoryData.id); 
+        setSuccess("Категория успешно удалена");
+        onSuccess && onSuccess();
+        if (response.success) {
+          toast.success(response.success); 
+        }
+        onOpenChange(false);
+      } catch (error) {
+        setError("Ошибка при удалении категории");
+        toast.error("Что-то пошло не так"); 
+      }
+    }
+  };
 
   const onSubmit = async (data: z.infer<typeof CategorySchema>) => {
     setError("");
@@ -94,6 +114,15 @@ export function DialogModalCategory({ open, onOpenChange, mode = "add", category
               />
             </div>
             <DialogFooter>
+              {mode === 'edit' && (
+                <Button
+                  className="w-full mr-2"
+                  onClick={handleDelete}
+                  variant="destructive"
+                >
+                  Удалить
+                </Button>
+              )}
               <Button
                 isLoading={isPending}
                 type="submit"

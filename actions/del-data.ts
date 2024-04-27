@@ -33,3 +33,17 @@ export const deleteService = async (serviceId: string) => {
   }
 };
 
+export const deleteCategory = async (categoryId: string) => {
+  try {
+    await db.category.delete({
+      where: {
+        id: categoryId,
+      },
+    });
+
+    return { success: "Category deleted!" };
+  } catch (error) {
+    console.error("Error deleting service:", error);
+    return { error: "What went wrong" };
+  }
+};
