@@ -20,9 +20,14 @@ const employeeColumns: TableColumn<Employee>[] = [
   },
   {
     accessorKey: "role",
-    header: "Роль",
-    cell: ({ row }) => <div>{row.getValue("role")}</div>,
+    header: "Должность",
+    cell: ({ row }) => (
+      <div>
+        {row.getValue("role") === "ADMIN" ? "Администратор" : "Сотрудник"}
+      </div>
+    ),
   }
+  
 ];
 
 const EmployeesPage = () => {
