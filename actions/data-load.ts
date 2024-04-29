@@ -66,7 +66,6 @@ export const getAllCategories = async () => {
 export const getAllEmployees = async () => {
   try {
     const employees = await db.user.findMany();
-    console.log(employees);
     return employees;
   } catch (error) {
     console.error('Error fetching employees:', error);
