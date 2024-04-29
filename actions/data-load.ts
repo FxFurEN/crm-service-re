@@ -76,3 +76,18 @@ export const getAllEmployees = async () => {
     await db.$disconnect();
   }
 };
+
+
+export const getAllOrders = async () => {
+  try {
+    const orders = await db.orders.findMany();
+
+    return orders;
+  } catch (error) {
+    console.error('Error fetching orders:', error);
+    return null;
+    
+  } finally {
+    await db.$disconnect();
+  }
+};
