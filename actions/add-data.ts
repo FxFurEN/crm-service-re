@@ -2,7 +2,7 @@
 
 import * as z from "zod";
 import { db } from "@/lib/db";
-import { CategorySchema, ClientSchema, ServiceSchema } from "@/schemas";
+import { CategorySchema, ClientSchema, OrderSchema, ServiceSchema } from "@/schemas";
 import { checkClientExistsByEmail } from "@/data/client-validaton"; 
 
 export const addClient = async (values: z.infer<typeof ClientSchema>) => {
@@ -87,5 +87,34 @@ export const addCategory = async (values: z.infer<typeof CategorySchema>) => {
   } catch (error) {
     console.error("Error adding client:", error);
     return { error: "What's wrong" };
+  }
+};
+
+
+
+export const addOrder = async (values: z.infer<typeof OrderSchema>) => {
+  try {
+    const validatedFields = OrderSchema.safeParse(values);
+
+    if (!validatedFields.success) {
+      return { error: "Invalid fields!" };
+    }
+
+    const { createdAt, comments, leadTime, userId, clientId, serviceId } = validatedFields.data;
+    const newOrder = await db.orders.create({
+      data: {
+        createdAt,
+        comments,
+        leadTime,
+        userId,
+        clientId,
+        serviceId,
+      },
+    });
+
+    return { success: "Order added!", order: newOrder };
+  } catch (error) {
+    console.error("Error adding order:", error);
+    return { error: "Something went wrong" };
   }
 };
