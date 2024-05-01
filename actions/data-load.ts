@@ -34,7 +34,17 @@ export const getClientById = async (clientId: string) => {
 
 export const getAllServices = async () => {
   try {
-    const services = await db.service.findMany();
+    const services = await db.service.findMany(
+      {
+        include: {
+          category: {
+            select: {
+              name: true
+            }
+          }
+        }
+      }
+    );
 
     return services;
   } catch (error) {

@@ -23,7 +23,7 @@ import CategoryList from './_components/category-list';
 const serviceColumns: TableColumn<Service>[] = [
   { accessorKey: "name", header: "Наименование", cell: ({ row }) => <div>{row.getValue("name")}</div> },
   { accessorKey: "price", header: "Цена", cell: ({ row }) => <div>{row.getValue("price")}</div> },
-  { accessorKey: "category", header: "Категория", cell: ({ row }) => <div>{row.getValue("category")}</div> },
+  { accessorKey: "categoryName", header: "Категория", cell: ({ row }) => <div>{row.getValue("categoryName")}</div> },
 ];
 
 const ServicesPage = () => {
@@ -50,9 +50,12 @@ const ServicesPage = () => {
   const fetchData = async () => {
     const servicesData = await getAllServices();
     if (servicesData) {
-      setServices(servicesData);
+      const transformedData = servicesData.map(services => ({
+        ...services,
+        categoryName: services.category.name
+      }));
+      setServices(transformedData);
     }
-
     const categoriesData = await getAllCategories();
     if (categoriesData) {
       setCategories(categoriesData);
