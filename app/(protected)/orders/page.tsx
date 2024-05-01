@@ -11,16 +11,16 @@ import DeleteConfirmationDialog from "@/components/alert-dialog-confirm";
 import { deleteClient } from "@/actions/del-data";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
-import { formatRevalidate } from "next/dist/server/lib/revalidate";
+import { formatDate } from "date-fns";
 
 const orderColumns: TableColumn<Order>[] = [
-  { accessorKey: "service", header: "Услуга", cell: ({ row }) => <div>{row.getValue("service")}</div> },
-  { accessorKey: "createdAt", header: "Дата создания", cell: ({ row }) => <div>{formatRevalidate(row.getValue("createdAt"))}</div> },
-  { accessorKey: "comments", header: "Комментарии", cell: ({ row }) => <div>{row.getValue("comments")}</div> },
-  { accessorKey: "leadTime", header: "Дата выполнения", cell: ({ row }) => <div>{formatRevalidate(row.getValue("leadTime"))}</div> },
-  { accessorKey: "user", header: "Сотрудник", cell: ({ row }) => <div>{row.getValue("user")}</div> },
-  { accessorKey: "client", header: "Клиент", cell: ({ row }) => <div>{row.getValue("client")}</div> },
+  { accessorKey: "serviceName", header: "Услуга", cell: ({ row }) => <div>{row.getValue("serviceName")}</div> },
+  { accessorKey: "createdAt", header: "Дата создания", cell: ({ row }) => <div>{formatDate(row.getValue("createdAt"), "dd.MM.yyyy")}</div> },
+  { accessorKey: "leadTime", header: "Дата выполнения", cell: ({ row }) => <div>{formatDate(row.getValue("leadTime"), "dd.MM.yyyy")}</div> },
+  { accessorKey: "userName", header: "Сотрудник", cell: ({ row }) => <div>{row.getValue("userName")}</div> },
+  { accessorKey: "clientName", header: "Клиент", cell: ({ row }) => <div>{row.getValue("clientName")}</div> },
 ];
+
 
 export default function OrdersPage() {
   const router = useRouter();
@@ -38,9 +38,16 @@ export default function OrdersPage() {
   const fetchData = async () => {
     const data = await getAllOrders();
     if (data) {
-      setOrder(data);
+      const transformedData = data.map(order => ({
+        ...order,
+        serviceName: order.service.name,
+        userName: order.user.name,
+        clientName: order.client.name ? order.client.name : order.client.initials,
+      }));
+      setOrder(transformedData);
     }
   };
+  
 
   const handleRowClick = (id: string) => {
     router.push(`/clients/${id}`);
