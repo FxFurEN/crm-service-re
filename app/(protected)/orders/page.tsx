@@ -100,7 +100,7 @@ export default function OrdersPage() {
       <CustomTable<Order>
         data={orders}
         columns={orderColumns}
-        searchableColumns={["client"]}
+        searchableColumns={["clientName"]}
         onRowClick={handleRowClick}
         onEdit={handleEdit}
         onDelete={handleDelete}
