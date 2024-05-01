@@ -79,7 +79,28 @@ export const getAllEmployees = async () => {
 
 export const getAllOrders = async () => {
   try {
-    const orders = await db.orders.findMany();
+    const orders = await db.orders.findMany(
+      {
+        include: {
+          service: {
+            select: {
+              name: true
+            }
+          },
+          user: {
+            select: {
+              name: true
+            }
+          },
+          client: {
+            select: {
+              name: true,
+              initials: true
+            }
+          }
+        }
+      }
+    );
 
     return orders;
   } catch (error) {
