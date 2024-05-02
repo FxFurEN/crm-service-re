@@ -78,7 +78,7 @@ export default function OrderDetailPage() {
                         <Separator className="my-2" />
                       </div>
                       <div>
-                        <Label htmlFor="orderLeadTime">Время выполнения заказа: {new Date(order.leadTime).toLocaleDateString()}</Label>
+                        <Label htmlFor="orderLeadTime">Предварительная дата выполнения заказа: {new Date(order.leadTime).toLocaleDateString()}</Label>
                         <Separator className="my-2" />
                       </div>
                       <div>
@@ -86,7 +86,7 @@ export default function OrderDetailPage() {
                         <Separator className="my-2" />
                       </div>
                       <div>
-                        <Label htmlFor="orderService">Исполнитель: {order.user.name}</Label>
+                        <Label htmlFor="orderService">Принял заказ: {order.user.name}</Label>
                         <Separator className="my-2" />
                       </div>
                       <div>
