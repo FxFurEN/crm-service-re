@@ -121,3 +121,41 @@ export const getAllOrders = async () => {
     await db.$disconnect();
   }
 };
+
+
+export const getOrderById = async (orderId: string) => {
+  try {
+    const order = await db.orders.findUnique({
+      where: {
+        id: orderId,
+      },
+      include: {
+        service: {
+          select: {
+            name: true
+          }
+        },
+        user: {
+          select: {
+            name: true
+          }
+        },
+        client: {
+          select: {
+            name: true,
+            initials: true,
+            phone: true,
+            email: true,
+            sign: true,
+            unp: true
+          }
+        }
+      }
+    });
+
+    return order;
+  } catch (error) {
+    console.error('Error fetching order:', error);
+    return null;
+  }
+};
