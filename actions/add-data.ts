@@ -101,6 +101,17 @@ export const addOrder = async (values: z.infer<typeof OrderSchema>) => {
     }
 
     const { createdAt, comments, leadTime, userId, clientId, serviceId } = validatedFields.data;
+
+    const newOrderStage = await db.stage.findFirst({
+      where: {
+        name: "Новый заказ"
+      }
+    });
+
+    if (!newOrderStage) {
+      return { error: "New Order stage not found" };
+    }
+
     const newOrder = await db.orders.create({
       data: {
         createdAt,
@@ -109,7 +120,26 @@ export const addOrder = async (values: z.infer<typeof OrderSchema>) => {
         userId,
         clientId,
         serviceId,
+        execution: {
+          create: {
+            name: "Заказ добавлен",
+            executionDate: new Date(),
+            stage: {
+              connect: {
+                id: newOrderStage.id
+              }
+            },
+            user: {
+              connect: {
+                id: userId 
+              }
+            }
+          }
+        }
       },
+      include: {
+        execution: true
+      }
     });
 
     return { success: "Order added!", order: newOrder };
@@ -118,3 +148,5 @@ export const addOrder = async (values: z.infer<typeof OrderSchema>) => {
     return { error: "Something went wrong" };
   }
 };
+
+
