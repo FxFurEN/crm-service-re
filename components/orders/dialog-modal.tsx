@@ -40,7 +40,6 @@ export function DialogModal({ open, onOpenChange, mode = "add", orderData, onSuc
   const form = useForm({
     resolver: zodResolver(OrderSchema),
     values: {
-      id: orderData?.id ?? "",
       createdAt: orderData?.createdAt ?? "",
       comments: orderData?.comments ?? "",
       leadTime: orderData?.leadTime ?? "",

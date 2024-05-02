@@ -106,7 +106,7 @@ export default function OrdersPage() {
         onDelete={handleDelete}
       />
       <FloatButton onClick={handleFloatButtonClick} />
-      <DialogModal open={open} onOpenChange={setOpen} mode={mode} ordersData={ordersData} onSuccess={handleAddOrUpdateSuccess} />
+      <DialogModal open={open} onOpenChange={setOpen} mode={mode} orderData={ordersData} onSuccess={handleAddOrUpdateSuccess} />
       <DeleteConfirmationDialog
         open={isDeleteDialogOpen}
         onOpenChange={setDeleteDialogOpen}
