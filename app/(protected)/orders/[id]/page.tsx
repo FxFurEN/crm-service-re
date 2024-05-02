@@ -153,7 +153,7 @@ export default function OrderDetailPage() {
                       <div key={execution.id}>
                         <p>
                           <span className="text-gray-800">{execution.user.name}:</span>{' '}
-                          <Tag color="#2db7f5">{execution.stage.name}</Tag>
+                          <Tag color={execution.stage.color}>{execution.stage.name}</Tag>
                         </p>
                         <p className="text-gray-800 text-sm">{formatDate(execution.executionDate)}</p>
                         <Separator className="my-2" />
