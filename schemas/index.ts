@@ -124,7 +124,6 @@ export const CategorySchema = z.object({
 
 
 export const OrderSchema = z.object({
-  id: z.string(),
   createdAt: z.date(),
   comments: z.string().nullable(),
   leadTime: z.date(),
