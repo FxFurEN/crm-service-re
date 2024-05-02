@@ -50,7 +50,7 @@ export default function OrdersPage() {
   
 
   const handleRowClick = (id: string) => {
-    router.push(`/clients/${id}`);
+    router.push(`/orders/${id}`);
   };
 
   const handleFloatButtonClick = () => {
