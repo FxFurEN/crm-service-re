@@ -159,3 +159,30 @@ export const getOrderById = async (orderId: string) => {
     return null;
   }
 };
+
+
+export const getOrderExecutionHistory = async (orderId: string) => {
+  try {
+    const executionHistory = await db.execution.findMany({
+      where: {
+        orderId: orderId
+      },
+      orderBy: {
+        executionDate: "asc"
+      },
+      include: {
+        user: {
+          select: {
+            name: true
+          }
+        },
+        stage: true
+      }
+    });
+
+    return executionHistory;
+  } catch (error) {
+    console.error('Error fetching order execution history:', error);
+    return null;
+  }
+};
