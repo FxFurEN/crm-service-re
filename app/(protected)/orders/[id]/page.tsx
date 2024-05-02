@@ -1,11 +1,12 @@
 "use client";
+
 import { SkeletonCard } from '@/components/skeleton-card';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { getOrderById } from '@/actions/data-load';
+import { Textarea } from '@/components/ui/textarea';
 
 export default function OrderDetailPage() {
   const pathname = usePathname(); 
@@ -35,9 +36,6 @@ export default function OrderDetailPage() {
             </CardHeader>
             <CardContent>
               <div>
-                <Label htmlFor="orderComments">Комментарии к заказу: {order.comments}</Label>
-              </div>
-              <div>
                 <Label htmlFor="orderCreatedAt">Дата создания заказа: {new Date(order.createdAt).toLocaleDateString()}</Label>
               </div>
               <div>
@@ -45,6 +43,13 @@ export default function OrderDetailPage() {
               </div>
               <div>
                 <Label htmlFor="orderService">Услуга: {order.service.name}</Label>
+              </div>
+              <div>
+                <Label htmlFor="orderService">Исполнитель: {order.user.name}</Label>
+              </div>
+              <div>
+                <Label htmlFor="orderComments">Комментарии к заказу:</Label>
+                <Textarea value={order.comments} className="resize-none" readOnly />
               </div>
             </CardContent>
           </div>
