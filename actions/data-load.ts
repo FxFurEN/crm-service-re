@@ -89,38 +89,28 @@ export const getAllEmployees = async () => {
 
 export const getAllOrders = async () => {
   try {
-    const orders = await db.orders.findMany(
-      {
-        include: {
-          service: {
-            select: {
-              name: true
-            }
-          },
-          user: {
-            select: {
-              name: true
-            }
-          },
-          client: {
-            select: {
-              name: true,
-              initials: true
-            }
+    const orders = await db.orders.findMany({
+      include: {
+        service: { select: { name: true } },
+        user: { select: { name: true } },
+        client: { select: { name: true, initials: true } },
+        execution: {
+          select: {
+            stage: { select: { name: true, color: true } }
           }
         }
       }
-    );
+    });
 
     return orders;
   } catch (error) {
     console.error('Error fetching orders:', error);
     return null;
-    
   } finally {
     await db.$disconnect();
   }
 };
+
 
 
 export const getOrderById = async (orderId: string) => {
