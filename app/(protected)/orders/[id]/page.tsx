@@ -8,6 +8,13 @@ import { usePathname } from 'next/navigation';
 import { getOrderById } from '@/actions/data-load';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { Separator } from "@/components/ui/separator"
+import { History } from 'lucide-react';
+ 
+const tags = Array.from({ length: 20 }).map(
+  (_, i, a) => `История выполнения:${a.length - i}`
+)
 
 export default function OrderDetailPage() {
   const pathname = usePathname(); 
@@ -26,88 +33,117 @@ export default function OrderDetailPage() {
   }, [id]);
 
   return (
-    <div>
+    <div className='ml-20'>
       {order ? (
         <>
-          <Button>Изменить статус заказа</Button>
-          <Card className="flex flex-col md:flex-row md:w-[700px] w-[400px]">
-            <div className="md:w-[50%]">
-              <CardHeader>
-                <p className="text-2xl font-semibold text-center">
-                  Информация
-                </p>
-              </CardHeader>
-              <CardContent>
-                <div>
-                  <Label htmlFor="orderCreatedAt">Дата создания заказа: {new Date(order.createdAt).toLocaleDateString()}</Label>
+          <div className='ml-5'>
+            <Button className="mb-4">Изменить статус заказа</Button>
+          </div>
+          <div className="flex justify-between">
+            <div className="md:w-[100%] px-4">
+              <Card>
+                <CardHeader>
+                  <p className="text-2xl font-semibold text-center">
+                    Информация
+                  </p>
+                </CardHeader>
+                <CardContent>
+                <div className="flex justify-between">
+                  <div className="md:w-[50%] px-4">
+                      <p className="text-2xl font-semibold text-left mb-4">
+                        Заказ
+                      </p>
+                      <div>
+                        <Label htmlFor="orderCreatedAt">Дата создания заказа: {new Date(order.createdAt).toLocaleDateString()}</Label>
+                        <Separator className="my-2" />
+                      </div>
+                      <div>
+                        <Label htmlFor="orderLeadTime">Время выполнения заказа: {new Date(order.leadTime).toLocaleDateString()}</Label>
+                        <Separator className="my-2" />
+                      </div>
+                      <div>
+                        <Label htmlFor="orderService">Услуга: {order.service.name}</Label>
+                        <Separator className="my-2" />
+                      </div>
+                      <div>
+                        <Label htmlFor="orderService">Исполнитель: {order.user.name}</Label>
+                        <Separator className="my-2" />
+                      </div>
+                      <div>
+                        <Label htmlFor="orderComments">Комментарии к заказу:</Label>
+                        <Textarea value={order.comments} className="resize-none" readOnly />
+                      </div>
+                  </div>
+                  <div className="md:w-[50%] px-4">
+                    <p className="text-2xl font-semibold text-left mb-4">
+                        Клиент
+                      </p>
+                    {order.client.sign === false ? (
+                        <>
+                        
+                          <div>
+                            <Label htmlFor="initials">ФИО: {order.client.initials}</Label>
+                            <Separator className="my-2" />
+                          </div>
+                          <div>
+                            <Label htmlFor="email">Email: {order.client.email}</Label>
+                            <Separator className="my-2" />
+                          </div>
+                          <div>
+                            <Label htmlFor="phone">Телефон: {order.client.phone}</Label>
+                            <Separator className="my-2" />
+                          </div>
+                          
+                        </>
+                      ) : (
+                        <>
+                          <div>
+                            <Label htmlFor="name">Название компании: {order.client.name}</Label>
+                            <Separator className="my-2" />
+                          </div>
+                          <div>
+                            <Label htmlFor="name">УНП: {order.client.unp}</Label>
+                            <Separator className="my-2" />
+                          </div>
+                          <div>
+                            <Label htmlFor="email">Почта: {order.client.email}</Label>
+                            <Separator className="my-2" />
+                          </div>
+                          <div>
+                            <Label htmlFor="phone">Телефон: {order.client.phone}</Label>
+                            <Separator className="my-2" />
+                          </div>
+                        </>
+                      )}
+                  </div>
                 </div>
-                <div>
-                  <Label htmlFor="orderLeadTime">Время выполнения заказа: {new Date(order.leadTime).toLocaleDateString()}</Label>
-                </div>
-                <div>
-                  <Label htmlFor="orderService">Услуга: {order.service.name}</Label>
-                </div>
-                <div>
-                  <Label htmlFor="orderService">Исполнитель: {order.user.name}</Label>
-                </div>
-                <div>
-                  <Label htmlFor="orderComments">Комментарии к заказу:</Label>
-                  <Textarea value={order.comments} className="resize-none" readOnly />
-                </div>
-              </CardContent>
+                </CardContent>
+              </Card>
             </div>
-            <div className="md:w-[50%]">
-              <CardHeader>
-                <p className="text-2xl font-semibold text-center">
-                  Клиент
-                </p>
-              </CardHeader>
-              <CardContent>
-              {order.client.sign === false ? (
-                  <>
-                    <div>
-                      <Label htmlFor="initials">ФИО: {order.client.initials}</Label>
+            <div className="flex-grow md:w-1/4">
+              <Card>
+                <CardHeader>
+                  <p className="text-2xl font-semibold flex items-center text-left">
+                    История <History className="ml-2" />
+                  </p>
+                </CardHeader>
+                <CardContent>
+                  <ScrollArea className="h-[400px] w-full rounded-md">
+                    <div className="p-4">
+                      {tags.map((tag) => (
+                        <>
+                          <div key={tag} className="text-sm">
+                            {tag}
+                          </div>
+                          <Separator className="my-2" />
+                        </>
+                      ))}
                     </div>
-                    <div>
-                      <Label htmlFor="email">Email: {order.client.email}</Label>
-                    </div>
-                    <div>
-                      <Label htmlFor="phone">Телефон: {order.client.phone}</Label>
-                    </div>
-                    
-                  </>
-                ) : (
-                  <>
-                    <div>
-                      <Label htmlFor="name">Название компании: {order.client.name}</Label>
-                    </div>
-                    <div>
-                      <Label htmlFor="name">УНП: {order.client.unp}</Label>
-                    </div>
-                    <div>
-                      <Label htmlFor="email">Почта: {order.client.email}</Label>
-                    </div>
-                    <div>
-                      <Label htmlFor="phone">Телефон: {order.client.phone}</Label>
-                    </div>
-                  </>
-                )}
-              </CardContent>
+                  </ScrollArea>
+                </CardContent>
+              </Card>
             </div>
-          </Card>
-          <Card className="flex flex-col md:flex-row md:w-[700px] w-[400px]">
-            <div className="md:w-[50%]">
-              <CardHeader>
-                <p className="text-2xl font-semibold text-center">
-                  История выполнения
-                </p>
-              </CardHeader>
-              <CardContent>
-                тест
-                тест
-              </CardContent>
-            </div>
-          </Card>
+          </div>
         </>
       ) : (
         <SkeletonCard/>
