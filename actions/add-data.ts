@@ -2,7 +2,7 @@
 
 import * as z from "zod";
 import { db } from "@/lib/db";
-import { CategorySchema, ClientSchema, ServiceSchema } from "@/schemas";
+import { CategorySchema, ClientSchema, OrderSchema, ServiceSchema } from "@/schemas";
 import { checkClientExistsByEmail } from "@/data/client-validaton"; 
 
 export const addClient = async (values: z.infer<typeof ClientSchema>) => {
@@ -89,3 +89,64 @@ export const addCategory = async (values: z.infer<typeof CategorySchema>) => {
     return { error: "What's wrong" };
   }
 };
+
+
+
+export const addOrder = async (values: z.infer<typeof OrderSchema>) => {
+  try {
+    const validatedFields = OrderSchema.safeParse(values);
+
+    if (!validatedFields.success) {
+      return { error: "Invalid fields!" };
+    }
+
+    const { createdAt, comments, leadTime, userId, clientId, serviceId } = validatedFields.data;
+
+    const newOrderStage = await db.stage.findFirst({
+      where: {
+        name: "Новый заказ"
+      }
+    });
+
+    if (!newOrderStage) {
+      return { error: "New Order stage not found" };
+    }
+
+    const newOrder = await db.orders.create({
+      data: {
+        createdAt,
+        comments,
+        leadTime,
+        userId,
+        clientId,
+        serviceId,
+        execution: {
+          create: {
+            name: "Заказ добавлен",
+            executionDate: new Date(),
+            stage: {
+              connect: {
+                id: newOrderStage.id
+              }
+            },
+            user: {
+              connect: {
+                id: userId 
+              }
+            }
+          }
+        }
+      },
+      include: {
+        execution: true
+      }
+    });
+
+    return { success: "Order added!", order: newOrder };
+  } catch (error) {
+    console.error("Error adding order:", error);
+    return { error: "Something went wrong" };
+  }
+};
+
+

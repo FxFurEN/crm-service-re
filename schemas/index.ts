@@ -122,3 +122,15 @@ export const CategorySchema = z.object({
   }),
 });
 
+
+export const OrderSchema = z.object({
+  createdAt: z.date(),
+  comments: z.string().nullable(),
+  leadTime: z.date(),
+  userId: z.string().min(1, 
+    { message: "Сотрудник не может быть пустым!" }),
+  clientId: z.string().min(1, 
+    { message: "Клиент не может быть пустым!" }),
+  serviceId: z.string().min(1, 
+    { message: "Услуга не может быть пустым!" }),
+});

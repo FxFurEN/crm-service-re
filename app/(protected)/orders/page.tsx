@@ -1,80 +1,123 @@
-"use client"
+"use client";
 
 import CustomTable, { TableColumn } from "@/components/data-table";
+import * as React from "react";
+import { useRouter } from "next/navigation";
+import FloatButton from "@/components/float-button";
+import { DialogModal } from "@/components/orders/dialog-modal";
+import { Order } from "@/types/order";
+import { getAllOrders } from "@/actions/data-load";
+import DeleteConfirmationDialog from "@/components/alert-dialog-confirm";
+import { deleteClient } from "@/actions/del-data";
+import { Toaster } from "@/components/ui/sonner";
+import { toast } from "sonner";
+import { formatDate } from "date-fns";
+import { Tag } from "antd";
 
-export type Payment = {
-  id: string;
-  amount: number;
-  status: "pending" | "processing" | "success" | "failed";
-  email: string;
-};
-
-const columns: TableColumn<Payment>[] = [
-  {
-    accessorKey: "id",
-    header: "ID",
-    cell: ({ row }) => <div>{row.getValue("id")}</div>,
-  },
-  {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => <div className="capitalize">{row.getValue("status")}</div>,
-  },
-  {
-    accessorKey: "email",
-    header: "Email",
-    cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
-  },
-  {
-    accessorKey: "amount",
-    header: "Amount",
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("amount"));
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(amount);
-      return <div className="font-medium">{formatted}</div>;
-    },
-  },
+const orderColumns: TableColumn<Order>[] = [
+  { accessorKey: "serviceName", header: "Услуга", cell: ({ row }) => <div>{row.getValue("serviceName")}</div> },
+  { accessorKey: "executionStatus", header: "Статус", cell: ({ row }) => <Tag color={row.getValue("executionColor")}>{row.getValue("executionStatus")}</Tag> },
+  { accessorKey: "createdAt", header: "Дата создания", cell: ({ row }) => <div>{formatDate(row.getValue("createdAt"), "dd.MM.yyyy")}</div> },
+  { accessorKey: "leadTime", header: "Дата выполнения", cell: ({ row }) => <div>{formatDate(row.getValue("leadTime"), "dd.MM.yyyy")}</div> },
+  { accessorKey: "userName", header: "Сотрудник", cell: ({ row }) => <div>{row.getValue("userName")}</div> },
+  { accessorKey: "clientName", header: "Клиент", cell: ({ row }) => <div>{row.getValue("clientName")}</div> },
 ];
-
-const data: Payment[] = [
-  {
-    id: "m5gr84i9",
-    amount: 316,
-    status: "success",
-    email: "ken99@yahoo.com",
-  },
-  {
-    id: "3u1reuv4",
-    amount: 242,
-    status: "success",
-    email: "Abe45@gmail.com",
-  },
-  {
-    id: "derv1ws0",
-    amount: 837,
-    status: "processing",
-    email: "Monserrat44@gmail.com",
-  },
-  {
-    id: "5kma53ae",
-    amount: 874,
-    status: "success",
-    email: "Silas22@gmail.com",
-  },
-  {
-    id: "bhqecj4p",
-    amount: 721,
-    status: "failed",
-    email: "carmella@hotmail.com",
-  },
-]
 
 
 export default function OrdersPage() {
+  const router = useRouter();
+  const [orders, setOrder] = React.useState<Order[]>([]); 
+  const [open, setOpen] = React.useState(false);
+  const [ordersData, setOrdersData] = React.useState<Order | null>(null);
+  const [mode, setMode] = React.useState<"edit" | "add">("add");
+  const [isDeleteDialogOpen, setDeleteDialogOpen] = React.useState(false); 
+  const [deleteRowId, setDeleteRowId] = React.useState<string | null>(null); 
+
+  React.useEffect(() => {
+    fetchData();
+  }, []); 
+
+  const fetchData = async () => {
+    const data = await getAllOrders();
+    if (data) {
+      const transformedData = data.map(order => ({
+        ...order,
+        serviceName: order.service.name,
+        userName: order.user.name,
+        clientName: order.client.name ? order.client.name : order.client.initials,
+        executionStatus: order.execution.length > 0 ? order.execution[0].stage.name : 'Нет статуса',
+        executionColor: order.execution.length > 0 ? order.execution[0].stage.color : '#000000'
+      }));
+      setOrder(transformedData);
+    }
+  };
+  
+
+  const handleRowClick = (id: string) => {
+    router.push(`/orders/${id}`);
+  };
+
+  const handleFloatButtonClick = () => {
+    setOpen(true);
+    setMode("add");
+  };
+
+  const handleEdit = (id: string) => {
+    const selectedOrder = orders.find((order) => order.id === id);
+    setOpen(true);
+    setOrdersData(selectedOrder);
+    setMode("edit");
+  };
+
+  const handleDelete = (id: string) => {
+    setDeleteRowId(id); 
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    try {
+      if (deleteRowId) {
+        const response = await deleteClient(deleteRowId);
+        if (response.success) {
+          toast.success(response.success); 
+          setOrder(orders.filter(order => order.id !== deleteRowId)); 
+        }
+      }
+      setDeleteRowId(null);
+      setDeleteDialogOpen(false);
+    } catch (error) {
+      toast.error("Что-то пошло не так"); 
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteRowId(null); 
+    setDeleteDialogOpen(false); 
+  };
+
+  const handleAddOrUpdateSuccess = () => {
+    fetchData(); 
+  };
+
   return (
-    <CustomTable<Payment> data={data} columns={columns} searchableColumns={["email"]} />
+    <>
+      <CustomTable<Order>
+        data={orders}
+        columns={orderColumns}
+        searchableColumns={["clientName"]}
+        onRowClick={handleRowClick}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+      />
+      <FloatButton onClick={handleFloatButtonClick} />
+      <DialogModal open={open} onOpenChange={setOpen} mode={mode} orderData={ordersData} onSuccess={handleAddOrUpdateSuccess} />
+      <DeleteConfirmationDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        onConfirm={handleDeleteConfirm}
+        onCancel={handleDeleteCancel}
+      />
+      <Toaster richColors  />
+    </>
   );
 }

@@ -2,7 +2,7 @@
 
 import * as z from "zod";
 import { db } from "@/lib/db";
-import { CategorySchema, ClientSchema, ServiceSchema } from "@/schemas";
+import { CategorySchema, ClientSchema, OrderSchema, ServiceSchema } from "@/schemas";
 
 export const updateClient = async (clientId: string, updatedData: z.infer<typeof ClientSchema>) => {
   try {
@@ -106,5 +106,38 @@ export const updateCategory = async (categoryId: string, updatedData: z.infer<ty
   } catch (error) {
     console.error("Error updating client:", error);
     return { error: "What went wrong" };
+  }
+};
+
+
+export const updateOrder = async (orderId: string, updatedData: z.infer<typeof OrderSchema>) => {
+  try {
+    const validatedFields = OrderSchema.safeParse(updatedData);
+    if (!validatedFields.success) {
+      return { error: "Fields are not valid!" };
+    }
+    const { createdAt, leadTime, comments, userId, clientId, serviceId } = validatedFields.data;
+
+    const existingOrder = await db.orders.findUnique({ where: { id: orderId } });
+    if (!existingOrder) {
+      return { error: 'Заказ не найден' };
+    }
+
+    const updatedOrder = await db.orders.update({
+      where: { id: orderId },
+      data: {
+        createdAt,
+        leadTime,
+        comments,
+        userId,
+        clientId,
+        serviceId,
+      },
+    });
+
+    return { success: "Данные заказа успешно обновлены!", order: updatedOrder };
+  } catch (error) {
+    console.error("Error updating order:", error);
+    return { error: "Что-то пошло не так" };
   }
 };

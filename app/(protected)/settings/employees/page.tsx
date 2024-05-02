@@ -1,81 +1,63 @@
 "use client";
 
-import { useRouter } from 'next/navigation';
-import { UserRole } from "@prisma/client";
-import { useCurrentRole } from "@/hooks/use-current-role";
-import CustomTable, { TableColumn }  from '@/components/data-table';
+import { useEffect, useState } from 'react';
+import CustomTable, { TableColumn } from '@/components/data-table';
 import { Employee } from '@/types/employee';
+import useRedirectIfUser from '@/hooks/use-redirect-User';
+import { getAllEmployees } from '@/actions/data-load';
+
 
 const employeeColumns: TableColumn<Employee>[] = [
   {
-    accessorKey: "id",
-    header: "ID",
-    cell: ({ row }) => <div>{row.getValue("id")}</div>,
-  },
-  {
-    accessorKey: "initials",
-    header: "Initials",
-    cell: ({ row }) => <div>{row.getValue("initials")}</div>,
-  },
-  {
     accessorKey: "email",
-    header: "Email",
-    cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
+    header: "Почта",
+    cell: ({ row }) => <div>{row.getValue("email")}</div>,
   },
   {
-    accessorKey: "sign",
-    header: "Sign",
-    cell: ({ row }) => <div>{row.getValue("sign") ? "Yes" : "No"}</div>,
+    accessorKey: "name",
+    header: "Имя",
+    cell: ({ row }) => <div>{row.getValue("name")}</div>,
   },
   {
-    accessorKey: "position",
-    header: "Position",
-    cell: ({ row }) => <div>{row.getValue("position")}</div>,
-  },
+    accessorKey: "role",
+    header: "Должность",
+    cell: ({ row }) => (
+      <div>
+        {row.getValue("role") === "ADMIN" ? "Администратор" : "Сотрудник"}
+      </div>
+    ),
+  }
+  
 ];
-
-const employeeData: Employee[] = [
-  {
-    id: "1",
-    initials: "JD",
-    email: "john.doe@example.com",
-    sign: false,
-    position: "Manager",
-  },
-  {
-    id: "2",
-    initials: "AS",
-    email: "alice.smith@example.com",
-    sign: true,
-    position: "Developer",
-  },
-];
-
-
 
 const EmployeesPage = () => {
-  const router = useRouter();
-  const role = useCurrentRole();
+  const [employees, setEmployees] = useState<Employee[]>([]);
+  useRedirectIfUser();
 
-  if (role === UserRole.USER) {
-    router.back(); 
-  }
+  useEffect(() => {
+    const fetchEmployees = async () => {
+      const data = await getAllEmployees();
+      if (data) {
+        setEmployees(data);
+      }
+    };
+    fetchEmployees();
+  }, []);
 
   return ( 
     <>
-        <p className="text-2xl font-semibold text-center">
-          Сотрудники
-        </p>
-        <div>
-          <CustomTable<Employee> 
-            data={employeeData} 
-            columns={employeeColumns} 
-            searchableColumns={["fullName", "email", "phone"]} 
-          />
-        </div>
-        
+      <p className="text-2xl font-semibold text-center">
+        Сотрудники
+      </p>
+      <div>
+        <CustomTable<Employee> 
+          data={employees} 
+          columns={employeeColumns} 
+          searchableColumns={["email"]} 
+        />
+      </div>
     </>
-   );
+  );
 }
- 
+
 export default EmployeesPage;
