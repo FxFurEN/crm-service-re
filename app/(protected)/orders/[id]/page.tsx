@@ -5,32 +5,39 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
-import { getOrderById } from '@/actions/data-load';
+import { getOrderById, getOrderExecutionHistory  } from '@/actions/data-load';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 import { History } from 'lucide-react';
- 
-const tags = Array.from({ length: 20 }).map(
-  (_, i, a) => `История выполнения:${a.length - i}`
-)
 
 export default function OrderDetailPage() {
   const pathname = usePathname(); 
   const id = pathname.split('/').pop();
   const [order, setOrder] = useState(null);
+  const [executionHistory, setExecutionHistory] = useState([]);
+
 
   useEffect(() => {
-    const fetchOrder = async () => {
-      if (id) {
-        const fetchedOrder = await getOrderById(id);
-        setOrder(fetchedOrder);
-      }
-    };
-
+    fetchExecutionHistory();
     fetchOrder();
   }, [id]);
+
+
+  const fetchOrder = async () => {
+    if (id) {
+      const fetchedOrder = await getOrderById(id);
+      setOrder(fetchedOrder);
+    }
+  };
+
+  const fetchExecutionHistory = async () => {
+    if (id) {
+      const history = await getOrderExecutionHistory(id);
+      setExecutionHistory(history);
+    }
+  };
 
   return (
     <div className='ml-20'>
@@ -128,18 +135,14 @@ export default function OrderDetailPage() {
                   </p>
                 </CardHeader>
                 <CardContent>
-                  <ScrollArea className="h-[400px] w-full rounded-md">
-                    <div className="p-4">
-                      {tags.map((tag) => (
-                        <>
-                          <div key={tag} className="text-sm">
-                            {tag}
-                          </div>
-                          <Separator className="my-2" />
-                        </>
-                      ))}
-                    </div>
-                  </ScrollArea>
+                <ScrollArea className="h-[400px] w-full rounded-md">
+                    {executionHistory.map((execution) => (
+                      <div key={execution.id}>
+                        <p>{execution.user.name}: {execution.stage.name}</p>
+                        <p>Дата создания: {new Date(execution.executionDate).toLocaleString()}</p>
+                      </div>
+                    ))}
+                </ScrollArea>
                 </CardContent>
               </Card>
             </div>
