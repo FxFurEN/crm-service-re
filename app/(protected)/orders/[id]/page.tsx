@@ -11,6 +11,19 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 import { History } from 'lucide-react';
+import { Tag } from "antd";
+
+
+
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  return `${day}.${month}, ${hours}:${minutes}`;
+};
+
 
 export default function OrderDetailPage() {
   const pathname = usePathname(); 
@@ -138,8 +151,12 @@ export default function OrderDetailPage() {
                 <ScrollArea className="h-[400px] w-full rounded-md">
                     {executionHistory.map((execution) => (
                       <div key={execution.id}>
-                        <p>{execution.user.name}: {execution.stage.name}</p>
-                        <p>Дата создания: {new Date(execution.executionDate).toLocaleString()}</p>
+                        <p>
+                          <span className="text-gray-800">{execution.user.name}:</span>{' '}
+                          <Tag color="#2db7f5">{execution.stage.name}</Tag>
+                        </p>
+                        <p className="text-gray-800 text-sm">{formatDate(execution.executionDate)}</p>
+                        <Separator className="my-2" />
                       </div>
                     ))}
                 </ScrollArea>
