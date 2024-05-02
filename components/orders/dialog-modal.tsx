@@ -21,7 +21,7 @@ import { Order } from '@/types/order';
 import { DialogModalProps} from '@/types/dialog-props';
 import { OrderSchema } from '@/schemas';
 import { addOrder } from '@/actions/add-data';
-import { updateService } from '@/actions/edit-data';
+import { updateOrder } from '@/actions/edit-data';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { getAllClients, getAllEmployees, getAllServices } from '@/actions/data-load';
 import { CalendarIcon } from 'lucide-react';
@@ -97,7 +97,7 @@ export function DialogModal({ open, onOpenChange, mode = "add", orderData, onSuc
             setError("Ошибка при добавлении заказа");
           });
       } else if (mode === "edit" && orderData) {
-        updateService(orderData.id, { ...data })
+        updateOrder(orderData.id, { ...data })
           .then(() => {
             setSuccess("Заказ успешно обновлен");
             onSuccess && onSuccess(); 
