@@ -118,7 +118,7 @@ const ServicesPage = () => {
   };
 
   return ( 
-    <div className="flex flex-col md:flex-row">
+    <div className="flex flex-col md:flex-row ml-20">
           <CategoryList categories={categories} onEditCategory={handleEditCategory} onCategoryButtonClick={handleCategoryButtonClick} />
       <div className="w-full">
         <CustomTable<Service>
