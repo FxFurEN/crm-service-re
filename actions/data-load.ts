@@ -176,3 +176,19 @@ export const getOrderExecutionHistory = async (orderId: string) => {
     return null;
   }
 };
+
+
+
+export const getAllStages = async () => {
+  try {
+    const stages = await db.stage.findMany();
+
+    return stages;
+  } catch (error) {
+    console.error('Error fetching stages:', error);
+    return null;
+    
+  } finally {
+    await db.$disconnect();
+  }
+};
