@@ -28,6 +28,7 @@ import { CalendarIcon } from 'lucide-react';
 import { cn } from "@/lib/utils"
 import { format } from "date-fns"
 import { Textarea } from '@/components/ui/textarea';
+import { useCurrentUser } from '@/hooks/use-current-user';
 
 export function DialogModal({ open, onOpenChange, mode = "add", orderData, onSuccess }:  DialogModalProps<Order>) {
   const [error, setError] = useState<string | undefined>("");
@@ -36,6 +37,8 @@ export function DialogModal({ open, onOpenChange, mode = "add", orderData, onSuc
   const [clients, setClients] = useState([]); 
   const [employees, setEmployee] = useState([]); 
   const [services, setServices] = useState([]);
+
+  const user = useCurrentUser();
 
   const form = useForm({
     resolver: zodResolver(OrderSchema),
@@ -97,7 +100,8 @@ export function DialogModal({ open, onOpenChange, mode = "add", orderData, onSuc
             setError("Ошибка при добавлении заказа");
           });
       } else if (mode === "edit" && orderData) {
-        updateOrder(orderData.id, { ...data })
+        const userIdEdit = user?.id;
+        updateOrder(orderData.id, userIdEdit, { ...data })
           .then(() => {
             setSuccess("Заказ успешно обновлен");
             onSuccess && onSuccess(); 
