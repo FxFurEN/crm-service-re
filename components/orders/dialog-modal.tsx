@@ -263,34 +263,36 @@ export function DialogModal({ open, onOpenChange, mode = "add", orderData, onSuc
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="userId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Сотрудник</FormLabel>
-                    <Select
-                      disabled={isPending}
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Выберите сотрудника" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {employees.map((employee) => (
-                          <SelectItem key={employee.id} value={employee.id}>
-                            {employee.name}, {employee.role === 'ADMIN' ? 'Администратор' : 'Сотрудник'}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              {mode === "add" && (
+                <FormField
+                  control={form.control}
+                  name="userId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Сотрудник</FormLabel>
+                      <Select
+                        disabled={isPending}
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Выберите сотрудника" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {employees.map((employee) => (
+                            <SelectItem key={employee.id} value={employee.id}>
+                              {employee.name}, {employee.role === 'ADMIN' ? 'Администратор' : 'Сотрудник'}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
               <FormField
                 control={form.control}
                 name="comments"
