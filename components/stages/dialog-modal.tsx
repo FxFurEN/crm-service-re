@@ -26,7 +26,7 @@ export function DialogModalStages({ open, onOpenChange, onSuccess }: DialogModal
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
-  const [selectedColor, setSelectedColor] = useState<string | undefined>();
+  const [selectedColor, setSelectedColor] = useState<string | undefined>( '#B4D455');
 
   const form = useForm({
     resolver: zodResolver(StageSchema),
