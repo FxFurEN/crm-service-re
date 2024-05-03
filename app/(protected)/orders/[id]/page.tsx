@@ -149,16 +149,20 @@ export default function OrderDetailPage() {
                 </CardHeader>
                 <CardContent>
                 <ScrollArea className="h-[400px] w-full rounded-md">
-                    {executionHistory.map((execution) => (
-                      <div key={execution.id}>
-                        <p>
-                          <span className="text-gray-800">{execution.user.name}:</span>{' '}
+                  {executionHistory.map((execution) => (
+                    <div key={execution.id}>
+                      <p>
+                        <span className="text-gray-800">{execution.user.name}:</span>{' '}
+                        {execution.name === "Заказ обновлен" ? (
+                          <span className="text-green-500">Заказ был обновлен пользователем</span>
+                        ) : (
                           <Tag color={execution.stage.color}>{execution.stage.name}</Tag>
-                        </p>
-                        <p className="text-gray-800 text-sm">{formatDate(execution.executionDate)}</p>
-                        <Separator className="my-2" />
-                      </div>
-                    ))}
+                        )}
+                      </p>
+                      <p className="text-gray-800 text-sm">{formatDate(execution.executionDate)}</p>
+                      <Separator className="my-2" />
+                    </div>
+                  ))}
                 </ScrollArea>
                 </CardContent>
               </Card>
