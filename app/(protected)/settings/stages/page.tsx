@@ -1,21 +1,24 @@
-"use client";
-
 import useRedirectIfUser from '@/hooks/use-redirect-User';
-import CategoryList from './_components/stages-list';
 import React from 'react';
+import StagesList from './_components/stages-list';
+import AddButton from './_components/add-button';
+import { getAllStages } from '@/actions/data-load';
 
-const StagesPage = () => {
-    const [categories, setCategories] = React.useState<string[]>([]);
+const StagesPage = async  () => {
 
-    useRedirectIfUser();
-
-  return ( 
-    <>
-        <div className="flex items-center justify-center">
-          <CategoryList categories={categories} onCategoryButtonClick={() => {}} />
+    const stages = await getAllStages();
+    return ( 
+      <>
+          <div className="flex flex-col ml-20">
+            <div>
+                <AddButton/>
+            </div>
+            <div>
+                <StagesList data={stages}/>
+            </div>
         </div>
-    </>
-   );
+      </>
+    );
 }
  
 export default StagesPage;
