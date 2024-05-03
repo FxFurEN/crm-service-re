@@ -11,13 +11,10 @@ interface CategoryListProps {
 const CategoryList: React.FC<CategoryListProps> = ({ categories, onCategoryButtonClick }) => {
   return (
     <div className="w-full md:w-48 md:flex-shrink-0 mt-7">
-      <h4 className="mb-4 text-md font-medium leading-none">
-        Статусы
-        <Button className="ml-2 rounded-full " variant="ghost" size="icon" onClick={onCategoryButtonClick}>
-          <Plus size={15}/>
-        </Button>
-      </h4>
-      <ScrollArea className="h-72 w-full md:w-48 rounded-md border">
+      <Button onClick={onCategoryButtonClick} className="mb-4">
+        Добавить статус  <Plus className="ml-2 h-4 w-4"/>
+      </Button>
+      <ScrollArea className="h-72 w-full md:w-full rounded-md border">
         {categories.length > 0 ? (
           <div className="p-4">
             {categories.map((category, index) => (
