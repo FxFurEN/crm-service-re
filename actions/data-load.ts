@@ -96,7 +96,7 @@ export const getAllOrders = async () => {
         client: { select: { name: true, initials: true } },
         execution: {
           select: {
-            stage: { select: { name: true, color: true } }
+            stage: { select: {id: true, name: true, color: true } }
           }
         }
       }
