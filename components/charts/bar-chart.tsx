@@ -35,8 +35,11 @@ export default function BarChart({ data, xKey, yKey }: Props) {
           axisLine={false}
           stroke="#888888"
           fontSize={12}
-          tickFormatter={(value) => `$${value}`}
+          tickFormatter={(value) => `${value}`}
+          domain={[0, 'dataMax']} 
+          ticks={[0, 1, 2, 3]} 
         />
+
         <Bar dataKey={yKey} radius={[4, 4, 0, 0]} />
         <Legend />
       </BarGraph>
