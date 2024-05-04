@@ -145,8 +145,9 @@ export const updateOrder = async (orderId: string, userIdEdit: string, updatedDa
       },
     });
 
-    const stageId = existingOrder?.execution[0]?.stage?.id;
-
+    const lastExecution = existingOrder.execution[existingOrder.execution.length - 1];
+    const stageId = lastExecution.stage.id;
+    
     if (!stageId) {
       return { error: 'Stage not found', existingOrder };
     }
