@@ -48,7 +48,7 @@ const HomePage = () => {
     <div className="flex flex-wrap justify-center items-start">
       <Card className="w-[450px] m-2">
         <CardHeader>
-          <CardTitle>Orders for the last 7 days</CardTitle>
+          <CardTitle>Заказы за последние 7 дней</CardTitle>
         </CardHeader>
         <CardContent>
           <BarChart data={ordersLast7Days.map(item => ({ x: item.createdAt, y: item.total }))} xKey="x" yKey="y" />
@@ -56,7 +56,7 @@ const HomePage = () => {
       </Card>
       <Card className="w-[450px] m-2">
         <CardHeader>
-          <CardTitle>Orders by status</CardTitle>
+          <CardTitle>Заказы по статусам</CardTitle>
         </CardHeader>
         <CardContent>
         <PieChart
@@ -68,7 +68,7 @@ const HomePage = () => {
       </Card>
       <Card className="w-[450px] m-2">
         <CardHeader>
-          <CardTitle>Orders by employee</CardTitle>
+          <CardTitle>Заказы по сотрудникам</CardTitle>
         </CardHeader>
         <CardContent>
           <BarChart data={ordersByEmployee.map(item => ({ x: item.name, y: item.orders.length }))} xKey="x" yKey="y" />
