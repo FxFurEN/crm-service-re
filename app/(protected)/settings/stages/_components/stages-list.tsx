@@ -13,7 +13,7 @@ const StagesList: React.FC<CategoryListProps> = ({ data }) => {
         {data.length > 0 ? (
           <div className="p-4">
             {data.map((stage, index) => (
-              <div key={index} className="text-sm">
+              <div key={index} className="text-sm mb-2">
                  <Tag color={stage.color}>{stage.name}</Tag>
                 
               </div>
