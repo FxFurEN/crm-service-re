@@ -12,6 +12,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 import { History } from 'lucide-react';
 import { Tag } from "antd";
+import { DialogModalChangeStages } from '@/components/orders/dialog-modal-change-stage';
 
 
 
@@ -30,7 +31,7 @@ export default function OrderDetailPage() {
   const id = pathname.split('/').pop();
   const [order, setOrder] = useState(null);
   const [executionHistory, setExecutionHistory] = useState([]);
-
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     fetchExecutionHistory();
@@ -57,7 +58,7 @@ export default function OrderDetailPage() {
       {order ? (
         <>
           <div className='ml-5'>
-            <Button className="mb-4">Изменить статус заказа</Button>
+            <Button className="mb-4" onClick={() => setOpen(true)}>Изменить статус заказа</Button>
           </div>
           <div className="flex justify-between">
             <div className="md:w-[100%] px-4">
@@ -78,7 +79,7 @@ export default function OrderDetailPage() {
                         <Separator className="my-2" />
                       </div>
                       <div>
-                        <Label htmlFor="orderLeadTime">Время выполнения заказа: {new Date(order.leadTime).toLocaleDateString()}</Label>
+                        <Label htmlFor="orderLeadTime">Предварительная дата выполнения заказа: {new Date(order.leadTime).toLocaleDateString()}</Label>
                         <Separator className="my-2" />
                       </div>
                       <div>
@@ -86,7 +87,7 @@ export default function OrderDetailPage() {
                         <Separator className="my-2" />
                       </div>
                       <div>
-                        <Label htmlFor="orderService">Исполнитель: {order.user.name}</Label>
+                        <Label htmlFor="orderService">Принял заказ: {order.user.name}</Label>
                         <Separator className="my-2" />
                       </div>
                       <div>
@@ -149,16 +150,26 @@ export default function OrderDetailPage() {
                 </CardHeader>
                 <CardContent>
                 <ScrollArea className="h-[400px] w-full rounded-md">
-                    {executionHistory.map((execution) => (
-                      <div key={execution.id}>
-                        <p>
-                          <span className="text-gray-800">{execution.user.name}:</span>{' '}
-                          <Tag color={execution.stage.color}>{execution.stage.name}</Tag>
-                        </p>
-                        <p className="text-gray-800 text-sm">{formatDate(execution.executionDate)}</p>
-                        <Separator className="my-2" />
-                      </div>
-                    ))}
+                  {executionHistory.map((execution) => (
+                    <div key={execution.id}>
+                      <p>
+                        {execution.name !== "Заказ добавлен" && execution.name !== "Заказ обновлен" ? (
+                          <>
+                            <span className="text-500">{execution.name} </span>
+                            <Tag color={execution.stage.color}>{execution.stage.name}</Tag>
+                          </>
+                        ) : (
+                          execution.name === "Заказ обновлен" ? (
+                            <span className="text-green-500">Информация о заказе была обновлена</span>
+                          ) : (
+                            <Tag color={execution.stage.color}>{execution.stage.name}</Tag>
+                          )
+                        )}
+                      </p>
+                      <p className="text-gray-800 text-sm">{formatDate(execution.executionDate)} <span className="text-gray-400">{execution.user.name}</span></p>
+                      <Separator className="my-2" />
+                    </div>
+                  ))}
                 </ScrollArea>
                 </CardContent>
               </Card>
@@ -168,6 +179,7 @@ export default function OrderDetailPage() {
       ) : (
         <SkeletonCard/>
       )}
+      <DialogModalChangeStages open={open} onOpenChange={setOpen} orderId={id} />
     </div>
   );
 }

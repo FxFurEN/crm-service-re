@@ -110,7 +110,7 @@ export const updateCategory = async (categoryId: string, updatedData: z.infer<ty
 };
 
 
-export const updateOrder = async (orderId: string, updatedData: z.infer<typeof OrderSchema>) => {
+export const updateOrder = async (orderId: string, userIdEdit: string, updatedData: z.infer<typeof OrderSchema>) => {
   try {
     const validatedFields = OrderSchema.safeParse(updatedData);
     if (!validatedFields.success) {
@@ -118,7 +118,17 @@ export const updateOrder = async (orderId: string, updatedData: z.infer<typeof O
     }
     const { createdAt, leadTime, comments, userId, clientId, serviceId } = validatedFields.data;
 
-    const existingOrder = await db.orders.findUnique({ where: { id: orderId } });
+    const existingOrder = await db.orders.findUnique({ 
+      where: { id: orderId }, 
+      include: { 
+        execution: { 
+          select: { 
+            stage: { select: { id: true } } 
+          } 
+        } 
+      } 
+    });
+    
     if (!existingOrder) {
       return { error: 'Заказ не найден' };
     }
@@ -135,9 +145,38 @@ export const updateOrder = async (orderId: string, updatedData: z.infer<typeof O
       },
     });
 
-    return { success: "Данные заказа успешно обновлены!", order: updatedOrder };
+    const lastExecution = existingOrder.execution[existingOrder.execution.length - 1];
+    const stageId = lastExecution.stage.id;
+    
+    if (!stageId) {
+      return { error: 'Stage not found', existingOrder };
+    }
+    
+    const newExecution = await db.execution.create({
+      data: {
+        name: "Заказ обновлен", 
+        executionDate: new Date(),
+        stage: {
+          connect: {
+            id: stageId
+          }
+        },
+        user: {
+          connect: {
+            id: userIdEdit 
+          }
+        },
+        order: {
+          connect: {
+            id: orderId 
+          }
+        }
+      },
+    });
+
+    return { success: "Данные заказа успешно обновлены!", order: updatedOrder, execution: newExecution };
   } catch (error) {
     console.error("Error updating order:", error);
-    return { error: "Что-то пошло не так" };
+    return { error: "What went wrong" };
   }
 };

@@ -16,7 +16,14 @@ import { Tag } from "antd";
 
 const orderColumns: TableColumn<Order>[] = [
   { accessorKey: "serviceName", header: "Услуга", cell: ({ row }) => <div>{row.getValue("serviceName")}</div> },
-  { accessorKey: "executionStatus", header: "Статус", cell: ({ row }) => <Tag color={row.getValue("executionColor")}>{row.getValue("executionStatus")}</Tag> },
+  { accessorKey: "executionStatus", header: "Статус", cell: ({ row }) => {
+    const execution = row.original.execution;
+    const lastStage = execution.length > 0 ? execution[execution.length - 1].stage : null;
+    const color = lastStage ? lastStage.color : '#000000';
+    const status = lastStage ? lastStage.name : 'Нет статуса';
+    return <Tag color={color}>{status}</Tag>;
+  }
+  },
   { accessorKey: "createdAt", header: "Дата создания", cell: ({ row }) => <div>{formatDate(row.getValue("createdAt"), "dd.MM.yyyy")}</div> },
   { accessorKey: "leadTime", header: "Дата выполнения", cell: ({ row }) => <div>{formatDate(row.getValue("leadTime"), "dd.MM.yyyy")}</div> },
   { accessorKey: "userName", header: "Сотрудник", cell: ({ row }) => <div>{row.getValue("userName")}</div> },
@@ -45,8 +52,6 @@ export default function OrdersPage() {
         serviceName: order.service.name,
         userName: order.user.name,
         clientName: order.client.name ? order.client.name : order.client.initials,
-        executionStatus: order.execution.length > 0 ? order.execution[0].stage.name : 'Нет статуса',
-        executionColor: order.execution.length > 0 ? order.execution[0].stage.color : '#000000'
       }));
       setOrder(transformedData);
     }

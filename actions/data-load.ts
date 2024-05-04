@@ -96,7 +96,7 @@ export const getAllOrders = async () => {
         client: { select: { name: true, initials: true } },
         execution: {
           select: {
-            stage: { select: { name: true, color: true } }
+            stage: { select: {id: true, name: true, color: true } }
           }
         }
       }
@@ -174,5 +174,21 @@ export const getOrderExecutionHistory = async (orderId: string) => {
   } catch (error) {
     console.error('Error fetching order execution history:', error);
     return null;
+  }
+};
+
+
+
+export const getAllStages = async () => {
+  try {
+    const stages = await db.stage.findMany();
+
+    return stages;
+  } catch (error) {
+    console.error('Error fetching stages:', error);
+    return null;
+    
+  } finally {
+    await db.$disconnect();
   }
 };

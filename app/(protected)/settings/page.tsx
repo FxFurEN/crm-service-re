@@ -22,6 +22,9 @@ const SettingsPage = () => {
             <Link href="/settings/documents">
               <Button className="mr-4">Документы</Button>
             </Link>
+            <Link href="/settings/stages">
+              <Button className="mr-4">Статусы</Button>
+            </Link>
           </RoleGate>
          
         </div>

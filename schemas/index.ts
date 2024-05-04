@@ -134,3 +134,19 @@ export const OrderSchema = z.object({
   serviceId: z.string().min(1, 
     { message: "Услуга не может быть пустым!" }),
 });
+
+
+export const StageSchema = z.object({
+  name: z.string().min(1, 
+    { message: "Названия не может быть пустым!" }),
+    color: z.string().optional(), 
+});
+
+
+export const ExecutionSchema = z.object({
+  name: z.string().min(1, 
+    { message: "Названия не может быть пустым!" }),
+  userId: z.string(),
+  orderId: z.string(),
+  stageId: z.string(),
+});
