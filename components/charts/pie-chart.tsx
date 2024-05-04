@@ -15,10 +15,10 @@ type DataItem = {
 type Props = {
   data: DataItem[];
   dataKey: string;
+  colors: string[]; // Добавлен новый тип для цветов
 };
 
-export default function PieChartComponent({ data, dataKey }: Props) {
-
+export default function PieChartComponent({ data, dataKey, colors }: Props) {
   return (
     <ResponsiveContainer width={"100%"} height={350}>
       <PieChart>
@@ -29,6 +29,9 @@ export default function PieChartComponent({ data, dataKey }: Props) {
           fill="black"
           label
         >
+          {data.map((entry, index) => (
+            <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
+          ))}
         </Pie>
         <Legend />
       </PieChart>
