@@ -160,7 +160,7 @@ export default function OrderDetailPage() {
                           </>
                         ) : (
                           execution.name === "Заказ обновлен" ? (
-                            <span className="text-green-500">Заказ был обновлен пользователем</span>
+                            <span className="text-green-500">Информация о заказе была обновлена</span>
                           ) : (
                             <Tag color={execution.stage.color}>{execution.stage.name}</Tag>
                           )
