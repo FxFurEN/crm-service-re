@@ -153,14 +153,20 @@ export default function OrderDetailPage() {
                   {executionHistory.map((execution) => (
                     <div key={execution.id}>
                       <p>
-                        <span className="text-gray-800">{execution.user.name}:</span>{' '}
-                        {execution.name === "Заказ обновлен" ? (
-                          <span className="text-green-500">Заказ был обновлен пользователем</span>
+                        {execution.name !== "Заказ добавлен" && execution.name !== "Заказ обновлен" ? (
+                          <>
+                            <span className="text-500">{execution.name} </span>
+                            <Tag color={execution.stage.color}>{execution.stage.name}</Tag>
+                          </>
                         ) : (
-                          <Tag color={execution.stage.color}>{execution.stage.name}</Tag>
+                          execution.name === "Заказ обновлен" ? (
+                            <span className="text-green-500">Заказ был обновлен пользователем</span>
+                          ) : (
+                            <Tag color={execution.stage.color}>{execution.stage.name}</Tag>
+                          )
                         )}
                       </p>
-                      <p className="text-gray-800 text-sm">{formatDate(execution.executionDate)}</p>
+                      <p className="text-gray-800 text-sm">{formatDate(execution.executionDate)} <span className="text-gray-400">{execution.user.name}</span></p>
                       <Separator className="my-2" />
                     </div>
                   ))}
