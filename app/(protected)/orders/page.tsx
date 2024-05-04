@@ -18,9 +18,9 @@ const orderColumns: TableColumn<Order>[] = [
   { accessorKey: "serviceName", header: "Услуга", cell: ({ row }) => <div>{row.getValue("serviceName")}</div> },
   { accessorKey: "executionStatus", header: "Статус", cell: ({ row }) => {
     const execution = row.original.execution;
-    const stage = execution.length > 0 ? execution[0].stage : null;
-    const color = stage ? stage.color : '#000000';
-    const status = execution.length > 0 ? execution[0].stage.name : 'Нет статуса';
+    const lastStage = execution.length > 0 ? execution[execution.length - 1].stage : null;
+    const color = lastStage ? lastStage.color : '#000000';
+    const status = lastStage ? lastStage.name : 'Нет статуса';
     return <Tag color={color}>{status}</Tag>;
   }
   },
