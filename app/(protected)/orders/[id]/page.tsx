@@ -12,6 +12,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 import { History } from 'lucide-react';
 import { Tag } from "antd";
+import { DialogModalChangeStages } from '@/components/orders/dialog-modal-change-stage';
 
 
 
@@ -30,7 +31,7 @@ export default function OrderDetailPage() {
   const id = pathname.split('/').pop();
   const [order, setOrder] = useState(null);
   const [executionHistory, setExecutionHistory] = useState([]);
-
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     fetchExecutionHistory();
@@ -57,7 +58,7 @@ export default function OrderDetailPage() {
       {order ? (
         <>
           <div className='ml-5'>
-            <Button className="mb-4">Изменить статус заказа</Button>
+            <Button className="mb-4" onClick={() => setOpen(true)}>Изменить статус заказа</Button>
           </div>
           <div className="flex justify-between">
             <div className="md:w-[100%] px-4">
@@ -172,6 +173,7 @@ export default function OrderDetailPage() {
       ) : (
         <SkeletonCard/>
       )}
+      <DialogModalChangeStages open={open} onOpenChange={setOpen} orderId={id} />
     </div>
   );
 }
