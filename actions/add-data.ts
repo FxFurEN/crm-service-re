@@ -2,7 +2,7 @@
 
 import * as z from "zod";
 import { db } from "@/lib/db";
-import { CategorySchema, ClientSchema, OrderSchema, ServiceSchema, StageSchema } from "@/schemas";
+import { CategorySchema, ClientSchema, ExecutionSchema, OrderSchema, ServiceSchema, StageSchema } from "@/schemas";
 import { checkClientExistsByEmail } from "@/data/client-validaton"; 
 
 export const addClient = async (values: z.infer<typeof ClientSchema>) => {
@@ -57,7 +57,7 @@ export const addService = async ({ name, price, categoryId }) => {
       data: {
         name,
         price,
-        category: { connect: { id: existingCategory ? categoryId : category.id } },
+        category: { connect: { id: existingCategory ? categoryId : category?.id } },
       },
     });
 
@@ -169,5 +169,31 @@ export const addStage = async (values: z.infer<typeof StageSchema>) => {
   } catch (error) {
     console.error("Error adding client:", error);
     return { error: "What's wrong" };
+  }
+};
+
+
+
+export const addExecution = async (orderId: string, userId: string, values: z.infer<typeof ExecutionSchema>) => {
+  try {
+    const validatedFields = ExecutionSchema.safeParse(values);
+    if (!validatedFields.success) {
+      return { error: "Invalid fields!" };
+    }
+    const { name, stageId, userId, orderId } = validatedFields.data;
+    const newExecution = await db.execution.create({
+      data: {
+        name,
+        executionDate: new Date(),
+        userId,
+        orderId,
+        stageId,
+      },
+    });
+
+    return { success: "Execution added!", execution: newExecution };
+  } catch (error) {
+    console.error("Error adding execution:", error);
+    return { error: "Something went wrong" };
   }
 };
