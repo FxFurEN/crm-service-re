@@ -4,21 +4,25 @@ import { useEffect, useState } from 'react';
 import BarChart from "@/components/charts/bar-chart";
 import PieChart from "@/components/charts/pie-chart"; 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getOrdersByEmployee, getOrdersByStatus, getOrdersLast7Days } from '@/actions/data-load';
+import { getOrdersByEmployee, getOrdersByStatus, getOrdersLast7Days, getOverdueOrdersCount } from '@/actions/data-load';
 
 const HomePage = () => {
   const [ordersLast7Days, setOrdersLast7Days] = useState([]);
   const [ordersByStatus, setOrdersByStatus] = useState([]);
   const [ordersByEmployee, setOrdersByEmployee] = useState([]);
+  const [overdueOrdersCount, setOverdueOrdersCount] = useState(0);
 
   useEffect(() => {
     const fetchOrdersData = async () => {
       const last7DaysData = await getOrdersLast7Days();
       const byStatusData = await getOrdersByStatus();
       const byEmployeeData = await getOrdersByEmployee();
+      const overdueCount = await getOverdueOrdersCount();
+
       setOrdersByStatus(byStatusData);
       setOrdersLast7Days(last7DaysData);
       setOrdersByEmployee(byEmployeeData);
+      setOverdueOrdersCount(overdueCount);
     };
 
     fetchOrdersData();
@@ -48,7 +52,7 @@ const HomePage = () => {
     <div className="flex flex-wrap justify-center items-start">
       <Card className="w-[450px] m-2">
         <CardHeader>
-          <CardTitle>Заказы за последние 7 дней</CardTitle>
+          <CardTitle className="text-sm text-muted-foreground">Заказы за последние 7 дней</CardTitle>
         </CardHeader>
         <CardContent>
           <BarChart data={ordersLast7Days.map(item => ({ x: item.createdAt, y: item.total }))} xKey="x" yKey="y" />
@@ -56,24 +60,42 @@ const HomePage = () => {
       </Card>
       <Card className="w-[450px] m-2">
         <CardHeader>
-          <CardTitle>Заказы по статусам</CardTitle>
+          <CardTitle className="text-sm  text-muted-foreground">Заказы по статусам</CardTitle>
         </CardHeader>
         <CardContent>
-        <PieChart
+          <PieChart
             data={transformDataForPieChart(ordersByStatus)}
             dataKey="value"
             colors={transformDataForPieChart(ordersByStatus).map(status => status.color)}
-        />
+          />
         </CardContent>
       </Card>
       <Card className="w-[450px] m-2">
         <CardHeader>
-          <CardTitle>Заказы по сотрудникам</CardTitle>
+          <CardTitle className="text-sm  text-muted-foreground">Заказы по сотрудникам</CardTitle>
         </CardHeader>
         <CardContent>
           <BarChart data={ordersByEmployee.map(item => ({ x: item.name, y: item.orders.length }))} xKey="x" yKey="y" />
         </CardContent>
       </Card>
+      <div className="flex m-2">
+        <Card className="flex-1 mr-2">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm text-muted-foreground">Просроченные заказы</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <CardTitle className="text-4xl">{overdueOrdersCount}</CardTitle>
+          </CardContent>
+        </Card>
+        <Card className="flex-1 ml-2">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm text-muted-foreground">Просроченные заказы</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <CardTitle className="text-4xl">{overdueOrdersCount}</CardTitle>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
