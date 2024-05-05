@@ -12,6 +12,7 @@ const HomePage = () => {
   const [ordersByStatus, setOrdersByStatus] = useState([]);
   const [ordersByEmployee, setOrdersByEmployee] = useState([]);
   const [overdueOrdersCount, setOverdueOrdersCount] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchOrdersData = async () => {
@@ -24,6 +25,7 @@ const HomePage = () => {
       setOrdersLast7Days(last7DaysData);
       setOrdersByEmployee(byEmployeeData);
       setOverdueOrdersCount(overdueCount);
+      setLoading(false); // Set loading to false when data is fetched
     };
 
     fetchOrdersData();
@@ -56,7 +58,7 @@ const HomePage = () => {
           <CardTitle className="text-sm text-muted-foreground">Заказы за последние 7 дней</CardTitle>
         </CardHeader>
         <CardContent>
-          <BarChart data={ordersLast7Days} xKey="x" yKey="y" />
+          {loading ? <Skeleton className="h-96" /> : <BarChart data={ordersLast7Days} xKey="x" yKey="y" />}
         </CardContent>
       </Card>
       <Card className="w-[450px] m-2">
@@ -64,11 +66,11 @@ const HomePage = () => {
           <CardTitle className="text-sm  text-muted-foreground">Заказы по статусам</CardTitle>
         </CardHeader>
         <CardContent>
-          <PieChart
+          {loading ? <Skeleton className="h-96" /> : <PieChart
             data={transformDataForPieChart(ordersByStatus)}
             dataKey="value"
             colors={transformDataForPieChart(ordersByStatus).map(status => status.color)}
-          />
+          />}
         </CardContent>
       </Card>
       <Card className="w-[450px] m-2">
@@ -76,7 +78,7 @@ const HomePage = () => {
           <CardTitle className="text-sm  text-muted-foreground">Заказы по сотрудникам</CardTitle>
         </CardHeader>
         <CardContent>
-          <BarChart data={ordersByEmployee.map(item => ({ x: item.name, Сотрудники: item.orders.length }))} xKey="x" yKey="Сотрудники" />
+          {loading ? <Skeleton className="h-96" /> : <BarChart data={ordersByEmployee.map(item => ({ x: item.name, Сотрудники: item.orders.length }))} xKey="x" yKey="Сотрудники" />}
         </CardContent>
       </Card>
       <div className="flex m-2">
@@ -85,11 +87,7 @@ const HomePage = () => {
             <CardTitle className="text-sm text-muted-foreground">Просроченные заказы</CardTitle>
           </CardHeader>
           <CardContent>
-          {overdueOrdersCount === null ? ( 
-              <Skeleton className="h-10 w-full" /> 
-            ) : (
-              <CardTitle className="text-4xl">{overdueOrdersCount}</CardTitle>
-            )}
+            {loading ? <Skeleton className="h-10 w-full" /> : <CardTitle className="text-4xl">{overdueOrdersCount}</CardTitle>}
           </CardContent>
         </Card>
         <Card className="flex-1 ml-2">
@@ -97,11 +95,7 @@ const HomePage = () => {
             <CardTitle className="text-sm text-muted-foreground">Просроченные заказы</CardTitle>
           </CardHeader>
           <CardContent>
-          {overdueOrdersCount === null ? ( 
-              <Skeleton className="h-10 w-full" /> 
-            ) : (
-              <CardTitle className="text-4xl">{overdueOrdersCount}</CardTitle>
-            )}
+            {loading ? <Skeleton className="h-10 w-full" /> : <CardTitle className="text-4xl">{overdueOrdersCount}</CardTitle>}
           </CardContent>
         </Card>
       </div>
