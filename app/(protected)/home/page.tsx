@@ -76,7 +76,7 @@ const HomePage = () => {
           <CardTitle className="text-sm  text-muted-foreground">Заказы по сотрудникам</CardTitle>
         </CardHeader>
         <CardContent>
-          <BarChart data={ordersByEmployee.map(item => ({ x: item.name, y: item.orders.length }))} xKey="x" yKey="y" />
+          <BarChart data={ordersByEmployee.map(item => ({ x: item.name, Сотрудники: item.orders.length }))} xKey="x" yKey="Сотрудники" />
         </CardContent>
       </Card>
       <div className="flex m-2">
