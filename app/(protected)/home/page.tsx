@@ -5,12 +5,13 @@ import BarChart from "@/components/charts/bar-chart";
 import PieChart from "@/components/charts/pie-chart"; 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getOrdersByEmployee, getOrdersByStatus, getOrdersLast7Days, getOverdueOrdersCount } from '@/actions/data-load';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const HomePage = () => {
   const [ordersLast7Days, setOrdersLast7Days] = useState([]);
   const [ordersByStatus, setOrdersByStatus] = useState([]);
   const [ordersByEmployee, setOrdersByEmployee] = useState([]);
-  const [overdueOrdersCount, setOverdueOrdersCount] = useState(0);
+  const [overdueOrdersCount, setOverdueOrdersCount] = useState(null);
 
   useEffect(() => {
     const fetchOrdersData = async () => {
@@ -84,7 +85,11 @@ const HomePage = () => {
             <CardTitle className="text-sm text-muted-foreground">Просроченные заказы</CardTitle>
           </CardHeader>
           <CardContent>
-            <CardTitle className="text-4xl">{overdueOrdersCount}</CardTitle>
+          {overdueOrdersCount === null ? ( 
+              <Skeleton className="h-10 w-full" /> 
+            ) : (
+              <CardTitle className="text-4xl">{overdueOrdersCount}</CardTitle>
+            )}
           </CardContent>
         </Card>
         <Card className="flex-1 ml-2">
@@ -92,7 +97,11 @@ const HomePage = () => {
             <CardTitle className="text-sm text-muted-foreground">Просроченные заказы</CardTitle>
           </CardHeader>
           <CardContent>
-            <CardTitle className="text-4xl">{overdueOrdersCount}</CardTitle>
+          {overdueOrdersCount === null ? ( 
+              <Skeleton className="h-10 w-full" /> 
+            ) : (
+              <CardTitle className="text-4xl">{overdueOrdersCount}</CardTitle>
+            )}
           </CardContent>
         </Card>
       </div>
