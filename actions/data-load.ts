@@ -261,3 +261,46 @@ export const getOrdersByEmployee = async () => {
     await db.$disconnect();
   }
 };
+
+
+
+export const getOverdueOrdersCount = async () => {
+  try {
+    const currentDate = new Date();
+    const overdueOrders = await db.orders.findMany({
+      where: {
+        NOT: {
+          execution: {
+            some: {
+              stage: {
+                OR: [
+                  { name: "Закрыт" }, 
+                  { name: "Готов" }  
+                ]
+              }
+            }
+          }
+        },
+        execution: {
+          some: {
+            stage: {
+              NOT: {
+                name: "Закрыт"
+              }
+            }
+          }
+        },
+        leadTime: {
+          lt: currentDate
+        }
+      }
+    });
+
+    return overdueOrders.length;
+  } catch (error) {
+    console.error('Error fetching overdue orders:', error);
+    return null;
+  } finally {
+    await db.$disconnect();
+  }
+};
