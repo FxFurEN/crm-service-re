@@ -56,7 +56,7 @@ const HomePage = () => {
           <CardTitle className="text-sm text-muted-foreground">Заказы за последние 7 дней</CardTitle>
         </CardHeader>
         <CardContent>
-          <BarChart data={ordersLast7Days.map(item => ({ x: item.createdAt, y: item.total }))} xKey="x" yKey="y" />
+          <BarChart data={ordersLast7Days} xKey="x" yKey="y" />
         </CardContent>
       </Card>
       <Card className="w-[450px] m-2">

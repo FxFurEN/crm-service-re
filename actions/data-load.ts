@@ -2,6 +2,10 @@
 
 import { db } from "@/lib/db";
 
+interface OrdersCount {
+  [key: string]: number;
+}
+
 export const getAllClients = async () => {
     try {
       const clients = await db.clients.findMany();
@@ -196,10 +200,17 @@ export const getAllStages = async () => {
 
 export const getOrdersLast7Days = async () => {
   try {
+    const endDate = new Date();
     const startDate = new Date();
-    startDate.setDate(startDate.getDate() - 6); // Subtract 6 days to get a 7-day range
-    const endDate = new Date(); // Today
+    startDate.setDate(startDate.getDate() - 6); 
 
+    const ordersCountByDay: OrdersCount = {};
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(startDate);
+      date.setDate(date.getDate() + i); 
+      const formattedDate = `${String(date.getDate()).padStart(2, '0')}.${String(date.getMonth() + 1).padStart(2, '0')}`; 
+      ordersCountByDay[formattedDate] = 0; 
+    }
     const orders = await db.orders.findMany({
       where: {
         createdAt: {
@@ -207,12 +218,19 @@ export const getOrdersLast7Days = async () => {
           lte: endDate,
         },
       },
-      orderBy: {
-        createdAt: 'asc',
-      },
+    });
+    orders.forEach(order => {
+      const orderDate = new Date(order.createdAt);
+      const formattedOrderDate = `${String(orderDate.getDate()).padStart(2, '0')}.${String(orderDate.getMonth() + 1).padStart(2, '0')}`; // Форматируем дату
+      ordersCountByDay[formattedOrderDate]++;
     });
 
-    return orders;
+    const ordersData = Object.keys(ordersCountByDay).map(date => ({
+      x: date, // Дата
+      y: ordersCountByDay[date],
+    }));
+
+    return ordersData;
   } catch (error) {
     console.error('Error fetching orders for the last 7 days:', error);
     return null;
@@ -220,6 +238,8 @@ export const getOrdersLast7Days = async () => {
     await db.$disconnect();
   }
 };
+
+
 
 
 
