@@ -192,3 +192,115 @@ export const getAllStages = async () => {
     await db.$disconnect();
   }
 };
+
+
+export const getOrdersLast7Days = async () => {
+  try {
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - 6); // Subtract 6 days to get a 7-day range
+    const endDate = new Date(); // Today
+
+    const orders = await db.orders.findMany({
+      where: {
+        createdAt: {
+          gte: startDate,
+          lte: endDate,
+        },
+      },
+      orderBy: {
+        createdAt: 'asc',
+      },
+    });
+
+    return orders;
+  } catch (error) {
+    console.error('Error fetching orders for the last 7 days:', error);
+    return null;
+  } finally {
+    await db.$disconnect();
+  }
+};
+
+
+
+
+export const getOrdersByStatus = async () => {
+  try {
+    const ordersByStatus = await db.orders.findMany({
+      include: {
+        execution: {
+          select: {
+            stage: { select: { name: true, color: true } }
+          }
+        }
+      }
+    });
+    return ordersByStatus;
+  } catch (error) {
+    console.error('Error fetching orders by status:', error);
+    return null;
+  } finally {
+    await db.$disconnect();
+  }
+};
+
+
+
+export const getOrdersByEmployee = async () => {
+  try {
+    const ordersByEmployee = await db.user.findMany({
+      include: {
+        orders: true,
+      },
+    });
+    return ordersByEmployee;
+  } catch (error) {
+    console.error('Error fetching orders by employee:', error);
+    return null;
+  } finally {
+    await db.$disconnect();
+  }
+};
+
+
+
+export const getOverdueOrdersCount = async () => {
+  try {
+    const currentDate = new Date();
+    const overdueOrders = await db.orders.findMany({
+      where: {
+        NOT: {
+          execution: {
+            some: {
+              stage: {
+                OR: [
+                  { name: "Закрыт" }, 
+                  { name: "Готов" }  
+                ]
+              }
+            }
+          }
+        },
+        execution: {
+          some: {
+            stage: {
+              NOT: {
+                name: "Закрыт"
+              }
+            }
+          }
+        },
+        leadTime: {
+          lt: currentDate
+        }
+      }
+    });
+
+    return overdueOrders.length;
+  } catch (error) {
+    console.error('Error fetching overdue orders:', error);
+    return null;
+  } finally {
+    await db.$disconnect();
+  }
+};
