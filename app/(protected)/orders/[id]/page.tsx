@@ -320,7 +320,13 @@ export default function OrderDetailPage() {
       return;
     }
   
-    const inputs = [{  }];
+    const clientData = order.client.sign === false ?
+      `${order.client.initials}\n${order.client.phone}\n${order.client.address}` :
+      `${order.client.name}\n${order.client.unp}\n${order.client.email}\n${order.client.phone}`;
+
+    const inputs = [{
+      clientData: clientData
+    }];
     const plugins = { text, image, readOnlyText, readOnlySvg, Table: tableBeta, line  };
     generate({ template, inputs, plugins}).then((pdf) => {
       try {
