@@ -126,7 +126,8 @@ export const getOrderById = async (orderId: string) => {
       include: {
         service: {
           select: {
-            name: true
+            name: true,
+            price: true,
           }
         },
         user: {
