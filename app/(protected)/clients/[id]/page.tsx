@@ -24,7 +24,7 @@ export default function ClientDetailPage() {
   }, [id]);
 
   return (
-    <div>
+    <div className='ml-20'>
       {client ? (
         <Card className="flex flex-col md:flex-row md:w-[700px] w-[400px]">
           <div className="md:w-[50%]">
