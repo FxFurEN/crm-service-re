@@ -22,7 +22,7 @@ import CategoryList from './_components/category-list';
 
 const serviceColumns: TableColumn<Service>[] = [
   { accessorKey: "name", header: "Наименование", cell: ({ row }) => <div>{row.getValue("name")}</div> },
-  { accessorKey: "price", header: "Цена", cell: ({ row }) => <div>{row.getValue("price")}</div> },
+  { accessorKey: "price", header: "Цена, BYN", cell: ({ row }) => <div>{row.getValue("price")}</div> },
   { accessorKey: "categoryName", header: "Категория", cell: ({ row }) => <div>{row.getValue("categoryName")}</div> },
 ];
 
