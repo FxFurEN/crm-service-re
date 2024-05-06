@@ -75,7 +75,7 @@ const template: Template = {
         "type": "text",
         "content": "\nImani Olowe \n+123-456-7890 \n63 Ivy Road, Hawkville, GA, USA 31036",
         "position": {
-          "x": 4.87,
+          "x": 6.87,
           "y": 48.31
         },
         "width": 97.65,
@@ -84,7 +84,7 @@ const template: Template = {
         "alignment": "left",
         "verticalAlignment": "top",
         "fontSize": 13,
-        "lineHeight": 1,
+        "lineHeight": 1.2,
         "characterSpacing": 0,
         "fontColor": "#000000",
         "backgroundColor": "",
@@ -319,12 +319,15 @@ export default function OrderDetailPage() {
       console.error('Template is not loaded yet.');
       return;
     }
-  
+
+    const orderData = `[[\"${order.service.name}\",\"${order.service.price}\"]]`;
+
     const clientData = order.client.sign === false ?
-      `${order.client.initials}\n${order.client.phone}\n${order.client.address}` :
+      `${order.client.initials}\n${order.client.phone}\n${order.client.email}` :
       `${order.client.name}\n${order.client.unp}\n${order.client.email}\n${order.client.phone}`;
 
     const inputs = [{
+      orderData: orderData,
       clientData: clientData
     }];
     const plugins = { text, image, readOnlyText, readOnlySvg, Table: tableBeta, line  };
