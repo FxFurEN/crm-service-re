@@ -13,9 +13,7 @@ import { Separator } from "@/components/ui/separator"
 import { History } from 'lucide-react';
 import { Tag } from "antd";
 import { DialogModalChangeStages } from '@/components/orders/dialog-modal-change-stage';
-import { generate } from '@pdfme/generator';
-import { text, image, readOnlyText, readOnlySvg, tableBeta, line  } from "@pdfme/schemas";
-import { certificate_of_Completion } from '@/documents/tempates';
+import { DialogModal } from '@/components/templates/dialog-modal';
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
@@ -33,10 +31,12 @@ export default function OrderDetailPage() {
   const [order, setOrder] = useState(null);
   const [executionHistory, setExecutionHistory] = useState([]);
   const [open, setOpen] = useState(false);
+  const [openTempate, setOpenTempate] = useState(false);
 
   useEffect(() => {
     fetchExecutionHistory();
     fetchOrder();
+
   }, [id]);
 
 
@@ -54,37 +54,6 @@ export default function OrderDetailPage() {
     }
   };
 
-  const generatePDF = () => {
-    if (!certificate_of_Completion) {
-      console.error('Template is not loaded yet.');
-      return;
-    }
-
-    const template = certificate_of_Completion;
-    
-    const orderData = `[[\"${order.service.name}\",\"${order.service.price}\"]]`;
-
-    const clientData = order.client.sign === false ?
-      `${order.client.initials}\n${order.client.phone}\n${order.client.email}` :
-      `${order.client.name}\n${order.client.unp}\n${order.client.email}\n${order.client.phone}`;
-
-    const inputs = [{
-      orderData: orderData,
-      clientData: clientData
-    }];
-    const plugins = { text, image, readOnlyText, readOnlySvg, Table: tableBeta, line  };
-    generate({ template , inputs, plugins}).then((pdf) => {
-      try {
-        const blob = new Blob([pdf.buffer], { type: 'application/pdf' });
-        window.open(URL.createObjectURL(blob));
-      } catch (error) {
-        console.error('Error generating PDF:', error);
-
-        alert('Error generating PDF. Please try again later.');
-      }
-    });
-};
-
   
 
   return (
@@ -93,7 +62,7 @@ export default function OrderDetailPage() {
         <>
           <div className='ml-5'>
             <Button className="mb-4" onClick={() => setOpen(true)}>Изменить статус заказа</Button>
-            <Button className="mb-4 ml-5" onClick={generatePDF}>Печатать</Button>
+            <Button className="mb-4 ml-5" onClick={() => setOpenTempate(true)}>Печатать</Button>
           </div>
           <div className="flex justify-between">
             <div className="md:w-[100%] px-4">
@@ -214,6 +183,7 @@ export default function OrderDetailPage() {
       ) : (
         <SkeletonCard/>
       )}
+      <DialogModal open={openTempate} onOpenChange={setOpenTempate} orderId={id}/>
       <DialogModalChangeStages open={open} onOpenChange={setOpen} orderId={id} />
     </div>
   );
