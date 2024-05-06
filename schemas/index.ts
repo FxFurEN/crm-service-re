@@ -107,6 +107,11 @@ export const ServiceSchema = z.object({
   }),
   price: z.string().min(1, {
     message: "Цена не может быть пустым!",
+  }).refine((price) => {
+    const numericPrice = parseFloat(price);
+    return numericPrice > 0;
+  }, {
+    message: "Цена должна быть больше нуля!",
   }),
   categoryId: z.string().min(1, {
     message: "Категория не может быть пустой!",
