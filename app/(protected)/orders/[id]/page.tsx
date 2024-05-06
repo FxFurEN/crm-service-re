@@ -351,7 +351,7 @@ export default function OrderDetailPage() {
         <>
           <div className='ml-5'>
             <Button className="mb-4" onClick={() => setOpen(true)}>Изменить статус заказа</Button>
-            <Button className="mb-4" onClick={generatePDF}>Печатать</Button>
+            <Button className="mb-4 ml-5" onClick={generatePDF}>Печатать</Button>
           </div>
           <div className="flex justify-between">
             <div className="md:w-[100%] px-4">
