@@ -43,15 +43,19 @@ export function DialogModal({ open, onOpenChange, orderId }) {
     let inputs = []; 
 
   if (selectedTemplateName === 'certificate_of_Completion') {
-      const orderData = `[[\"${order.service.name}\",\"${order.service.price}\"]]`;
+      const createdAt = formatDate(order.createdAt, "dd.MM.yyyy");
+      const leadTime = formatDate(order.leadTime, "dd.MM.yyyy");
 
-      const clientData = order.client.sign === false ?
-        `${order.client.initials}\n${order.client.phone}\n${order.client.email}` :
-        `${order.client.name}\n${order.client.unp}\n${order.client.email}\n${order.client.phone}`;
+      const serviceData = `[[\"${order.service.name}\",\"${order.service.price}\"]]`;
+
+      const orderData = order.client.sign === false ?
+      `[[\"${order.client.initials}\", \"${order.service.name}\", \"${createdAt}\", \"${leadTime}\"]]` :
+      `[[${JSON.stringify(order.client.name)}, \"${order.service.name}\", \"${createdAt}\", \"${leadTime}\"]]`;    
 
       inputs.push({
         orderData: orderData,
-        clientData: clientData
+        serviceData: serviceData,
+        createdAt: createdAt
       });
   } else if (selectedTemplateName === 'collection_slip') {
       const createdAt = formatDate(order.createdAt, "dd.MM.yyyy");
