@@ -1,7 +1,7 @@
 "use client";
 
 import { generate } from '@pdfme/generator';
-import { certificate_of_Completion, collection_slip } from '@/documents/tempates';
+import { certificate_of_Completion, collection_slip, guarantee_card } from '@/documents/tempates';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Button } from "@/components/ui/button";
@@ -19,6 +19,7 @@ export function DialogModal({ open, onOpenChange, orderId }) {
   const templates: { name: string; label: string; template: Template; }[] = [
     { name: "certificate_of_Completion", label: "Акт выполненных работ", template: certificate_of_Completion },
     { name: "collection_slip", label: "Квитанция о приеме на ремонт", template: collection_slip },
+    { name: "guarantee_card", label: "Гарантийный талон", template: guarantee_card },
   ];
 
 
@@ -69,7 +70,24 @@ export function DialogModal({ open, onOpenChange, orderId }) {
         orderData: orderData,
         createdAt: createdAt
       });
-  }
+  } else if (selectedTemplateName === 'guarantee_card') {
+    const createdAt = formatDate(order.createdAt, "dd.MM.yyyy");
+    const createdAtCopy = formatDate(order.createdAt, "dd.MM.yyyy");
+    const leadTime = formatDate(order.leadTime, "dd.MM.yyyy");
+
+    const serviceData = `[[\"${order.service.name}\",\"${order.service.price}\"]]`;
+
+    const orderData = order.client.sign === false ?
+      `[[\"${order.client.initials}\", \"${order.service.name}\", \"${createdAt}\", \"${leadTime}\"]]` :
+      `[[${JSON.stringify(order.client.name)}, \"${order.service.name}\", \"${createdAt}\", \"${leadTime}\"]]`;    
+
+      inputs.push({
+        orderData: orderData,
+        serviceData: serviceData,
+        createdAt: createdAt,
+        createdAtCopy: createdAtCopy
+      });
+}
     
 
     const plugins = { text, image, readOnlyText, readOnlySvg, Table: tableBeta, line };
