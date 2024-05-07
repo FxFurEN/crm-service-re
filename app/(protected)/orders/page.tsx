@@ -80,9 +80,11 @@ export default function OrdersPage() {
 
       const currentDate = new Date();
       const overdueOrders = orders.filter(order => {
-      const leadTime = new Date(order.leadTime);
-      return leadTime < new Date(currentDate.setHours(0, 0, 0, 0));
-    });
+        const leadTime = new Date(order.leadTime);
+        const isOverdue = leadTime < new Date(currentDate.setHours(0, 0, 0, 0)); // Просрочен ли заказ
+        const isNotClosedOrReady = !["Закрыт", "Готов"].includes(order.execution[order.execution.length - 1].stage.name);
+        return isOverdue && isNotClosedOrReady;
+      });
       setOrder(overdueOrders);
       setFilterActive(true);
     }
