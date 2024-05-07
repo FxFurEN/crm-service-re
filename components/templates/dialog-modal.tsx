@@ -60,7 +60,7 @@ export function DialogModal({ open, onOpenChange, orderId }) {
       const orderData = order.client.sign === false ?
       `[[\"${order.client.initials}\", \"${order.service.name}\", \"${createdAt}\", \"${leadTime}\"]]` :
       `[[${JSON.stringify(order.client.name)}, \"${order.service.name}\", \"${createdAt}\", \"${leadTime}\"]]`;    
-      
+
       inputs.push({
         orderData: orderData,
         createdAt: createdAt
@@ -85,7 +85,7 @@ export function DialogModal({ open, onOpenChange, orderId }) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Изменить статус заказа</DialogTitle>
+          <DialogTitle>Печатать</DialogTitle>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <RadioGroup value={selectedTemplateName} onValueChange={handleTemplateSelection}>
