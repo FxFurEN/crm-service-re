@@ -1,7 +1,7 @@
 "use client";
 
 import { generate } from '@pdfme/generator';
-import { certificate_of_Completion, collection_slip, guarantee_card } from '@/documents/tempates';
+import { certificate_of_Completion, collection_slip, guarantee_card, sales_receipt } from '@/documents/tempates';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,7 @@ export function DialogModal({ open, onOpenChange, orderId }) {
     { name: "certificate_of_Completion", label: "Акт выполненных работ", template: certificate_of_Completion },
     { name: "collection_slip", label: "Квитанция о приеме на ремонт", template: collection_slip },
     { name: "guarantee_card", label: "Гарантийный талон", template: guarantee_card },
+    { name: "sales_receipt", label: "Товарный чек", template: sales_receipt }
   ];
 
 
@@ -87,7 +88,22 @@ export function DialogModal({ open, onOpenChange, orderId }) {
         createdAt: createdAt,
         createdAtCopy: createdAtCopy
       });
-}
+  } else {
+    const createdAt = formatDate(order.createdAt, "dd.MM.yyyy");
+    const createdAtCopy = formatDate(order.createdAt, "dd.MM.yyyy");
+
+    const serviceData = `[[\"${order.service.name}\",\"${order.service.price}\"]]`;
+
+    const clientData = order.client.sign === false ?
+      `\"${order.client.initials}\"` :`\"${order.client.name}\"`;      
+
+      inputs.push({
+        clientData: clientData,
+        serviceData: serviceData,
+        createdAt: createdAt,
+        createdAtCopy: createdAtCopy
+      });
+  }
     
 
     const plugins = { text, image, readOnlyText, readOnlySvg, Table: tableBeta, line };
