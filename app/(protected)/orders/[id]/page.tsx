@@ -36,7 +36,6 @@ export default function OrderDetailPage() {
   useEffect(() => {
     fetchExecutionHistory();
     fetchOrder();
-
   }, [id]);
 
 
@@ -54,7 +53,9 @@ export default function OrderDetailPage() {
     }
   };
 
-  
+  const handleAddOrUpdateSuccess = () => {
+    fetchExecutionHistory();
+  };
 
   return (
     <div className='ml-20'>
@@ -184,7 +185,7 @@ export default function OrderDetailPage() {
         <SkeletonCard/>
       )}
       <DialogModal open={openTempate} onOpenChange={setOpenTempate} orderId={id}/>
-      <DialogModalChangeStages open={open} onOpenChange={setOpen} orderId={id} />
+      <DialogModalChangeStages open={open} onOpenChange={setOpen} orderId={id} onSuccess={handleAddOrUpdateSuccess}/>
     </div>
   );
 }
