@@ -126,6 +126,12 @@ export default function Navbar() {
                                     </div>
                                 </Link>
                             ))}
+                             <Link href="/settings">
+                                    <div className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground">
+                                        <Settings className="h-5 w-5" />
+                                        Настройки
+                                    </div>
+                             </Link>
                         </nav>
                     </SheetContent>
                 </Sheet>

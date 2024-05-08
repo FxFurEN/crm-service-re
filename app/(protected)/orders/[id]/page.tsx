@@ -14,6 +14,7 @@ import { History } from 'lucide-react';
 import { Tag } from "antd";
 import { DialogModalChangeStages } from '@/components/orders/dialog-modal-change-stage';
 import { DialogModal } from '@/components/templates/dialog-modal';
+import { Sheet, SheetClose, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
@@ -58,12 +59,43 @@ export default function OrderDetailPage() {
   };
 
   return (
-    <div className='ml-20'>
+    <div>
       {order ? (
         <>
-          <div className='ml-5'>
-            <Button className="mb-4" onClick={() => setOpen(true)}>Изменить статус заказа</Button>
-            <Button className="mb-4 ml-5" onClick={() => setOpenTempate(true)}>Печатать</Button>
+          <div className='flex items-center ml-5 mb-5'>
+              <Button  onClick={() => setOpen(true)}>Изменить статус заказа</Button>
+              <Button className="ml-5" onClick={() => setOpenTempate(true)}>Печатать</Button>
+              <Sheet side="right" >
+                <SheetTrigger asChild>
+                      <Button className="ml-5">
+                        <History size={24} />
+                      </Button>
+                </SheetTrigger>
+                <SheetContent>
+                  <ScrollArea className="h-[400px] w-full rounded-md">
+                    {executionHistory.map((execution) => (
+                      <div key={execution.id}>
+                        <p>
+                          {execution.name !== 'Заказ добавлен' && execution.name !== 'Заказ обновлен' ? (
+                            <>
+                              <span className="text-500">{execution.name} </span>
+                              <Tag color={execution.stage.color}>{execution.stage.name}</Tag>
+                            </>
+                          ) : execution.name === 'Заказ обновлен' ? (
+                            <span className="text-green-500">Информация о заказе была обновлена</span>
+                          ) : (
+                            <Tag color={execution.stage.color}>{execution.stage.name}</Tag>
+                          )}
+                        </p>
+                        <p className="text-gray-800 text-sm">
+                          {formatDate(execution.executionDate)} <span className="text-gray-400">{execution.user.name}</span>
+                        </p>
+                        <Separator className="my-2" />
+                      </div>
+                    ))}
+                  </ScrollArea>
+                </SheetContent>
+            </Sheet>
           </div>
           <div className="flex justify-between">
             <div className="md:w-[100%] px-4">
@@ -143,39 +175,6 @@ export default function OrderDetailPage() {
                       )}
                   </div>
                 </div>
-                </CardContent>
-              </Card>
-            </div>
-            <div className="flex-grow md:w-1/4">
-              <Card>
-                <CardHeader>
-                  <p className="text-2xl font-semibold flex items-center text-left">
-                    История <History className="ml-2" />
-                  </p>
-                </CardHeader>
-                <CardContent>
-                <ScrollArea className="h-[400px] w-full rounded-md">
-                  {executionHistory.map((execution) => (
-                    <div key={execution.id}>
-                      <p>
-                        {execution.name !== "Заказ добавлен" && execution.name !== "Заказ обновлен" ? (
-                          <>
-                            <span className="text-500">{execution.name} </span>
-                            <Tag color={execution.stage.color}>{execution.stage.name}</Tag>
-                          </>
-                        ) : (
-                          execution.name === "Заказ обновлен" ? (
-                            <span className="text-green-500">Информация о заказе была обновлена</span>
-                          ) : (
-                            <Tag color={execution.stage.color}>{execution.stage.name}</Tag>
-                          )
-                        )}
-                      </p>
-                      <p className="text-gray-800 text-sm">{formatDate(execution.executionDate)} <span className="text-gray-400">{execution.user.name}</span></p>
-                      <Separator className="my-2" />
-                    </div>
-                  ))}
-                </ScrollArea>
                 </CardContent>
               </Card>
             </div>
