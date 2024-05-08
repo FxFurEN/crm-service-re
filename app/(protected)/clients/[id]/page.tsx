@@ -25,7 +25,6 @@ export default function ClientDetailPage() {
 
   return (
     <div className='flex justify-center'>
-      {client ? (
         <Card className="flex flex-col md:flex-row md:w-[700px] w-[400px]">
           <div className="md:w-[50%]">
             <CardHeader>
@@ -34,33 +33,39 @@ export default function ClientDetailPage() {
               </p>
             </CardHeader>
             <CardContent>
-              {client.sign == false ? (
-                <>
-                  <div>
-                    <Label htmlFor="email">Email: {client.email}</Label>
-                  </div>
-                  <div>
-                    <Label htmlFor="phone">Телефон: {client.phone}</Label>
-                  </div>
-                  <div>
-                    <Label htmlFor="initials">ФИО: {client.initials}</Label>
-                  </div>
-                </>
+            {client ? (
+              <>
+                {client.sign == false ? (
+                    <>
+                      <div>
+                        <Label htmlFor="email">Email: {client.email}</Label>
+                      </div>
+                      <div>
+                        <Label htmlFor="phone">Телефон: {client.phone}</Label>
+                      </div>
+                      <div>
+                        <Label htmlFor="initials">ФИО: {client.initials}</Label>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div>
+                        <Label htmlFor="name">Название компании: {client.name}</Label>
+                      </div>
+                      <div>
+                        <Label htmlFor="unp">УНП: {client.unp}</Label>
+                      </div>
+                      <div>
+                        <Label htmlFor="email">Почта: {client.email}</Label>
+                      </div>
+                      <div>
+                        <Label htmlFor="phone">Телефон: {client.phone}</Label>
+                      </div>
+                    </>
+                  )}
+              </>
               ) : (
-                <>
-                  <div>
-                    <Label htmlFor="name">Название компании: {client.name}</Label>
-                  </div>
-                  <div>
-                    <Label htmlFor="unp">УНП: {client.unp}</Label>
-                  </div>
-                  <div>
-                    <Label htmlFor="email">Почта: {client.email}</Label>
-                  </div>
-                  <div>
-                    <Label htmlFor="phone">Телефон: {client.phone}</Label>
-                  </div>
-                </>
+                <SkeletonCard/>
               )}
             </CardContent>
           </div>
@@ -86,9 +91,6 @@ export default function ClientDetailPage() {
             </CardContent>
           </div>
         </Card>
-      ) : (
-        <SkeletonCard/>
-      )}
     </div>
   );
 }
