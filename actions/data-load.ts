@@ -288,6 +288,9 @@ export const getOrdersByEmployee = async () => {
 export const getOverdueOrdersCount = async () => {
   try {
     const currentDate = new Date();
+    const yesterday = new Date(currentDate);
+    yesterday.setDate(currentDate.getDate() - 1);
+
     const overdueOrders = await db.orders.findMany({
       where: {
         NOT: {
@@ -312,7 +315,7 @@ export const getOverdueOrdersCount = async () => {
           }
         },
         leadTime: {
-          lt: currentDate
+          lt: yesterday
         }
       }
     });
@@ -325,3 +328,4 @@ export const getOverdueOrdersCount = async () => {
     await db.$disconnect();
   }
 };
+
