@@ -135,7 +135,7 @@ export default function Navbar() {
                         </nav>
                     </SheetContent>
                 </Sheet>
-                <div className="ml-auto">
+                <div className="ml-auto sm:mt-2">
                     <UserButton />
                 </div>
             </header>                          
