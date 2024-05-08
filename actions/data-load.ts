@@ -355,3 +355,84 @@ export const getClientOrders = async (clientId: string) => {
     await db.$disconnect();
   }
 };
+
+
+
+
+export const getOrdersByPeriod = async (period) => {
+  try {
+    let orders;
+    switch (period) {
+      case 'today':
+        orders = await db.orders.findMany({
+          where: {
+            createdAt: {
+              gte: new Date(new Date().setHours(0, 0, 0, 0)),
+              lt: new Date(new Date().setHours(23, 59, 59, 999)),
+            },
+          },
+          include: {
+            service: { select: { name: true } },
+            user: { select: { name: true } }
+          }
+        });
+        break;
+      case 'yesterday':
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        orders = await db.orders.findMany({
+          where: {
+            createdAt: {
+              gte: new Date(yesterday.setHours(0, 0, 0, 0)),
+              lt: new Date(yesterday.setHours(23, 59, 59, 999)),
+            },
+          },
+          include: {
+            service: { select: { name: true } },
+            user: { select: { name: true } },
+          }
+        });
+        break;
+      case 'last-week':
+        const lastWeek = new Date();
+        lastWeek.setDate(lastWeek.getDate() - 7);
+        orders = await db.orders.findMany({
+          where: {
+            createdAt: {
+              gte: new Date(lastWeek.setHours(0, 0, 0, 0)),
+              lt: new Date(),
+            },
+          },
+          include: {
+            service: { select: { name: true } },
+            user: { select: { name: true } },
+          }
+        });
+        break;
+      case 'last-month':
+        const lastMonth = new Date();
+        lastMonth.setMonth(lastMonth.getMonth() - 1);
+        orders = await db.orders.findMany({
+          where: {
+            createdAt: {
+              gte: new Date(lastMonth.setHours(0, 0, 0, 0)),
+              lt: new Date(),
+            },
+          },
+          include: {
+            service: { select: { name: true } },
+            user: { select: { name: true } },
+          }
+        });
+        break;
+      default:
+        orders = null;
+    }
+    return orders;
+  } catch (error) {
+    console.error('Error fetching orders by period:', error);
+    return null;
+  } finally {
+    await db.$disconnect();
+  }
+};
