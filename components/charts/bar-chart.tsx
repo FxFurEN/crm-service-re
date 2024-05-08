@@ -37,7 +37,6 @@ export default function BarChart({ data, xKey, yKey }: Props) {
           fontSize={12}
           tickFormatter={(value) => `${value}`}
           domain={[0, 'dataMax']} 
-          ticks={[0, 1, 2, 3]} 
         />
 
         <Bar dataKey={yKey} radius={[4, 4, 0, 0]} />

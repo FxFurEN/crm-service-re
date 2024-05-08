@@ -7,22 +7,19 @@ import CustomTable, { TableColumn } from '@/components/data-table';
 import { Service } from '@/types/services';
 import React, { useEffect, useState } from 'react';
 import { getAllCategories, getAllServices } from '@/actions/data-load';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Separator } from '@/components/ui/separator';
 import FloatButton from '@/components/float-button';
 import { DialogModal } from '@/components/services/dialog-modal-service';
 import DeleteConfirmationDialog from '@/components/alert-dialog-confirm';
 import { deleteService } from '@/actions/del-data';
 import { toast } from 'sonner';
 import { Toaster } from '@/components/ui/sonner';
-import { Button } from '@/components/ui/button';
-import { Pencil, Plus } from 'lucide-react';
 import { DialogModalCategory } from '@/components/services/dialog-modal-category';
 import CategoryList from './_components/category-list';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const serviceColumns: TableColumn<Service>[] = [
   { accessorKey: "name", header: "Наименование", cell: ({ row }) => <div>{row.getValue("name")}</div> },
-  { accessorKey: "price", header: "Цена", cell: ({ row }) => <div>{row.getValue("price")}</div> },
+  { accessorKey: "price", header: "Цена, BYN", cell: ({ row }) => <div>{row.getValue("price")}</div> },
   { accessorKey: "categoryName", header: "Категория", cell: ({ row }) => <div>{row.getValue("categoryName")}</div> },
 ];
 
@@ -38,6 +35,7 @@ const ServicesPage = () => {
   const [mode, setMode] = React.useState<"edit" | "add">("add");
   const [isDeleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
   const [deleteRowId, setDeleteRowId] = React.useState<string | null>(null);
+  const [loadingCategories, setLoadingCategories] = useState(true);
 
   if (role === UserRole.USER) {
     router.back(); 
@@ -59,6 +57,7 @@ const ServicesPage = () => {
     const categoriesData = await getAllCategories();
     if (categoriesData) {
       setCategories(categoriesData);
+      setLoadingCategories(false); 
     }
   };
 
@@ -118,8 +117,12 @@ const ServicesPage = () => {
   };
 
   return ( 
-    <div className="flex flex-col md:flex-row ml-20">
-          <CategoryList categories={categories} onEditCategory={handleEditCategory} onCategoryButtonClick={handleCategoryButtonClick} />
+    <div className="flex mr-5 ml-5 flex-col md:flex-row">
+          {loadingCategories ? ( 
+              <Skeleton className="h-[340px] w-[220px]" />
+          ) : (
+            <CategoryList categories={categories} onEditCategory={handleEditCategory} onCategoryButtonClick={handleCategoryButtonClick} />
+          )}
       <div className="w-full">
         <CustomTable<Service>
             data={services}
@@ -144,3 +147,4 @@ const ServicesPage = () => {
 }
 
 export default ServicesPage;
+

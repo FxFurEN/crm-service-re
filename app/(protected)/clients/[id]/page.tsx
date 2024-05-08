@@ -4,19 +4,25 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useEffect, useState } from 'react';
-import { usePathname } from 'next/navigation'; // Import usePathname from next/navigation
-import { getClientById } from '@/actions/data-load';
+import { usePathname } from 'next/navigation';
+import { getClientById, getClientOrders  } from '@/actions/data-load';
+import { format } from 'date-fns';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function ClientDetailPage() {
   const pathname = usePathname(); 
   const id = pathname.split('/').pop();
   const [client, setClient] = useState(null);
+  const [clientOrders, setClientOrders] = useState(null);
 
   useEffect(() => {
     const fetchClient = async () => {
       if (id) {
         const fetchedClient = await getClientById(id);
         setClient(fetchedClient);
+
+        const orders = await getClientOrders(id);
+        setClientOrders(orders);
       }
     };
 
@@ -24,8 +30,7 @@ export default function ClientDetailPage() {
   }, [id]);
 
   return (
-    <div>
-      {client ? (
+    <div className='flex justify-center'>
         <Card className="flex flex-col md:flex-row md:w-[700px] w-[400px]">
           <div className="md:w-[50%]">
             <CardHeader>
@@ -33,34 +38,40 @@ export default function ClientDetailPage() {
                 Информация о клиенте
               </p>
             </CardHeader>
-            <CardContent>
-              {client.sign == false ? (
-                <>
-                  <div>
-                    <Label htmlFor="email">Email: {client.email}</Label>
-                  </div>
-                  <div>
-                    <Label htmlFor="phone">Телефон: {client.phone}</Label>
-                  </div>
-                  <div>
-                    <Label htmlFor="initials">ФИО: {client.initials}</Label>
-                  </div>
-                </>
+            <CardContent className='mt-5'>
+            {client ? (
+              <>
+                {client.sign == false ? (
+                    <>
+                      <div>
+                        <Label htmlFor="email"><strong>Email:</strong> {client.email}</Label>
+                      </div>
+                      <div>
+                        <Label htmlFor="phone"><strong>Телефон:</strong> {client.phone}</Label>
+                      </div>
+                      <div>
+                        <Label htmlFor="initials"><strong>ФИО:</strong> {client.initials}</Label>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div>
+                        <Label htmlFor="name"><strong>Название компании:</strong> {client.name}</Label>
+                      </div>
+                      <div>
+                        <Label htmlFor="unp"><strong>УНП: </strong>{client.unp}</Label>
+                      </div>
+                      <div>
+                        <Label htmlFor="email"><strong>Почта:</strong> {client.email}</Label>
+                      </div>
+                      <div>
+                        <Label htmlFor="phone"><strong>Телефон:</strong>Телефон: {client.phone}</Label>
+                      </div>
+                    </>
+                  )}
+              </>
               ) : (
-                <>
-                  <div>
-                    <Label htmlFor="name">Название компании: {client.name}</Label>
-                  </div>
-                  <div>
-                    <Label htmlFor="unp">УНП: {client.unp}</Label>
-                  </div>
-                  <div>
-                    <Label htmlFor="email">Почта: {client.email}</Label>
-                  </div>
-                  <div>
-                    <Label htmlFor="phone">Телефон: {client.phone}</Label>
-                  </div>
-                </>
+                <SkeletonCard/>
               )}
             </CardContent>
           </div>
@@ -72,23 +83,46 @@ export default function ClientDetailPage() {
             </CardHeader>
             <CardContent>
               <Table>
-                <TableCaption>Нет данных.</TableCaption>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Номер заказа</TableHead>
+                    <TableHead>Услуга</TableHead>
                     <TableHead>Дата заказа</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {/* Your table body content */}
+                {clientOrders ? ( 
+                  <>
+                     {clientOrders.map(order => (
+                        <TableRow key={order.id}>
+                          <TableCell>{order.service.name}</TableCell>
+                          <TableCell>{format(order.createdAt, 'dd.MM.yyyy')}</TableCell>
+                        </TableRow>
+                      ))}
+                  </>
+                ) : (
+                  <>
+                    <TableRow>
+                        <TableCell><Skeleton className="h-4 w-full"/></TableCell>
+                        <TableCell><Skeleton className="h-4 w-full"/></TableCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableCell><Skeleton className="h-4 w-full"/></TableCell>
+                        <TableCell><Skeleton className="h-4 w-full"/></TableCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableCell><Skeleton className="h-4 w-full"/></TableCell>
+                        <TableCell><Skeleton className="h-4 w-full"/></TableCell>
+                    </TableRow>
+                  </>
+                 
+                 
+                )}
+                
                 </TableBody>
               </Table>
             </CardContent>
           </div>
         </Card>
-      ) : (
-        <SkeletonCard/>
-      )}
     </div>
   );
 }

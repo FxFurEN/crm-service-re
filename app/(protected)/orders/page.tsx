@@ -13,23 +13,8 @@ import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
 import { formatDate } from "date-fns";
 import { Tag } from "antd";
-
-const orderColumns: TableColumn<Order>[] = [
-  { accessorKey: "serviceName", header: "Услуга", cell: ({ row }) => <div>{row.getValue("serviceName")}</div> },
-  { accessorKey: "executionStatus", header: "Статус", cell: ({ row }) => {
-    const execution = row.original.execution;
-    const lastStage = execution.length > 0 ? execution[execution.length - 1].stage : null;
-    const color = lastStage ? lastStage.color : '#000000';
-    const status = lastStage ? lastStage.name : 'Нет статуса';
-    return <Tag color={color}>{status}</Tag>;
-  }
-  },
-  { accessorKey: "createdAt", header: "Дата создания", cell: ({ row }) => <div>{formatDate(row.getValue("createdAt"), "dd.MM.yyyy")}</div> },
-  { accessorKey: "leadTime", header: "Дата выполнения", cell: ({ row }) => <div>{formatDate(row.getValue("leadTime"), "dd.MM.yyyy")}</div> },
-  { accessorKey: "userName", header: "Сотрудник", cell: ({ row }) => <div>{row.getValue("userName")}</div> },
-  { accessorKey: "clientName", header: "Клиент", cell: ({ row }) => <div>{row.getValue("clientName")}</div> },
-];
-
+import { Button } from "@/components/ui/button";
+import { CaretSortIcon } from "@radix-ui/react-icons";
 
 export default function OrdersPage() {
   const router = useRouter();
@@ -39,6 +24,35 @@ export default function OrdersPage() {
   const [mode, setMode] = React.useState<"edit" | "add">("add");
   const [isDeleteDialogOpen, setDeleteDialogOpen] = React.useState(false); 
   const [deleteRowId, setDeleteRowId] = React.useState<string | null>(null); 
+  const [filterActive, setFilterActive] = React.useState(false);
+
+
+  const orderColumns: TableColumn<Order>[] = [
+    { accessorKey: "serviceName", header: "Услуга", cell: ({ row }) => <div>{row.getValue("serviceName")}</div> },
+    { accessorKey: "executionStatus", header: "Статус", cell: ({ row }) => {
+      const execution = row.original.execution;
+      const lastStage = execution.length > 0 ? execution[execution.length - 1].stage : null;
+      const color = lastStage ? lastStage.color : '#000000';
+      const status = lastStage ? lastStage.name : 'Нет статуса';
+      return <Tag color={color}>{status}</Tag>;
+    }
+    },
+    { accessorKey: "createdAt", header: "Дата создания", cell: ({ row }) => <div>{formatDate(row.getValue("createdAt"), "dd.MM.yyyy")}</div> },
+    { accessorKey: "leadTime", header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={handleFilterOverdueOrders}
+        >
+          Дата выполнения
+          <CaretSortIcon className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    }, cell: ({ row }) => <div>{formatDate(row.getValue("leadTime"), "dd.MM.yyyy")}</div> },
+    { accessorKey: "userName", header: "Сотрудник", cell: ({ row }) => <div>{row.getValue("userName")}</div> },
+    { accessorKey: "clientName", header: "Клиент", cell: ({ row }) => <div>{row.getValue("clientName")}</div> },
+  ];
+
 
   React.useEffect(() => {
     fetchData();
@@ -54,6 +68,25 @@ export default function OrdersPage() {
         clientName: order.client.name ? order.client.name : order.client.initials,
       }));
       setOrder(transformedData);
+    }
+    return data;
+  };
+  
+  const handleFilterOverdueOrders = () => {
+    if (filterActive) {
+      fetchData();
+      setFilterActive(false);
+    } else {
+
+      const currentDate = new Date();
+      const overdueOrders = orders.filter(order => {
+        const leadTime = new Date(order.leadTime);
+        const isOverdue = leadTime < new Date(currentDate.setHours(0, 0, 0, 0)); // Просрочен ли заказ
+        const isNotClosedOrReady = !["Закрыт", "Готов"].includes(order.execution[order.execution.length - 1].stage.name);
+        return isOverdue && isNotClosedOrReady;
+      });
+      setOrder(overdueOrders);
+      setFilterActive(true);
     }
   };
   

@@ -11,7 +11,7 @@ interface CategoryListProps {
 
 const CategoryList: React.FC<CategoryListProps> = ({ categories, onEditCategory, onCategoryButtonClick }) => {
   return (
-    <div className="w-full md:w-48 md:flex-shrink-0 mt-7">
+    <div>
       <h4 className="mb-4 text-md font-medium leading-none">
         Категории
         <Button className="ml-2 rounded-full " variant="ghost" size="icon" onClick={onCategoryButtonClick}>

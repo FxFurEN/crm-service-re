@@ -119,7 +119,22 @@ export function DialogModal({ open, onOpenChange, mode = "add", serviceData, onS
                       {...field}
                       disabled={isPending}
                       placeholder="Цена"
-                      type="number"
+                      type="text"
+                      onChange={(e) => {
+                        let value = e.target.value;
+                        value = value.replace(/[^\d.]/g, '');
+                        if (!/\./.test(value)) {
+                          if (/^\d+$/.test(value)) {
+                            value += '.0';
+                          }
+                        }
+                        field.onChange({
+                          target: {
+                            value,
+                            name: field.name,
+                          },
+                        });
+                      }}
                     />
                     <FormMessage />
                   </FormItem>

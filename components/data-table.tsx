@@ -87,7 +87,7 @@ function CustomTable<T>({
 
   return (
     <main className="justify-between">
-      <div className="ml-20 mr-5">
+      <div className="ml-5 mr-5">
         <div className="flex py-4">
           {searchableColumns.length > 0 && (
             <Input
