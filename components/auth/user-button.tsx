@@ -18,8 +18,11 @@ import {
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { LogoutButton } from "@/components/auth/logout-button";
 import { User } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Skeleton } from "@/components/ui/skeleton"; 
 
 export const UserButton = () => {
+  const [loading, setLoading] = useState(true); 
   const user = useCurrentUser();
   const router = useRouter();
 
@@ -33,20 +36,29 @@ export const UserButton = () => {
     }
   };
   
-
   const redirectToProfile = () => {
     router.push("/settings/profile");
   };
 
+  useEffect(() => {
+    if (user) setLoading(false);
+  }, [user]);
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
         <Avatar>
-          {user?.image ? (
-            <AvatarImage src={user.image} alt="User avatar" />
+          {loading ? ( 
+
+            <Skeleton className="h-12 w-12 rounded-full" />
           ) : (
-            <AvatarFallback style={{ backgroundColor: 'white' }}>{getInitials(user.name)}</AvatarFallback>
+            <>
+              {user?.image ? (
+                <AvatarImage src={user.image} alt="User avatar" />
+              ) : (
+                <AvatarFallback style={{ backgroundColor: 'white' }}>{getInitials(user.name)}</AvatarFallback>
+              )}
+            </>
           )}
         </Avatar>
       </DropdownMenuTrigger>
@@ -65,4 +77,3 @@ export const UserButton = () => {
     </DropdownMenu>
   );
 };
-
