@@ -15,6 +15,7 @@ import { Tag } from "antd";
 import { DialogModalChangeStages } from '@/components/orders/dialog-modal-change-stage';
 import { DialogModal } from '@/components/templates/dialog-modal';
 import { Sheet, SheetClose, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Toaster } from 'sonner';
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
@@ -33,6 +34,7 @@ export default function OrderDetailPage() {
   const [executionHistory, setExecutionHistory] = useState([]);
   const [open, setOpen] = useState(false);
   const [openTempate, setOpenTempate] = useState(false);
+  const [isPending, setIsPending] = useState(false);
 
   useEffect(() => {
     fetchExecutionHistory();
@@ -40,12 +42,19 @@ export default function OrderDetailPage() {
   }, [id]);
 
 
-  const fetchOrder = async () => {
-    if (id) {
+const fetchOrder = async () => {
+  setIsPending(true); 
+  if (id) {
+    try {
       const fetchedOrder = await getOrderById(id);
       setOrder(fetchedOrder);
+    } catch (error) {
+      Toaster.error("Error fetching order:", error);
+    } finally {
+      setIsPending(false); 
     }
-  };
+  }
+};
 
   const fetchExecutionHistory = async () => {
     if (id) {
@@ -60,14 +69,13 @@ export default function OrderDetailPage() {
 
   return (
     <div>
-      {order ? (
         <>
           <div className='flex items-center ml-5 mb-5'>
-              <Button  onClick={() => setOpen(true)}>Изменить статус заказа</Button>
-              <Button className="ml-5" onClick={() => setOpenTempate(true)}>Печатать</Button>
+              <Button  isLoading={isPending} onClick={() => setOpen(true)}>Изменить статус заказа</Button>
+              <Button className="ml-5" isLoading={isPending} onClick={() => setOpenTempate(true)}>Печатать</Button>
               <Sheet side="right" >
                 <SheetTrigger asChild>
-                      <Button className="ml-5">
+                      <Button className="ml-5" isLoading={isPending}>
                         <History size={24} />
                       </Button>
                 </SheetTrigger>
@@ -111,67 +119,80 @@ export default function OrderDetailPage() {
                       <p className="text-2xl font-semibold text-left mb-4">
                         Заказ
                       </p>
-                      <div>
-                        <Label htmlFor="orderCreatedAt">Дата создания заказа: {new Date(order.createdAt).toLocaleDateString()}</Label>
-                        <Separator className="my-2" />
-                      </div>
-                      <div>
-                        <Label htmlFor="orderLeadTime">Предварительная дата выполнения заказа: {new Date(order.leadTime).toLocaleDateString()}</Label>
-                        <Separator className="my-2" />
-                      </div>
-                      <div>
-                        <Label htmlFor="orderService">Услуга: {order.service.name}</Label>
-                        <Separator className="my-2" />
-                      </div>
-                      <div>
-                        <Label htmlFor="orderService">Принял заказ: {order.user.name}</Label>
-                        <Separator className="my-2" />
-                      </div>
-                      <div>
-                        <Label htmlFor="orderComments">Комментарии к заказу:</Label>
-                        <Textarea value={order.comments} className="resize-none" readOnly />
-                      </div>
+                      {order ? (    
+                        <>
+                          <div>
+                            <Label htmlFor="orderCreatedAt">Дата создания заказа: {new Date(order.createdAt).toLocaleDateString()}</Label>
+                            <Separator className="my-2" />
+                          </div>
+                          <div>
+                            <Label htmlFor="orderLeadTime">Предварительная дата выполнения заказа: {new Date(order.leadTime).toLocaleDateString()}</Label>
+                            <Separator className="my-2" />
+                          </div>
+                          <div>
+                            <Label htmlFor="orderService">Услуга: {order.service.name}</Label>
+                            <Separator className="my-2" />
+                          </div>
+                          <div>
+                            <Label htmlFor="orderService">Принял заказ: {order.user.name}</Label>
+                            <Separator className="my-2" />
+                          </div>
+                          <div>
+                            <Label htmlFor="orderComments">Комментарии к заказу:</Label>
+                            <Textarea value={order.comments} className="resize-none" readOnly />
+                          </div>   
+                        </>
+                      
+                      ) : (
+                        <SkeletonCard/>
+                      )}
                   </div>
                   <div className="md:w-[50%] px-4">
                     <p className="text-2xl font-semibold text-left mb-4">
                         Клиент
                       </p>
-                    {order.client.sign === false ? (
+                      {order ? (    
                         <>
-                        
-                          <div>
-                            <Label htmlFor="initials">ФИО: {order.client.initials}</Label>
-                            <Separator className="my-2" />
-                          </div>
-                          <div>
-                            <Label htmlFor="email">Email: {order.client.email}</Label>
-                            <Separator className="my-2" />
-                          </div>
-                          <div>
-                            <Label htmlFor="phone">Телефон: {order.client.phone}</Label>
-                            <Separator className="my-2" />
-                          </div>
-                          
+                            {order.client.sign === false ? (
+                              <>
+                              
+                                <div>
+                                  <Label htmlFor="initials">ФИО: {order.client.initials}</Label>
+                                  <Separator className="my-2" />
+                                </div>
+                                <div>
+                                  <Label htmlFor="email">Email: {order.client.email}</Label>
+                                  <Separator className="my-2" />
+                                </div>
+                                <div>
+                                  <Label htmlFor="phone">Телефон: {order.client.phone}</Label>
+                                  <Separator className="my-2" />
+                                </div>
+                                
+                              </>
+                            ) : (
+                              <>
+                                <div>
+                                  <Label htmlFor="name">Название компании: {order.client.name}</Label>
+                                  <Separator className="my-2" />
+                                </div>
+                                <div>
+                                  <Label htmlFor="name">УНП: {order.client.unp}</Label>
+                                  <Separator className="my-2" />
+                                </div>
+                                <div>
+                                  <Label htmlFor="email">Почта: {order.client.email}</Label>
+                                  <Separator className="my-2" />
+                                </div>
+                                <div>
+                                  <Label htmlFor="phone">Телефон: {order.client.phone}</Label>
+                                  <Separator className="my-2" />
+                                </div>
+                              </>
+                            )}  
                         </>
                       ) : (
-                        <>
-                          <div>
-                            <Label htmlFor="name">Название компании: {order.client.name}</Label>
-                            <Separator className="my-2" />
-                          </div>
-                          <div>
-                            <Label htmlFor="name">УНП: {order.client.unp}</Label>
-                            <Separator className="my-2" />
-                          </div>
-                          <div>
-                            <Label htmlFor="email">Почта: {order.client.email}</Label>
-                            <Separator className="my-2" />
-                          </div>
-                          <div>
-                            <Label htmlFor="phone">Телефон: {order.client.phone}</Label>
-                            <Separator className="my-2" />
-                          </div>
-                        </>
+                        <SkeletonCard/>
                       )}
                   </div>
                 </div>
@@ -180,9 +201,6 @@ export default function OrderDetailPage() {
             </div>
           </div>
         </>
-      ) : (
-        <SkeletonCard/>
-      )}
       <DialogModal open={openTempate} onOpenChange={setOpenTempate} orderId={id}/>
       <DialogModalChangeStages open={open} onOpenChange={setOpen} orderId={id} onSuccess={handleAddOrUpdateSuccess}/>
     </div>
