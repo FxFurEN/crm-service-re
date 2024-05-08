@@ -119,7 +119,7 @@ const ServicesPage = () => {
   return ( 
     <div className="flex mr-5 ml-5 flex-col md:flex-row">
           {loadingCategories ? ( 
-              <Skeleton className="h-[340px] md:max-w-55 md:w-full w-[220px] max-w-35 " />
+              <Skeleton className="h-[340px] w-[220px]" />
           ) : (
             <CategoryList categories={categories} onEditCategory={handleEditCategory} onCategoryButtonClick={handleCategoryButtonClick} />
           )}
