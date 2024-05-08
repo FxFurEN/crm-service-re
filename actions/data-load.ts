@@ -329,3 +329,29 @@ export const getOverdueOrdersCount = async () => {
   }
 };
 
+
+export const getClientOrders = async (clientId: string) => {
+  try {
+    const clientOrders = await db.orders.findMany({
+      where: {
+        clientId: clientId,
+      },
+      include: {
+        service: { select: { name: true } },
+        user: { select: { name: true } },
+        execution: {
+          select: {
+            stage: { select: { id: true, name: true, color: true } }
+          }
+        }
+      }
+    });
+
+    return clientOrders;
+  } catch (error) {
+    console.error('Error fetching client orders:', error);
+    return null;
+  } finally {
+    await db.$disconnect();
+  }
+};
