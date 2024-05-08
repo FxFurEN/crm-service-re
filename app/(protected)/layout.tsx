@@ -9,8 +9,7 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
   return ( 
     <div className="h-full w-full flex flex-col gap-y-10">
       <Navbar/>
-      <Navheader />
-        <main  className="mt-20">
+        <main  className="sm:ml-20">
         {children}
         </main>
     </div>
