@@ -12,7 +12,7 @@ import { usePathname } from 'next/navigation';
 import { report_by_employee, report_by_date } from '@/documents/tempates';
 import { text, image, readOnlyText, readOnlySvg, tableBeta, line  } from "@pdfme/schemas";
 import { generate } from '@pdfme/generator';
-import { Template } from '@pdfme/common';
+import { Template, Font  } from '@pdfme/common';
 
 const ReportDetailPage = () => {
     const pathname = usePathname(); 
@@ -79,6 +79,13 @@ const ReportDetailPage = () => {
         let startDate;
         let endDate = new Date(); 
         let period;
+
+        const font = {
+            sans_serif: {
+                data: 'https://fonts.gstatic.com/s/notosanskr/v36/PbyxFmXiEBPT4ITbgNA5Cgms3VYcOA-vvnIzzuoyeLTq8H4hfeE.ttf',
+                fallback: true,
+            },
+          };
     
         switch (selectedPeriod) {
             case "today":
@@ -144,7 +151,7 @@ const ReportDetailPage = () => {
         
     
         const plugins = { text, image, readOnlyText, readOnlySvg, Table: tableBeta, line };
-        generate({ template: selectedTemplateName, inputs, plugins }).then((pdf) => {
+        generate({ template: selectedTemplateName, inputs, plugins, options: { font }}).then((pdf) => {
             try {
                 const blob = new Blob([pdf.buffer], { type: 'application/pdf' });
                 window.open(URL.createObjectURL(blob));

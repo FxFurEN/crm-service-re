@@ -1307,6 +1307,7 @@ export const  report_by_employee: Template = {
         },
         "bodyStyles": {
           "fontSize": 12,
+          "fontName": "sans_serif",
           "characterSpacing": 0,
           "alignment": "center",
           "verticalAlignment": "middle",
