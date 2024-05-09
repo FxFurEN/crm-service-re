@@ -1,7 +1,7 @@
 "use client";
 
 import { getOrdersByPeriod, getOrdersByEmployeeAndPeriod } from '@/actions/data-load';
-import { format, formatDate } from 'date-fns';
+import { format, formatDate, subDays, subWeeks, subMonths } from 'date-fns';
 import { useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -74,10 +74,36 @@ const ReportDetailPage = () => {
     
 
     const generatePDF = () => {
-        setIsLoading(true); 
-        let inputs = []; 
+        setIsLoading(true);
+        let inputs = [];
+    
+        let startDate;
+        let endDate = new Date(); 
+        let period;
+    
+        switch (selectedPeriod) {
+            case "today":
+                startDate = new Date();
+                period = formatDate(startDate, "dd.MM.yyyy");
+                break;
+            case "yesterday":
+                startDate = subDays(new Date(), 1);
+                period = formatDate(startDate, "dd.MM.yyyy");
+                break;
+            case "last-week":
+                startDate = subWeeks(new Date(), 1);
+                period = `${formatDate(startDate, "dd.MM.yyyy")} - ${formatDate(endDate, "dd.MM.yyyy")}`;
+                break;
+            case "last-month":
+                startDate = subMonths(new Date(), 1);
+                period = `${formatDate(startDate, "dd.MM.yyyy")} - ${formatDate(endDate, "dd.MM.yyyy")}`;
+                break;
+            default:
+                startDate = new Date();
+                period = `${formatDate(startDate, "dd.MM.yyyy")} - ${formatDate(endDate, "dd.MM.yyyy")}`;
+                break;
+        }
         if (selectedTemplateName == report_by_employee) {
-            const period = selectedPeriod;
             let serviceData = "["; 
             orders.forEach((order, index) => {
                 const createdAt = formatDate(order.createdAt, "dd.MM.yyyy");
@@ -100,17 +126,17 @@ const ReportDetailPage = () => {
     
         const plugins = { text, image, readOnlyText, readOnlySvg, Table: tableBeta, line };
         generate({ template: selectedTemplateName, inputs, plugins }).then((pdf) => {
-          try {
-            const blob = new Blob([pdf.buffer], { type: 'application/pdf' });
-            window.open(URL.createObjectURL(blob));
-          } catch (error) {
-            console.error('Error generating PDF:', error);
-            alert('Error generating PDF. Please try again later.');
-          } finally {
-            setIsLoading(false);
-        }
+            try {
+                const blob = new Blob([pdf.buffer], { type: 'application/pdf' });
+                window.open(URL.createObjectURL(blob));
+            } catch (error) {
+                console.error('Error generating PDF:', error);
+                alert('Error generating PDF. Please try again later.');
+            } finally {
+                setIsLoading(false);
+            }
         });
-      };
+    };
 
     return (
         <>
