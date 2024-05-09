@@ -1,7 +1,7 @@
 "use client";
 
 import { getOrdersByPeriod, getOrdersByEmployeeAndPeriod } from '@/actions/data-load';
-import { format } from 'date-fns';
+import { format, formatDate } from 'date-fns';
 import { useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -9,41 +9,101 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useRouter } from 'next/navigation';
 import { usePathname } from 'next/navigation';
+import { report_by_employee } from '@/documents/tempates';
+import { text, image, readOnlyText, readOnlySvg, tableBeta, line  } from "@pdfme/schemas";
+import { generate } from '@pdfme/generator';
+import { Template } from '@pdfme/common';
 
 const ReportDetailPage = () => {
-    const pathname = usePathname();
+    const pathname = usePathname(); 
     const name = pathname.split('/').pop();
     const router = useRouter();
-    const [selectedPeriod, setSelectedPeriod] = useState(null);
-    const [orders, setOrders] = useState(null);
+    const [selectedPeriod, setSelectedPeriod] = useState(null); 
+    const [selectedTemplateName, setSelectedTemplateName] = useState<Template>();
+    const [orders, setOrders] = useState(null); 
 
     let reportName = "";
     let fetchData = null;
 
     switch (name) {
-        case "status-report":
-            reportName = "Отчет по статусам";
-            fetchData = getOrdersByPeriod;
-            break;
-        case "employee-report":
-            reportName = "Отчет по сотрудникам";
-            fetchData = getOrdersByEmployeeAndPeriod;
-            break;
-        case "date-report":
-            reportName = "Отчет по датам";
-            fetchData = getOrdersByPeriod;
-            break;
-        default:
-            router.back();
+      case "status-report":
+        reportName = "Отчет по статусам";
+        fetchData = getOrdersByPeriod;
+        break;
+      case "employee-report":
+        reportName = "Отчет по сотрудникам";
+        fetchData = getOrdersByEmployeeAndPeriod;
+        break;
+      case "date-report":
+        reportName = "Отчет по датам";
+        fetchData = getOrdersByPeriod;
+        break;
+      default:
+        router.back();
     }
 
+    const handlePeriodChange = async (selectedPeriod) => {
+        if (!selectedPeriod) return; 
+        try {
+            const data = await fetchData(selectedPeriod);
+            setOrders(data);
+        } catch (error) {
+            console.error('Error fetching orders:', error);
+        }
+    };
+
     useEffect(() => {
-        if (selectedPeriod) {
-            fetchData(selectedPeriod).then(data => {
-                setOrders(data);
+        if (selectedPeriod !== null) {
+            handlePeriodChange(selectedPeriod);
+        }
+    }, [selectedPeriod]);
+
+    useEffect(() => {
+        switch (name) {
+            case "employee-report":
+                setSelectedTemplateName(report_by_employee);  
+                break;
+            default:
+                setSelectedTemplateName(null);
+        }
+    }, []);
+    
+
+    const generatePDF = () => {
+    
+        let inputs = []; 
+        if (selectedTemplateName == report_by_employee) {
+            const period = selectedPeriod;
+            let serviceData = "["; 
+            orders.forEach((order, index) => {
+                const orderString = `[\"${order.serviceId}\",\"${order.createdAt}\",\"${order.userId}\"]`;
+            
+                serviceData += orderString;
+                if (index < orders.length - 1) {
+                    serviceData += ",";
+                }
+            });
+            
+            serviceData += "]"; 
+            
+            inputs.push({
+                period: period,
+                serviceData: serviceData
             });
         }
-    }, [selectedPeriod, fetchData]);
+        
+    
+        const plugins = { text, image, readOnlyText, readOnlySvg, Table: tableBeta, line };
+        generate({ template: selectedTemplateName, inputs, plugins }).then((pdf) => {
+          try {
+            const blob = new Blob([pdf.buffer], { type: 'application/pdf' });
+            window.open(URL.createObjectURL(blob));
+          } catch (error) {
+            console.error('Error generating PDF:', error);
+            alert('Error generating PDF. Please try again later.');
+          }
+        });
+      };
 
     return (
         <>
@@ -64,7 +124,7 @@ const ReportDetailPage = () => {
                         </SelectGroup>
                     </SelectContent>
                 </Select>
-                <Button className="last:ml-auto">Распечатать</Button>
+                <Button className="last:ml-auto" onClick={generatePDF}>Распечатать</Button>
             </div>
             <Table>
                 <TableHeader>
