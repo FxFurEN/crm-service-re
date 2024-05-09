@@ -256,7 +256,7 @@ const ReportDetailPage = () => {
                             <SelectItem value="yesterday">Вчера</SelectItem>
                             <SelectItem value="last-week">Последние 7 дней</SelectItem>
                             <SelectItem value="last-month">Последний 30 дней</SelectItem>
-                            <SelectItem value="manual">Выбрать диапазон</SelectItem>
+                            {name === 'date-report' &&  <SelectItem value="manual">Выбрать диапазон</SelectItem>}
                         </SelectGroup>
                     </SelectContent>
                 </Select>
@@ -277,14 +277,14 @@ const ReportDetailPage = () => {
                         </SelectContent>
                     </Select>
                 }
-                {selectedPeriod === 'manual' && 
+                {name === 'date-report' && selectedPeriod === "manual" && 
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button
                           id="date"
                           variant={"outline"}
                           className={cn(
-                            "w-[300px] justify-start text-left font-normal",
+                            "w-full md:w-auto justify-start text-left font-normal",
                             !date && "text-muted-foreground"
                           )}
                         >
