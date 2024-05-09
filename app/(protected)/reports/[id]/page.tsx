@@ -13,6 +13,15 @@ import { report_by_employee, report_by_date } from '@/documents/tempates';
 import { text, image, readOnlyText, readOnlySvg, tableBeta, line } from "@pdfme/schemas";
 import { generate } from '@pdfme/generator';
 import { Template, Font } from '@pdfme/common';
+import { CalendarIcon } from "@radix-ui/react-icons"
+import { DateRange } from "react-day-picker"
+import { cn } from "@/lib/utils"
+import { Calendar } from "@/components/ui/calendar"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 
 const ReportDetailPage = () => {
     const pathname = usePathname();
@@ -24,6 +33,7 @@ const ReportDetailPage = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [selectedEmployee, setSelectedEmployee] = useState(null);
     const [employees, setEmployees] = useState([]);
+    const [date, setDate] = useState<DateRange | undefined>();
 
     let reportName = "";
     let fetchData = null;
@@ -48,8 +58,12 @@ const ReportDetailPage = () => {
                 const data = await fetchData(selectedEmployee, selectedPeriod);
                 setOrders(data);
             } else if (name === "date-report") {
-                const data = await fetchData(selectedPeriod);
-                setOrders(data);
+                if (selectedPeriod === 'manual' && date) {
+                    const startDate = date.from;
+                    const endDate = date.to || date.from; 
+                    const data = await fetchData(selectedPeriod, startDate, endDate);
+                    setOrders(data);
+                }
             }
         } catch (error) {
             console.error('Error fetching orders:', error);
@@ -62,7 +76,7 @@ const ReportDetailPage = () => {
         if (selectedPeriod !== null) {
             handlePeriodChange(selectedPeriod);
         }
-    }, [selectedPeriod, selectedEmployee]);
+    }, [selectedPeriod, selectedEmployee, date]);
 
     useEffect(() => {
         switch (name) {
@@ -180,6 +194,26 @@ const ReportDetailPage = () => {
         });
     };
 
+    const determinePeriod = (selectedDate) => {
+        if (!selectedDate || !selectedDate.from) {
+            return null;
+        } else if (selectedDate.to) {
+            return 'manual';
+        } else {
+            const currentDate = new Date();
+            const selectedFrom = new Date(selectedDate.from);
+    
+            if (formatDate(selectedFrom, 'yyyy-MM-dd') === formatDate(currentDate, 'yyyy-MM-dd')) {
+                return 'today';
+            } else if (formatDate(selectedFrom, 'yyyy-MM-dd') === formatDate(subDays(currentDate, 1), 'yyyy-MM-dd')) {
+                return 'yesterday';
+            } else {
+                return 'manual';
+            }
+        }
+    };
+    
+
     return (
         <>
             <p className="text-2xl font-semibold text-center">
@@ -197,6 +231,7 @@ const ReportDetailPage = () => {
                             <SelectItem value="yesterday">Вчера</SelectItem>
                             <SelectItem value="last-week">Последние 7 дней</SelectItem>
                             <SelectItem value="last-month">Последний 30 дней</SelectItem>
+                            <SelectItem value="manual">Выбрать диапазон</SelectItem>
                         </SelectGroup>
                     </SelectContent>
                 </Select>
@@ -216,6 +251,48 @@ const ReportDetailPage = () => {
                             </SelectGroup>
                         </SelectContent>
                     </Select>
+                }
+                {selectedPeriod === 'manual' && 
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          id="date"
+                          variant={"outline"}
+                          className={cn(
+                            "w-[300px] justify-start text-left font-normal",
+                            !date && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {date?.from ? (
+                            date.to ? (
+                              <>
+                                {format(date.from, "LLL dd, y")} -{" "}
+                                {format(date.to, "LLL dd, y")}
+                              </>
+                            ) : (
+                              format(date.from, "LLL dd, y")
+                            )
+                          ) : (
+                            <span>Выберите дату</span>
+                          )}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          initialFocus
+                          mode="range"
+                          defaultMonth={date?.from}
+                          selected={date}
+                          onSelect={(selectedDate) => {
+                            const period = determinePeriod(selectedDate);
+                            setSelectedPeriod(period);
+                            setDate(selectedDate);
+                        }}
+                          numberOfMonths={2}
+                        />
+                      </PopoverContent>
+                    </Popover>
                 }
                 <Button className="w-full md:w-auto" onClick={generatePDF} isLoading={isLoading}>Распечатать</Button>
             </div>

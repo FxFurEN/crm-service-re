@@ -359,7 +359,7 @@ export const getClientOrders = async (clientId: string) => {
 
 
 
-export const getOrdersByPeriod = async (period) => {
+export const getOrdersByPeriod = async (period, startDate, endDate) => {
   try {
     let orders;
     switch (period) {
@@ -425,6 +425,20 @@ export const getOrdersByPeriod = async (period) => {
           }
         });
         break;
+      case 'manual':
+          orders = await db.orders.findMany({
+            where: {
+              createdAt: {
+                gte: startDate,
+                lt: endDate,
+              },
+            },
+            include: {
+              service: { select: { name: true } },
+              user: { select: { name: true } },
+            }
+          });
+          break;
       default:
         orders = null;
     }
