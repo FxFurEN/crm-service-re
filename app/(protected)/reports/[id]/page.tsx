@@ -21,6 +21,7 @@ const ReportDetailPage = () => {
     const [selectedPeriod, setSelectedPeriod] = useState(null); 
     const [selectedTemplateName, setSelectedTemplateName] = useState<Template>();
     const [orders, setOrders] = useState(null); 
+    const [isLoading, setIsLoading] = useState(true);
 
     let reportName = "";
     let fetchData = null;
@@ -45,10 +46,13 @@ const ReportDetailPage = () => {
     const handlePeriodChange = async (selectedPeriod) => {
         if (!selectedPeriod) return; 
         try {
+            setIsLoading(true);
             const data = await fetchData(selectedPeriod);
             setOrders(data);
         } catch (error) {
             console.error('Error fetching orders:', error);
+        } finally {
+            setIsLoading(false); 
         }
     };
 
@@ -70,7 +74,7 @@ const ReportDetailPage = () => {
     
 
     const generatePDF = () => {
-
+        setIsLoading(true); 
         let inputs = []; 
         if (selectedTemplateName == report_by_employee) {
             const period = selectedPeriod;
@@ -102,7 +106,9 @@ const ReportDetailPage = () => {
           } catch (error) {
             console.error('Error generating PDF:', error);
             alert('Error generating PDF. Please try again later.');
-          }
+          } finally {
+            setIsLoading(false);
+        }
         });
       };
 
@@ -125,7 +131,7 @@ const ReportDetailPage = () => {
                         </SelectGroup>
                     </SelectContent>
                 </Select>
-                <Button className="last:ml-auto" onClick={generatePDF}>Распечатать</Button>
+                <Button className="last:ml-auto" onClick={generatePDF} isLoading={isLoading}>Распечатать</Button>
             </div>
             <Table>
                 <TableHeader>
