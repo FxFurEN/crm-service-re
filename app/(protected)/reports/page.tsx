@@ -6,7 +6,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 
 const reports = [
-  { name: "status-report", label: "Отчет по статусам" },
   { name: "employee-report", label: "Отчет по сотрудникам" },
   { name: "date-report", label: "Отчет по датам" }
 ];
