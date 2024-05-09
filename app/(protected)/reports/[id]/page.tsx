@@ -134,6 +134,17 @@ const ReportDetailPage = () => {
                 startDate = subMonths(new Date(), 1);
                 period = `${formatDate(startDate, "dd.MM.yyyy")} - ${formatDate(endDate, "dd.MM.yyyy")}`;
                 break;
+                case "manual":
+                    if (date && date.from && date.to) {                        // If manual selection and date range is selected, set startDate and endDate accordingly
+                        startDate = date.from;
+                        endDate = date.to;
+                        period = `${formatDate(startDate, "dd.MM.yyyy")} - ${formatDate(endDate, "dd.MM.yyyy")}`;
+                    } else {
+                        startDate = new Date();
+                        period = formatDate(startDate, "dd.MM.yyyy");
+                    }
+                    break;
+
             default:
                 startDate = new Date();
                 period = `${formatDate(startDate, "dd.MM.yyyy")} - ${formatDate(endDate, "dd.MM.yyyy")}`;
