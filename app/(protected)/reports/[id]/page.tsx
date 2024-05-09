@@ -9,7 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useRouter } from 'next/navigation';
 import { usePathname } from 'next/navigation';
-import { report_by_employee } from '@/documents/tempates';
+import { report_by_employee, report_by_date } from '@/documents/tempates';
 import { text, image, readOnlyText, readOnlySvg, tableBeta, line  } from "@pdfme/schemas";
 import { generate } from '@pdfme/generator';
 import { Template } from '@pdfme/common';
@@ -27,10 +27,6 @@ const ReportDetailPage = () => {
     let fetchData = null;
 
     switch (name) {
-      case "status-report":
-        reportName = "Отчет по статусам";
-        fetchData = getOrdersByPeriod;
-        break;
       case "employee-report":
         reportName = "Отчет по сотрудникам";
         fetchData = getOrdersByEmployeeAndPeriod;
@@ -66,6 +62,9 @@ const ReportDetailPage = () => {
         switch (name) {
             case "employee-report":
                 setSelectedTemplateName(report_by_employee);  
+                break;
+            case "date-report":
+                setSelectedTemplateName(report_by_date);  
                 break;
             default:
                 setSelectedTemplateName(null);
@@ -109,6 +108,25 @@ const ReportDetailPage = () => {
                 const createdAt = formatDate(order.createdAt, "dd.MM.yyyy");
                 const number = index + 1;
                 const orderString = `[\"${number}\",\"${createdAt}\",\"${order.service.name}\",\"${order.user.name}\"]`;
+            
+                serviceData += orderString;
+                if (index < orders.length - 1) {
+                    serviceData += ",";
+                }
+            });
+            
+            serviceData += "]"; 
+            
+            inputs.push({
+                period: period,
+                serviceData: serviceData
+            });
+        } else if (selectedTemplateName == report_by_date) {
+            let serviceData = "["; 
+            orders.forEach((order, index) => {
+                const createdAt = formatDate(order.createdAt, "dd.MM.yyyy");
+                const number = index + 1;
+                const orderString = `[\"${number}\",\"${order.service.name}\",\"${createdAt}\"]`;
             
                 serviceData += orderString;
                 if (index < orders.length - 1) {
