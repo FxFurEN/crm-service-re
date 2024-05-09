@@ -439,7 +439,7 @@ export const getOrdersByPeriod = async (period) => {
 
 
 
-export const getOrdersByEmployeeAndPeriod = async (period) => {
+export const getOrdersByEmployeeAndPeriod = async (employeeId, period) => {
   try {
     let orders;
     let startDate;
@@ -481,6 +481,9 @@ export const getOrdersByEmployeeAndPeriod = async (period) => {
             },
           },
           {
+            userId: employeeId, 
+          },
+          {
             execution: {
               some: {
                 stage: {
@@ -496,7 +499,6 @@ export const getOrdersByEmployeeAndPeriod = async (period) => {
       },
       include: {
         service: { select: { name: true } },
-        user: { select: { name: true } },
       }
     });
 
