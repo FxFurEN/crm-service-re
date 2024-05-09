@@ -1216,3 +1216,148 @@ export const  sales_receipt: Template = {
   },
   "pdfmeVersion": "4.0.0"
 }
+
+
+
+export const  report_by_employee: Template = {
+  "schemas": [
+    {
+      "head copy": {
+        "type": "readOnlyText",
+        "position": {
+          "x": 0,
+          "y": 6.71
+        },
+        "content": "Отчет",
+        "width": 210,
+        "height": 11.3,
+        "rotate": 0,
+        "alignment": "center",
+        "verticalAlignment": "middle",
+        "fontSize": 24,
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#000000",
+        "backgroundColor": "",
+        "opacity": 1,
+        "readOnly": true,
+      },
+      "head copy 3": {
+        "type": "readOnlyText",
+        "position": {
+          "x": 54.94,
+          "y": 17.52
+        },
+        "content": "о проделанной работе за",
+        "width": 61.39,
+        "height": 7.59,
+        "rotate": 0,
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "fontSize": 13,
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#000000",
+        "backgroundColor": "",
+        "opacity": 1,
+        "readOnly": true,
+      },
+      "serviceData": {
+        "type": "table",
+        "position": {
+          "x": 5.88,
+          "y": 33.4
+        },
+        "width": 197.51,
+        "height": 44.7008,
+        "content": "[[\"Eggshell Camisole Top\",\"Row 1\",\"Row 1\"],[\"123\",\"Row 2\",\"Row 2\"]]",
+        "showHead": true,
+        "head": [
+          "Дата заказа",
+          "Услуга",
+          "Сотрудник"
+        ],
+        "headWidthPercentages": [37.4297301139293, 37.5702698860707, 25],
+        "tableStyles": {
+          "borderWidth": 0,
+          "borderColor": "#000000"
+        },
+        "headStyles": {
+          "fontSize": 12,
+          "characterSpacing": 0,
+          "alignment": "left",
+          "verticalAlignment": "middle",
+          "lineHeight": 1,
+          "fontColor": "#000000",
+          "borderColor": "#000000",
+          "backgroundColor": "",
+          "borderWidth": {
+            "top": 0.1,
+            "right": 0.1,
+            "bottom": 0.1,
+            "left": 0.1
+          },
+          "padding": {
+            "top": 5,
+            "right": 5,
+            "bottom": 5,
+            "left": 5
+          }
+        },
+        "bodyStyles": {
+          "fontSize": 12,
+          "characterSpacing": 0,
+          "alignment": "center",
+          "verticalAlignment": "middle",
+          "lineHeight": 1,
+          "fontColor": "#000000",
+          "borderColor": "#000000",
+          "backgroundColor": "",
+          "alternateBackgroundColor": "",
+          "borderWidth": {
+            "top": 0.1,
+            "right": 0.1,
+            "bottom": 0.1,
+            "left": 0.1
+          },
+          "padding": {
+            "top": 6,
+            "right": 5,
+            "bottom": 5,
+            "left": 5
+          }
+        },
+        "columnStyles": {
+          "alignment": {
+            "0": "left"
+          }
+        }
+      },
+      "period": {
+        "type": "text",
+        "position": {
+          "x": 115.64,
+          "y": 18.15
+        },
+        "icon": "\u003Csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide lucide-text-cursor-input\"\u003E\u003Cpath d=\"M5 4h1a3 3 0 0 1 3 3 3 3 0 0 1 3-3h1\"/\u003E\u003Cpath d=\"M13 20h-1a3 3 0 0 1-3-3 3 3 0 0 1-3 3H5\"/\u003E\u003Cpath d=\"M5 16H4a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h1\"/\u003E\u003Cpath d=\"M13 8h7a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-7\"/\u003E\u003Cpath d=\"M9 7v10\"/\u003E\u003C/svg\u003E",
+        "content": "05.05.2024",
+        "width": 45,
+        "height": 7.62,
+        "rotate": 0,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "fontSize": 13,
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#000000",
+        "backgroundColor": "",
+        "opacity": 1,
+      }
+    }
+  ],
+  "basePdf": {
+    "width": 210,
+    "height": 297,
+    "padding": [0, 0, 0, 0]
+  }
+}
