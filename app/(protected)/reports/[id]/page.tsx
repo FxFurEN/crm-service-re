@@ -70,13 +70,14 @@ const ReportDetailPage = () => {
     
 
     const generatePDF = () => {
-    
+
         let inputs = []; 
         if (selectedTemplateName == report_by_employee) {
             const period = selectedPeriod;
             let serviceData = "["; 
             orders.forEach((order, index) => {
-                const orderString = `[\"${order.serviceId}\",\"${order.createdAt}\",\"${order.userId}\"]`;
+                const createdAt = formatDate(order.createdAt, "dd.MM.yyyy");
+                const orderString = `[\"${createdAt}\",\"${order.service.name}\",\"${order.user.name}\"]`;
             
                 serviceData += orderString;
                 if (index < orders.length - 1) {
