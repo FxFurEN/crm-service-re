@@ -63,7 +63,11 @@ const ReportDetailPage = () => {
                     const endDate = date.to || date.from; 
                     const data = await fetchData(selectedPeriod, startDate, endDate);
                     setOrders(data);
+                }  else {
+                    const data = await fetchData(selectedPeriod);
+                    setOrders(data);
                 }
+                
             }
         } catch (error) {
             console.error('Error fetching orders:', error);
