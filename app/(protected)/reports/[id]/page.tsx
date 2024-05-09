@@ -102,7 +102,7 @@ const ReportDetailPage = () => {
         }
     };
 
-    const generatePDF = () => {
+    const generatePDF = async () => {
         setIsLoading(true);
         let inputs = [];
 
@@ -135,7 +135,7 @@ const ReportDetailPage = () => {
                 period = `${formatDate(startDate, "dd.MM.yyyy")} - ${formatDate(endDate, "dd.MM.yyyy")}`;
                 break;
                 case "manual":
-                    if (date && date.from && date.to) {                        // If manual selection and date range is selected, set startDate and endDate accordingly
+                    if (date && date.from && date.to) {
                         startDate = date.from;
                         endDate = date.to;
                         period = `${formatDate(startDate, "dd.MM.yyyy")} - ${formatDate(endDate, "dd.MM.yyyy")}`;
@@ -152,10 +152,19 @@ const ReportDetailPage = () => {
         }
         if (selectedTemplateName === report_by_employee) {
             let serviceData = "[";
+            let employeeData;
+            if (selectedEmployee) {
+                const allEmployees = await getAllEmployees();
+                const employee = allEmployees.find(emp => emp.id === selectedEmployee);
+                if (employee) {
+                    const roleText = employee.role === 'Admin' ? 'Администратор' : 'Сотрудник';
+                    employeeData = `Сотрудник: ${employee.name}\nДолжность: ${roleText}`;
+                }
+            }   
             orders.forEach((order, index) => {
                 const createdAt = formatDate(order.createdAt, "dd.MM.yyyy");
                 const number = index + 1;
-                const orderString = `[\"${number}\",\"${createdAt}\",\"${order.service.name}\",\"${order.user.name}\"]`;
+                const orderString = `[\"${number}\",\"${createdAt}\",\"${order.service.name}\"]`;
 
                 serviceData += orderString;
                 if (index < orders.length - 1) {
@@ -166,6 +175,7 @@ const ReportDetailPage = () => {
             serviceData += "]";
 
             inputs.push({
+                employeeData: employeeData,
                 period: period,
                 serviceData: serviceData
             });
