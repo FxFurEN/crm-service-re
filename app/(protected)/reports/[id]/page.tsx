@@ -107,7 +107,8 @@ const ReportDetailPage = () => {
             let serviceData = "["; 
             orders.forEach((order, index) => {
                 const createdAt = formatDate(order.createdAt, "dd.MM.yyyy");
-                const orderString = `[\"${createdAt}\",\"${order.service.name}\",\"${order.user.name}\"]`;
+                const number = index + 1;
+                const orderString = `[\"${number}\",\"${createdAt}\",\"${order.service.name}\",\"${order.user.name}\"]`;
             
                 serviceData += orderString;
                 if (index < orders.length - 1) {
