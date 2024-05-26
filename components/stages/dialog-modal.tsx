@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useTransition } from 'react';
 import { Button } from "@/components/ui/button";
 import {
@@ -22,7 +20,7 @@ import { addStage } from '@/actions/add-data';
 import { Stage } from '@/types/stages';
 import { GradientPicker } from '@/components/gradient-picker';
 
-export function DialogModalStages({ open, onOpenChange, onSuccess }: DialogModalProps<Stage>) {
+export function DialogModalStages({ open, onOpenChange, onSuccess, mode = "add" }: DialogModalProps<Stage>) {
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
@@ -61,7 +59,7 @@ export function DialogModalStages({ open, onOpenChange, onSuccess }: DialogModal
         >
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
-              <DialogTitle>Добавить статус</DialogTitle>
+              <DialogTitle>{mode === "add" ? "Добавить статус" : "Редактировать статус"}</DialogTitle>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <FormField
@@ -103,7 +101,7 @@ export function DialogModalStages({ open, onOpenChange, onSuccess }: DialogModal
                 form="stageForm"
                 className="w-full"
               >
-                Добавить
+                {mode === "add" ? "Добавить" : "Сохранить"}
               </Button>
             </DialogFooter>
             <FormError message={error} />

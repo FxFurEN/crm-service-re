@@ -13,7 +13,7 @@ const AddButton = ({ onSuccess }) => {
             <Button className="mb-4" onClick={() => setOpen(true)}>
                 Добавить статус  <Plus className="ml-2 h-4 w-4"/>
             </Button>
-            <DialogModalStages open={open} onOpenChange={setOpen} onSuccess={onSuccess}/>
+            <DialogModalStages open={open} onOpenChange={setOpen} onSuccess={onSuccess}  mode="add"/>
         </>
     );
 }
