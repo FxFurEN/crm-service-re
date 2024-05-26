@@ -20,7 +20,7 @@ import { addStage } from '@/actions/add-data';
 import { Stage } from '@/types/stages';
 import { GradientPicker } from '@/components/gradient-picker';
 
-export function DialogModalStages({ open, onOpenChange, onSuccess, mode = "add" }: DialogModalProps<Stage>) {
+export function DialogModalStages({ open, onOpenChange, onSuccess, mode = "add", stageData }: DialogModalProps<Stage>) {
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
@@ -28,6 +28,10 @@ export function DialogModalStages({ open, onOpenChange, onSuccess, mode = "add" 
 
   const form = useForm({
     resolver: zodResolver(StageSchema),
+    values: {
+      name: stageData?.name ?? '',
+      color: stageData?.color ?? '#B4D455',
+    },
   });
 
   const onSubmit = async (data: z.infer<typeof StageSchema>) => {
@@ -38,14 +42,25 @@ export function DialogModalStages({ open, onOpenChange, onSuccess, mode = "add" 
       if (selectedColor) {
         formData.color = selectedColor;
       }
-      addStage(formData)
-        .then(() => {
-          setSuccess("Статус успешно добавлен");
-          onSuccess && onSuccess();
-        })
-        .catch((error) => {
-          setError("Ошибка при добавлении статуса");
-        });
+      if (mode === "add") {
+        addStage(formData)
+          .then(() => {
+            setSuccess("Статус успешно добавлен");
+            onSuccess && onSuccess();
+          })
+          .catch((error) => {
+            setError("Ошибка при добавлении статуса");
+          });
+      } else if (mode === "edit" && stageData) {
+        {/*updateStage(stageData.id, formData) 
+          .then(() => {
+            setSuccess("Статус успешно обновлен");
+            onSuccess && onSuccess();
+          })
+          .catch((error) => {
+            setError("Ошибка при обновлении статуса");
+          });*/}
+      }
     });
   };
 

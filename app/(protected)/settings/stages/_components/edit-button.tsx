@@ -1,11 +1,9 @@
-"use client";
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { PenIcon, Plus } from "lucide-react";
+import { PenIcon } from "lucide-react";
 import { DialogModalStages } from "@/components/stages/dialog-modal";
 
-const EditButton = ({ onSuccess }) => {
+const EditButton = ({ stageData, onSuccess }) => {
     const [open, setOpen] = useState(false);
 
     return (
@@ -15,7 +13,7 @@ const EditButton = ({ onSuccess }) => {
                     <PenIcon className="h-4 w-4"/>
                 </div>
             </Button>
-            <DialogModalStages open={open} onOpenChange={setOpen} onSuccess={onSuccess} mode="edit" />
+            <DialogModalStages open={open} onOpenChange={setOpen} onSuccess={onSuccess} mode="edit" stageData={stageData} />
         </>
     );
 }
