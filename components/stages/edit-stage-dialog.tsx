@@ -19,6 +19,8 @@ import { StageSchema } from '@/schemas';
 import { updateStage } from '@/actions/edit-data';
 import { Stage } from '@/types/stages';
 import { GradientPicker } from '@/components/gradient-picker';
+import { deleteStage } from '@/actions/del-data';
+import { Toaster, toast } from 'sonner';
 
 export function EditStageDialog({ open, onOpenChange, onSuccess, stageData }: DialogModalProps<Stage>) {
   const [error, setError] = useState<string | undefined>("");
@@ -62,6 +64,25 @@ export function EditStageDialog({ open, onOpenChange, onSuccess, stageData }: Di
           });
       }
     });
+  };
+
+  const onDeleteClick = async () => {
+    setError("");
+    setSuccess("");
+    if (stageData && stageData.id) {
+      try {
+        const response = await deleteStage(stageData.id); 
+        setSuccess("Статус успешно удалена");
+        onSuccess && onSuccess();
+        if (response.success) {
+          toast.success("Статус успешно удален"); 
+        }
+        onOpenChange(false);
+      } catch (error) {
+        setError("Ошибка при удалении категории");
+        toast.error("Что-то пошло не так"); 
+      }
+    }
   };
 
   return (
@@ -109,6 +130,14 @@ export function EditStageDialog({ open, onOpenChange, onSuccess, stageData }: Di
               />
             </div>
             <DialogFooter>
+            <Button
+                isLoading={isPending}
+                onClick={onDeleteClick}
+                className="w-full"
+                variant="destructive"
+              >
+                Удалить
+              </Button>
               <Button
                 isLoading={isPending}
                 type="submit"
@@ -123,6 +152,7 @@ export function EditStageDialog({ open, onOpenChange, onSuccess, stageData }: Di
           </DialogContent>
         </form>
       </Form>
+      <Toaster richColors  />
     </Dialog>
   );
 }
