@@ -2,7 +2,7 @@
 
 import * as z from "zod";
 import { db } from "@/lib/db";
-import { CategorySchema, ClientSchema, OrderSchema, ServiceSchema } from "@/schemas";
+import { CategorySchema, ClientSchema, OrderSchema, ServiceSchema, StageSchema } from "@/schemas";
 
 export const updateClient = async (clientId: string, updatedData: z.infer<typeof ClientSchema>) => {
   try {
@@ -178,5 +178,32 @@ export const updateOrder = async (orderId: string, userIdEdit: string, updatedDa
   } catch (error) {
     console.error("Error updating order:", error);
     return { error: "What went wrong" };
+  }
+};
+
+export const updateStage = async (stageId: string, updatedData: z.infer<typeof StageSchema>) => {
+  try {
+    const validatedFields = StageSchema.safeParse(updatedData);
+
+    if (!validatedFields.success) {
+      return { error: "Invalid fields!" };
+    }
+
+    const { name, color } = validatedFields.data;
+
+    const updatedStage = await db.stage.update({
+      where: {
+        id: stageId,
+      },
+      data: {
+        name,
+        color,
+      },
+    });
+
+    return { success: "Stage successfully updated!", stage: updatedStage };
+  } catch (error) {
+    console.error("Error updating stage:", error);
+    return { error: "Something went wrong" };
   }
 };

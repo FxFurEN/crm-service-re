@@ -1,14 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tag } from "antd";
 import EditButton from './edit-button';
+import { Stage } from '@/types/stages';
+import { EditStageDialog } from '@/components/stages/edit-stage-dialog';
 
 interface StageListProps {
-  data: { name: string; color: string }[];
+  data: Stage[];
   onEditSuccess: () => void;
 }
 
-const StagesList: React.FC<StageListProps> = ({ data, onEditSuccess }) => {
+const StagesList: React.FC<StageListProps> = ({ data, onSuccess }) => {
+  const [openDialog, setOpenDialog] = useState<boolean>(false);
+  const [currentStage, setCurrentStage] = useState<Stage | null>(null);
+
+  const handleEditClick = (stage: Stage) => {
+    setCurrentStage(stage);
+    setOpenDialog(true);
+  };
+
+
   return (
     <div className="w-full md:flex-shrink-0 mt-7">
       <ScrollArea className="h-72 w-full md:w-full rounded-md border">
@@ -20,7 +31,7 @@ const StagesList: React.FC<StageListProps> = ({ data, onEditSuccess }) => {
                   <Tag color={stage.color}>{stage.name}</Tag>
                 </div>
                 <div>
-                  <EditButton stageData={stage} onSuccess={onEditSuccess} />
+                  <EditButton onClick={() => handleEditClick(stage)} />
                 </div>
               </div>
             ))}
@@ -29,6 +40,15 @@ const StagesList: React.FC<StageListProps> = ({ data, onEditSuccess }) => {
           <p className="text-center mt-5">Нет результатов</p>
         )}
       </ScrollArea>
+
+      {currentStage && (
+        <EditStageDialog 
+          open={openDialog} 
+          onOpenChange={setOpenDialog} 
+          onSuccess={onSuccess}
+          stageData={currentStage} 
+        />
+      )}
     </div>
   );
 }

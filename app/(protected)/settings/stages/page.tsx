@@ -30,7 +30,7 @@ const StagesPage = () => {
                     <AddButton onSuccess={handleSuccess} />
                 </div>
                 <div>
-                    <StagesList data={stages}/>
+                    <StagesList data={stages} onSuccess={handleSuccess} />
                 </div>
             </div>
         </>
