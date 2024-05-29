@@ -19,9 +19,9 @@ const SettingsPage = () => {
               <Link href="/settings/employees">
                   <Button className="mr-4 mb-4 sm:mb-0">Сотрудники</Button>
               </Link>
-              <Link href="/settings/documents">
+              {/*<Link href="/settings/documents">
                   <Button className="mr-4 mb-4 sm:mb-0">Документы</Button>
-              </Link>
+  </Link>*/}
               <Link href="/settings/stages">
                   <Button className="mr-4 mb-4 sm:mb-0">Статусы</Button>
               </Link>
