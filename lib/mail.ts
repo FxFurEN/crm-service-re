@@ -1,33 +1,65 @@
-import { Resend } from "resend";
+const nodemailer = require('nodemailer');
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const transporter = nodemailer.createTransport({
+  host: 'smtp.gmail.com',
+  port: 587,
+  secure: false,
+  auth: {
+    user: 'gangsas507@gmail.com',
+    pass: 'wvvu gafo pwwl jpnm',
+  },
+});
 
 const domain = process.env.NEXT_PUBLIC_APP_URL;
 
-export const sendPasswordResetEmail = async (
-  email: string,
-  token: string,
-) => {
-  const resetLink = `${domain}/auth/new-password?token=${token}`
+export const sendPasswordResetEmail = async (email: string, token: string) => {
+  const resetLink = `${domain}/auth/new-password?token=${token}`;
 
-  await resend.emails.send({
-    from: "onboarding@resend.dev",
-    to: email,
-    subject: "Reset your password",
-    html: `<p>Click <a href="${resetLink}">here</a> to reset password.</p>`
-  });
+  const htmlContent = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #dcdcdc;">
+      <h2 style="color: #333;">Сброс пароля в CRM-SERVICE</h2>
+      <p>Для сброса пароля нажмите на кнопку ниже:</p>
+      <a href="${resetLink}" style="display: inline-block; padding: 10px 20px; margin: 20px 0; color: #fff; background-color: #007bff; text-decoration: none; border-radius: 5px;">Сбросить пароль</a>
+      <p>Если вы не запрашивали сброс пароля, просто проигнорируйте это письмо.</p>
+      <p>С уважением, команда CRM-SERVICE</p>
+    </div>
+  `;
+
+  try {
+    await transporter.sendMail({
+      from: 'gangsas507@gmail.com',
+      to: email,
+      subject: 'Сброс пароля в CRM-SERVICE',
+      html: htmlContent,
+    });
+
+  } catch (error) {
+    throw error;
+  }
 };
 
-export const sendVerificationEmail = async (
-  email: string, 
-  token: string
-) => {
+export const sendVerificationEmail = async (email: string, token: string) => {
   const confirmLink = `${domain}/auth/new-verification?token=${token}`;
 
-  await resend.emails.send({
-    from: "onboarding@resend.dev",
-    to: email,
-    subject: "Confirm your email",
-    html: `<p>Click <a href="${confirmLink}">here</a> to confirm email.</p>`
-  });
+  const htmlContent = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #dcdcdc;">
+      <h2 style="color: #333;">Подтверждение электронной почты в CRM-SERVICE</h2>
+      <p>Для подтверждения электронной почты нажмите на кнопку ниже:</p>
+      <a href="${confirmLink}" style="display: inline-block; padding: 10px 20px; margin: 20px 0; color: #fff; background-color: #28a745; text-decoration: none; border-radius: 5px;">Подтвердить электронную почту</a>
+      <p>Если вы не регистрировались на нашем сайте, просто проигнорируйте это письмо.</p>
+      <p>С уважением, команда CRM-SERVICE</p>
+    </div>
+  `;
+
+  try {
+    await transporter.sendMail({
+      from: 'gangsas507@gmail.com',
+      to: email,
+      subject: 'Подтверждение электронной почты в CRM-SERVICE',
+      html: htmlContent,
+    });
+
+  } catch (error) {
+    throw error;
+  }
 };
