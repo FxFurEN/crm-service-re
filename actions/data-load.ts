@@ -359,7 +359,7 @@ export const getClientOrders = async (clientId: string) => {
 
 
 
-export const getOrdersByPeriod = async (period, startDate, endDate) => {
+export const getOrdersByPeriod = async (period: 'today' | 'yesterday' | 'last-week' | 'last-month' | 'manual', startDate: Date, endDate: Date) => {
   try {
     let orders;
     switch (period) {
@@ -453,7 +453,7 @@ export const getOrdersByPeriod = async (period, startDate, endDate) => {
 
 
 
-export const getOrdersByEmployeeAndPeriod = async (employeeId, period) => {
+export const getOrdersByEmployeeAndPeriod = async (employeeId: string, period: string) => {
   try {
     let orders;
     let startDate;

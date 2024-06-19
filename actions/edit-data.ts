@@ -4,7 +4,27 @@ import * as z from "zod";
 import { db } from "@/lib/db";
 import { CategorySchema, ClientSchema, OrderSchema, ServiceSchema, StageSchema } from "@/schemas";
 
-export const updateClient = async (clientId: string, updatedData: z.infer<typeof ClientSchema>) => {
+interface ClientSchemaType {
+  individual: () => z.ZodObject<{
+    email: z.ZodString;
+    phone: z.ZodNullable<z.ZodString>;
+    sign: z.ZodBoolean;
+    initials: z.ZodNullable<z.ZodString>;
+  }>;
+  corporate: () => z.ZodObject<{
+    email: z.ZodString;
+    phone: z.ZodNullable<z.ZodString>;
+    sign: z.ZodBoolean;
+    name: z.ZodNullable<z.ZodString>;
+    unp: z.ZodNullable<z.ZodString>;
+  }>;
+}
+
+
+export const updateClient = async (
+  clientId: string,
+  updatedData: z.infer<ReturnType<ClientSchemaType["individual"]>> | z.infer<ReturnType<ClientSchemaType["corporate"]>>
+) => {
   try {
     const formSchema = updatedData.sign ? ClientSchema.corporate() : ClientSchema.individual();
     const validatedFields = formSchema.safeParse(updatedData);
@@ -13,20 +33,23 @@ export const updateClient = async (clientId: string, updatedData: z.infer<typeof
       return { error: "Недопустимые поля!" };
     }
 
-    const { email, phone, sign, initials, unp, name } = validatedFields.data;
+    const { email, phone, sign } = validatedFields.data;
+
+    let clientData: any = { email, phone, sign };
+
+    if (sign) {
+      const { name, unp } = validatedFields.data as z.infer<ReturnType<ClientSchemaType["corporate"]>>;
+      clientData = { ...clientData, name, unp };
+    } else {
+      const { initials } = validatedFields.data as z.infer<ReturnType<ClientSchemaType["individual"]>>;
+      clientData = { ...clientData, initials };
+    }
 
     const updatedClient = await db.clients.update({
       where: {
         id: clientId,
       },
-      data: {
-        email,
-        phone,
-        sign,
-        initials,
-        unp,
-        name,
-      },
+      data: clientData,
     });
 
     return { success: "Данные клиента успешно обновлены!", client: updatedClient };
@@ -36,34 +59,38 @@ export const updateClient = async (clientId: string, updatedData: z.infer<typeof
   }
 };
 
-export const updateService = async (serviceId: string, updatedData: z.infer<typeof ServiceSchema>) => {
+
+export const updateService = async (
+  serviceId: string,
+  updatedData: z.infer<typeof ServiceSchema>
+) => {
   try {
     const validatedFields = ServiceSchema.safeParse(updatedData);
     if (!validatedFields.success) {
       return { error: "Fields are not valid!" };
     }
-    const { name, category } = validatedFields.data;
-    const price = parseFloat(validatedFields.data.price); 
-    
+    const { name, categoryId } = validatedFields.data;
+    const price = parseFloat(validatedFields.data.price);
+
     const existingService = await db.service.findUnique({ where: { id: serviceId } });
     if (!existingService) {
       return { error: 'Услуга не найдена' };
     }
 
     const existingCategory = await db.category.findFirst({
-      where: { id: category },
+      where: { id: categoryId },
     });
 
-    let categoryId;
+    let finalCategoryId;
     if (existingCategory) {
-      categoryId = existingCategory.id;
+      finalCategoryId = existingCategory.id;
     } else {
       const newCategory = await db.category.create({
         data: {
-          name: category,
+          name: categoryId, // This assumes categoryId is the category name if it doesn't exist
         },
       });
-      categoryId = newCategory.id;
+      finalCategoryId = newCategory.id;
     }
 
     const updatedService = await db.service.update({
@@ -71,7 +98,7 @@ export const updateService = async (serviceId: string, updatedData: z.infer<type
       data: {
         name,
         price,
-        category: { connect: { id: categoryId } },
+        category: { connect: { id: finalCategoryId } },
       },
     });
 

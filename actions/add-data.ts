@@ -29,21 +29,27 @@ export const addClient = async (values: z.infer<ReturnType<ClientSchemaType["ind
     if (!validatedFields.success) {
       return { error: "Недопустимые поля!" };
     }
-    const { email, phone, sign, initials, unp, name } = validatedFields.data;
+
+    const { email, phone, sign } = validatedFields.data;
+
+    let clientData: any = { email, phone, sign };
+
+    if (values.sign) {
+      const { name, unp } = validatedFields.data as z.infer<ReturnType<ClientSchemaType["corporate"]>>;
+      clientData = { ...clientData, name, unp };
+    } else {
+      const { initials } = validatedFields.data as z.infer<ReturnType<ClientSchemaType["individual"]>>;
+      clientData = { ...clientData, initials };
+    }
+
     const clientExists = await checkClientExistsByEmail(email);
 
     if (clientExists) {
       return { error: "Клиент уже существует!" };
     }
+
     const newClient = await db.clients.create({
-      data: {
-        email,
-        phone,
-        sign,
-        initials,
-        unp,
-        name,
-      },
+      data: clientData,
     });
 
     return { success: "Клиент успешно добавлен!", client: newClient };
@@ -54,17 +60,18 @@ export const addClient = async (values: z.infer<ReturnType<ClientSchemaType["ind
 };
 
 
-export const addService = async ({ name, price, categoryId }) => {
+
+export const addService = async ({ name, price, categoryId }: { name: string, price: number, categoryId: number }) => {
   try {
     const existingCategory = await db.category.findFirst({
-      where: { id: categoryId },
+      where: { id: categoryId.toString() },
     });
 
     let category;
     if (!existingCategory) {
       category = await db.category.create({
         data: {
-          name: categoryId,
+          name: categoryId.toString(),
         },
       });
     }
@@ -73,7 +80,7 @@ export const addService = async ({ name, price, categoryId }) => {
       data: {
         name,
         price,
-        category: { connect: { id: existingCategory ? categoryId : category?.id } },
+        category: { connect: { id: existingCategory ? categoryId.toString() : category?.id } },
       },
     });
 
@@ -169,18 +176,23 @@ export const addOrder = async (values: z.infer<typeof OrderSchema>) => {
 export const addStage = async (values: z.infer<typeof StageSchema>) => {
   try {
     const validatedFields = StageSchema.safeParse(values);
-
+  
     if (!validatedFields.success) {
       return { error: "Invalid fields!" };
     }
     const { name, color } = validatedFields.data;
+  
+    if (typeof color !== 'string') {
+      return { error: "Color is required." };
+    }
+  
     const newStage = await db.stage.create({
       data: {
         name,
         color,
       },
     });
-
+  
     return { success: "Stage added!", stage: newStage };
   } catch (error) {
     console.error("Error adding client:", error);
