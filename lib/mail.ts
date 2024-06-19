@@ -10,7 +10,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const domain = process.env.NEXT_PUBLIC_APP_URL;
+const domain = process.env.VERCEL_URL;
 
 export const sendPasswordResetEmail = async (email: string, token: string) => {
   const resetLink = `${domain}/auth/new-password?token=${token}`;
