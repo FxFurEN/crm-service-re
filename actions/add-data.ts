@@ -5,7 +5,23 @@ import { db } from "@/lib/db";
 import { CategorySchema, ClientSchema, ExecutionSchema, OrderSchema, ServiceSchema, StageSchema } from "@/schemas";
 import { checkClientExistsByEmail } from "@/data/client-validaton"; 
 
-export const addClient = async (values: z.infer<typeof ClientSchema>) => {
+interface ClientSchemaType {
+  individual: () => z.ZodObject<{
+    email: z.ZodString;
+    phone: z.ZodNullable<z.ZodString>;
+    sign: z.ZodBoolean;
+    initials: z.ZodNullable<z.ZodString>;
+  }>;
+  corporate: () => z.ZodObject<{
+    email: z.ZodString;
+    phone: z.ZodNullable<z.ZodString>;
+    sign: z.ZodBoolean;
+    name: z.ZodNullable<z.ZodString>;
+    unp: z.ZodNullable<z.ZodString>;
+  }>;
+}
+
+export const addClient = async (values: z.infer<ReturnType<ClientSchemaType["individual"]> | ReturnType<ClientSchemaType["corporate"]>>) => {
   try {
     const formSchema = values.sign ? ClientSchema.corporate() : ClientSchema.individual();
     const validatedFields = formSchema.safeParse(values);
