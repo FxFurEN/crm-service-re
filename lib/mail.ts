@@ -1,12 +1,12 @@
 const nodemailer = require('nodemailer');
 
 const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
+  host: process.env.EMAIL_HOST,
   port: 587,
   secure: false,
   auth: {
-    user: 'gangsas507@gmail.com',
-    pass: 'wvvu gafo pwwl jpnm',
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
   },
 });
 
@@ -27,7 +27,7 @@ export const sendPasswordResetEmail = async (email: string, token: string) => {
 
   try {
     await transporter.sendMail({
-      from: 'gangsas507@gmail.com',
+      from: process.env.EMAIL_USER,
       to: email,
       subject: 'Сброс пароля в CRM-SERVICE',
       html: htmlContent,
@@ -53,7 +53,7 @@ export const sendVerificationEmail = async (email: string, token: string) => {
 
   try {
     await transporter.sendMail({
-      from: 'gangsas507@gmail.com',
+      from: process.env.EMAIL_USER,
       to: email,
       subject: 'Подтверждение электронной почты в CRM-SERVICE',
       html: htmlContent,
