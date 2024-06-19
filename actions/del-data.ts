@@ -47,3 +47,20 @@ export const deleteCategory = async (categoryId: string) => {
     return { error: "What went wrong" };
   }
 };
+
+
+
+export const deleteStage = async (stageId: string) => {
+  try {
+    await db.stage.delete({
+      where: {
+        id: stageId,
+      },
+    });
+
+    return { success: "Stage deleted!" };
+  } catch (error) {
+    console.error("Error deleting service:", error);
+    return { error: "What went wrong" };
+  }
+};

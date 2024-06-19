@@ -64,8 +64,24 @@ export const RegisterSchema = z.object({
   }),
 });
 
+interface ClientSchemaType {
+  individual: () => z.ZodObject<{
+    email: z.ZodString;
+    phone: z.ZodNullable<z.ZodString>;
+    sign: z.ZodBoolean;
+    initials: z.ZodNullable<z.ZodString>;
+  }>;
+  corporate: () => z.ZodObject<{
+    email: z.ZodString;
+    phone: z.ZodNullable<z.ZodString>;
+    sign: z.ZodBoolean;
+    name: z.ZodNullable<z.ZodString>;
+    unp: z.ZodNullable<z.ZodString>;
+  }>;
+}
 
-export const ClientSchema = {
+
+export const ClientSchema: ClientSchemaType = {
   individual: () =>
     z.object({
       email: z.string().email({

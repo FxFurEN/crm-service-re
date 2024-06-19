@@ -5,7 +5,23 @@ import { db } from "@/lib/db";
 import { CategorySchema, ClientSchema, ExecutionSchema, OrderSchema, ServiceSchema, StageSchema } from "@/schemas";
 import { checkClientExistsByEmail } from "@/data/client-validaton"; 
 
-export const addClient = async (values: z.infer<typeof ClientSchema>) => {
+interface ClientSchemaType {
+  individual: () => z.ZodObject<{
+    email: z.ZodString;
+    phone: z.ZodNullable<z.ZodString>;
+    sign: z.ZodBoolean;
+    initials: z.ZodNullable<z.ZodString>;
+  }>;
+  corporate: () => z.ZodObject<{
+    email: z.ZodString;
+    phone: z.ZodNullable<z.ZodString>;
+    sign: z.ZodBoolean;
+    name: z.ZodNullable<z.ZodString>;
+    unp: z.ZodNullable<z.ZodString>;
+  }>;
+}
+
+export const addClient = async (values: z.infer<ReturnType<ClientSchemaType["individual"]> | ReturnType<ClientSchemaType["corporate"]>>) => {
   try {
     const formSchema = values.sign ? ClientSchema.corporate() : ClientSchema.individual();
     const validatedFields = formSchema.safeParse(values);
@@ -13,21 +29,27 @@ export const addClient = async (values: z.infer<typeof ClientSchema>) => {
     if (!validatedFields.success) {
       return { error: "Недопустимые поля!" };
     }
-    const { email, phone, sign, initials, unp, name } = validatedFields.data;
+
+    const { email, phone, sign } = validatedFields.data;
+
+    let clientData: any = { email, phone, sign };
+
+    if (values.sign) {
+      const { name, unp } = validatedFields.data as z.infer<ReturnType<ClientSchemaType["corporate"]>>;
+      clientData = { ...clientData, name, unp };
+    } else {
+      const { initials } = validatedFields.data as z.infer<ReturnType<ClientSchemaType["individual"]>>;
+      clientData = { ...clientData, initials };
+    }
+
     const clientExists = await checkClientExistsByEmail(email);
 
     if (clientExists) {
       return { error: "Клиент уже существует!" };
     }
+
     const newClient = await db.clients.create({
-      data: {
-        email,
-        phone,
-        sign,
-        initials,
-        unp,
-        name,
-      },
+      data: clientData,
     });
 
     return { success: "Клиент успешно добавлен!", client: newClient };
@@ -38,17 +60,18 @@ export const addClient = async (values: z.infer<typeof ClientSchema>) => {
 };
 
 
-export const addService = async ({ name, price, categoryId }) => {
+
+export const addService = async ({ name, price, categoryId }: { name: string, price: number, categoryId: number }) => {
   try {
     const existingCategory = await db.category.findFirst({
-      where: { id: categoryId },
+      where: { id: categoryId.toString() },
     });
 
     let category;
     if (!existingCategory) {
       category = await db.category.create({
         data: {
-          name: categoryId,
+          name: categoryId.toString(),
         },
       });
     }
@@ -57,7 +80,7 @@ export const addService = async ({ name, price, categoryId }) => {
       data: {
         name,
         price,
-        category: { connect: { id: existingCategory ? categoryId : category?.id } },
+        category: { connect: { id: existingCategory ? categoryId.toString() : category?.id } },
       },
     });
 
@@ -153,18 +176,23 @@ export const addOrder = async (values: z.infer<typeof OrderSchema>) => {
 export const addStage = async (values: z.infer<typeof StageSchema>) => {
   try {
     const validatedFields = StageSchema.safeParse(values);
-
+  
     if (!validatedFields.success) {
       return { error: "Invalid fields!" };
     }
     const { name, color } = validatedFields.data;
+  
+    if (typeof color !== 'string') {
+      return { error: "Color is required." };
+    }
+  
     const newStage = await db.stage.create({
       data: {
         name,
         color,
       },
     });
-
+  
     return { success: "Stage added!", stage: newStage };
   } catch (error) {
     console.error("Error adding client:", error);

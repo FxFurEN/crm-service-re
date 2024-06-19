@@ -1,6 +1,4 @@
-"use client";
-
-import { useState, useTransition } from 'react';
+import React, { useState, useTransition, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -16,21 +14,35 @@ import { FormSuccess } from '../form-success';
 import { useForm } from 'react-hook-form';
 import * as z from "zod";
 import { zodResolver } from '@hookform/resolvers/zod';
-import { DialogModalProps} from '@/types/dialog-props';
+import { DialogModalProps } from '@/types/dialog-props';
 import { StageSchema } from '@/schemas';
-import { addStage } from '@/actions/add-data';
+import { updateStage } from '@/actions/edit-data';
 import { Stage } from '@/types/stages';
 import { GradientPicker } from '@/components/gradient-picker';
+import { deleteStage } from '@/actions/del-data';
+import { Toaster, toast } from 'sonner';
 
-export function DialogModalStages({ open, onOpenChange, onSuccess }: DialogModalProps<Stage>) {
+export function EditStageDialog({ open, onOpenChange, onSuccess, stageData }: DialogModalProps<Stage>) {
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
-  const [selectedColor, setSelectedColor] = useState<string | undefined>( '#B4D455');
+  const [selectedColor, setSelectedColor] = useState<string | undefined>(stageData?.color ?? '#B4D455');
 
   const form = useForm({
     resolver: zodResolver(StageSchema),
+    defaultValues: {
+      name: stageData?.name ?? '',
+      color: stageData?.color ?? '',
+    },
   });
+
+  useEffect(() => {
+    form.reset({
+      name: stageData?.name ?? '',
+      color: stageData?.color ?? '',
+    });
+    setSelectedColor(stageData?.color ?? '#B4D455');
+  }, [stageData, form]);
 
   const onSubmit = async (data: z.infer<typeof StageSchema>) => {
     setError("");
@@ -40,28 +52,46 @@ export function DialogModalStages({ open, onOpenChange, onSuccess }: DialogModal
       if (selectedColor) {
         formData.color = selectedColor;
       }
-      addStage(formData)
-        .then(() => {
-          setSuccess("Статус успешно добавлен");
-          onSuccess && onSuccess();
-        })
-        .catch((error) => {
-          setError("Ошибка при добавлении статуса");
-        });
+      if (stageData) {
+        updateStage(stageData.id, formData)
+          .then(() => {
+            setSuccess("Статус успешно обновлен");
+            onSuccess && onSuccess();
+          })
+          .catch((error) => {
+            setError("Ошибка при обновлении статуса");
+            console.error(error);
+          });
+      }
     });
+  };
+
+  const onDeleteClick = async () => {
+    setError("");
+    setSuccess("");
+    if (stageData && stageData.id) {
+      try {
+        const response = await deleteStage(stageData.id); 
+        setSuccess("Статус успешно удалена");
+        onSuccess && onSuccess();
+        if (response.success) {
+          toast.success("Статус успешно удален"); 
+        }
+        onOpenChange(false);
+      } catch (error) {
+        setError("Ошибка при удалении категории");
+        toast.error("Что-то пошло не так"); 
+      }
+    }
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <Form {...form}>
-        <form
-          id="stageForm"
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-6"
-        >
+        <form id="editStageForm" onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
-              <DialogTitle>Добавить статус</DialogTitle>
+              <DialogTitle>Редактировать статус</DialogTitle>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <FormField
@@ -88,8 +118,11 @@ export function DialogModalStages({ open, onOpenChange, onSuccess }: DialogModal
                   <FormItem>
                     <FormLabel>Цвет</FormLabel>
                     <GradientPicker
-                      background={selectedColor} 
-                      setBackground={setSelectedColor} 
+                      background={field.value ?? selectedColor}
+                      setBackground={(color) => {
+                        setSelectedColor(color);
+                        field.onChange(color);
+                      }}
                     />
                     <FormMessage />
                   </FormItem>
@@ -97,13 +130,21 @@ export function DialogModalStages({ open, onOpenChange, onSuccess }: DialogModal
               />
             </div>
             <DialogFooter>
+            <Button
+                isLoading={isPending}
+                onClick={onDeleteClick}
+                className="w-full"
+                variant="destructive"
+              >
+                Удалить
+              </Button>
               <Button
                 isLoading={isPending}
                 type="submit"
-                form="stageForm"
+                form="editStageForm"
                 className="w-full"
               >
-                Добавить
+                Сохранить
               </Button>
             </DialogFooter>
             <FormError message={error} />
@@ -111,6 +152,7 @@ export function DialogModalStages({ open, onOpenChange, onSuccess }: DialogModal
           </DialogContent>
         </form>
       </Form>
+      <Toaster richColors  />
     </Dialog>
   );
 }
