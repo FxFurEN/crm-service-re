@@ -219,8 +219,8 @@ export const addExecution = async (orderId: string, userId: string, values: z.in
         orderId,
         stageId,
       },
-    });
-
+    });;
+    revalidateTag('allHistory');
     return { success: "Execution added!", execution: newExecution };
   } catch (error) {
     console.error("Error adding execution:", error);
