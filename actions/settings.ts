@@ -84,5 +84,7 @@ export const settings = async (
     }
   });
   revalidatePath('/services')
+  revalidatePath('/settings/employees')
+  revalidatePath('/settings/stages')
   return { success: "Settings Updated!" }
 }
