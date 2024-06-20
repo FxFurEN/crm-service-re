@@ -1,24 +1,25 @@
 import { getAllCategories, getAllServices } from "@/actions/data-load";
 import ServicesPage from "./page.client";
-import { revalidateTag } from "next/cache";
+import { revalidatePath } from 'next/cache'
 import { currentRole } from "@/lib/auth";
 import AccessPage from "@/components/access.denied";
 
 const ServerServicesPage = async () => {
-  const servicesData = await getAllServices();
-  const categoriesData = await getAllCategories();
   const userRole = await currentRole();
 
   if (userRole !== 'ADMIN') {
     return <AccessPage />;
   }
 
+  const servicesData = await getAllServices();
+  const categoriesData = await getAllCategories();
+
   const transformedServices = servicesData?.map(service => ({
     ...service,
     categoryName: service.category.name,
   }));
 
-  revalidateTag('allServiceAndCategory');
+  revalidatePath('/services')
 
   return (
     <ServicesPage
