@@ -26,7 +26,7 @@ export const deleteService = async (serviceId: string) => {
         id: serviceId,
       },
     });
-
+    revalidateTag('allServiceAndCategory');
     return { success: "Услуга успешно удалена!" };
   } catch (error) {
     console.error("Error deleting service:", error);
@@ -41,7 +41,7 @@ export const deleteCategory = async (categoryId: string) => {
         id: categoryId,
       },
     });
-
+    revalidateTag('allServiceAndCategory');
     return { success: "Category deleted!" };
   } catch (error) {
     console.error("Error deleting service:", error);

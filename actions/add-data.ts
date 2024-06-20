@@ -85,7 +85,7 @@ export const addService = async ({ name, price, categoryId }: { name: string, pr
         category: { connect: { id: existingCategory ? categoryId.toString() : category?.id } },
       },
     });
-
+    revalidateTag('allServiceAndCategory');
     return { success: 'Услуга успешно добавлена!', service };
   } catch (error) {
     console.error('Error adding service:', error);
@@ -107,7 +107,7 @@ export const addCategory = async (values: z.infer<typeof CategorySchema>) => {
         name,
       },
     });
-
+    revalidateTag('allServiceAndCategory');
     return { success: "Category added!", client: newCategory };
   } catch (error) {
     console.error("Error adding client:", error);

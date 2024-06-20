@@ -103,7 +103,7 @@ export const updateService = async (
         category: { connect: { id: finalCategoryId } },
       },
     });
-
+    revalidateTag('allServiceAndCategory');
     return { success: "Данные услуги успешно обновлены!", service: updatedService };
   } catch (error) {
     console.error("Error updating service:", error);
@@ -130,7 +130,7 @@ export const updateCategory = async (categoryId: string, updatedData: z.infer<ty
         name,
       },
     });
-
+    revalidateTag('allServiceAndCategory');
     return { success: "Category successfully updated!", category: updatedCategory };
   } catch (error) {
     console.error("Error updating client:", error);
