@@ -4,6 +4,7 @@ import * as z from "zod";
 import { db } from "@/lib/db";
 import { CategorySchema, ClientSchema, ExecutionSchema, OrderSchema, ServiceSchema, StageSchema } from "@/schemas";
 import { checkClientExistsByEmail } from "@/data/client-validaton"; 
+import { revalidateTag } from "next/cache";
 
 interface ClientSchemaType {
   individual: () => z.ZodObject<{
@@ -164,6 +165,7 @@ export const addOrder = async (values: z.infer<typeof OrderSchema>) => {
         execution: true
       }
     });
+    revalidateTag('allOrders');
 
     return { success: "Order added!", order: newOrder };
   } catch (error) {

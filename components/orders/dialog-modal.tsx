@@ -98,6 +98,7 @@ export function DialogModal({ open, onOpenChange, mode = "add", orderData, onSuc
           })
           .catch((error) => {
             setError("Ошибка при добавлении заказа");
+            console.log(error);
           });
       } else if (mode === "edit" && orderData) {
         const userIdEdit = user?.id;

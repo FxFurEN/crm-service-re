@@ -3,6 +3,7 @@
 import * as z from "zod";
 import { db } from "@/lib/db";
 import { CategorySchema, ClientSchema, OrderSchema, ServiceSchema, StageSchema } from "@/schemas";
+import { revalidateTag } from "next/cache";
 
 interface ClientSchemaType {
   individual: () => z.ZodObject<{
@@ -201,6 +202,7 @@ export const updateOrder = async (orderId: string, userIdEdit: string, updatedDa
       },
     });
 
+    revalidateTag('allOrders');
     return { success: "Данные заказа успешно обновлены!", order: updatedOrder, execution: newExecution };
   } catch (error) {
     console.error("Error updating order:", error);
