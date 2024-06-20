@@ -230,7 +230,7 @@ export const updateStage = async (stageId: string, updatedData: z.infer<typeof S
         color,
       },
     });
-
+    revalidateTag('allStages');
     return { success: "Stage successfully updated!", stage: updatedStage };
   } catch (error) {
     console.error("Error updating stage:", error);

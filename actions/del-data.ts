@@ -58,7 +58,7 @@ export const deleteStage = async (stageId: string) => {
         id: stageId,
       },
     });
-
+    revalidateTag('allStages');
     return { success: "Stage deleted!" };
   } catch (error) {
     console.error("Error deleting service:", error);

@@ -195,6 +195,7 @@ export const addStage = async (values: z.infer<typeof StageSchema>) => {
         color,
       },
     });
+    revalidateTag('allStages');
     return { success: "Stage added!", stage: newStage };
   } catch (error) {
     console.error("Error adding stage:", error);
