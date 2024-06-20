@@ -53,6 +53,7 @@ export const updateClient = async (
       data: clientData,
     });
 
+    revalidateTag('allClients')
     return { success: "Данные клиента успешно обновлены!", client: updatedClient };
   } catch (error) {
     console.error("Error updating client:", error);

@@ -53,6 +53,7 @@ export const addClient = async (values: z.infer<ReturnType<ClientSchemaType["ind
       data: clientData,
     });
 
+    revalidateTag('allClients')
     return { success: "Клиент успешно добавлен!", client: newClient };
   } catch (error) {
     console.error("Error adding client:", error);
@@ -194,10 +195,9 @@ export const addStage = async (values: z.infer<typeof StageSchema>) => {
         color,
       },
     });
-  
     return { success: "Stage added!", stage: newStage };
   } catch (error) {
-    console.error("Error adding client:", error);
+    console.error("Error adding stage:", error);
     return { error: "What's wrong" };
   }
 };
