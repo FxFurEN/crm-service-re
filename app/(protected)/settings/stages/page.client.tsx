@@ -6,7 +6,6 @@ import AddButton from './_components/add-button';
 const StagesPage = ({ stages }) => {
 
   const handleSuccess = () => {
-    console.log('Success!'); 
   };
 
   return (

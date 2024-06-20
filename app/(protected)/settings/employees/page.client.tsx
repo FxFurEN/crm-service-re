@@ -2,7 +2,6 @@
 
 import CustomTable, { TableColumn } from '@/components/data-table';
 import { Employee } from '@/types/employee';
-import useRedirectIfUser from '@/hooks/use-redirect-User';
 
 const employeeColumns: TableColumn<Employee>[] = [
   {
@@ -27,7 +26,6 @@ const employeeColumns: TableColumn<Employee>[] = [
 ];
 
 const EmployeesPage = ({ employees }) => {
-  useRedirectIfUser();
 
   return (
     <>
