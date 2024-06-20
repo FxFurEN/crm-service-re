@@ -35,11 +35,6 @@ const ServicesPage = ({ initialServices, initialCategories }) => {
   const [isDeleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
   const [deleteRowId, setDeleteRowId] = React.useState<string | null>(null);
 
-  useEffect(() => {
-    if (role === UserRole.USER) {
-      router.back(); 
-    }
-  }, [role, router]);
 
   const handleFloatButtonClick = () => {
     setOpen(true);
