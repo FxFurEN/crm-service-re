@@ -1,6 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
+import { revalidateTag } from "next/cache";
 
 export const deleteClient = async (clientId: string) => {
   try {
@@ -9,7 +10,7 @@ export const deleteClient = async (clientId: string) => {
         id: clientId,
       },
     });
-
+    revalidateTag('allClients')
     return { success: "Клиент успешно удален!" };
   } catch (error) {
     console.error("Error deleting client:", error);
@@ -25,7 +26,7 @@ export const deleteService = async (serviceId: string) => {
         id: serviceId,
       },
     });
-
+    revalidateTag('allServiceAndCategory');
     return { success: "Услуга успешно удалена!" };
   } catch (error) {
     console.error("Error deleting service:", error);
@@ -40,7 +41,7 @@ export const deleteCategory = async (categoryId: string) => {
         id: categoryId,
       },
     });
-
+    revalidateTag('allServiceAndCategory');
     return { success: "Category deleted!" };
   } catch (error) {
     console.error("Error deleting service:", error);
@@ -57,7 +58,7 @@ export const deleteStage = async (stageId: string) => {
         id: stageId,
       },
     });
-
+    revalidateTag('allStages');
     return { success: "Stage deleted!" };
   } catch (error) {
     console.error("Error deleting service:", error);

@@ -21,7 +21,7 @@ export default function DeleteConfirmationDialog({
         <AlertDialogHeader>
           <AlertDialogTitle>Вы уверены?</AlertDialogTitle>
           <AlertDialogDescription>
-            Вы действительно хотите удалить запись о клиенте?
+            Вы действительно хотите удалить запись?
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

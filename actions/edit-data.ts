@@ -3,6 +3,7 @@
 import * as z from "zod";
 import { db } from "@/lib/db";
 import { CategorySchema, ClientSchema, OrderSchema, ServiceSchema, StageSchema } from "@/schemas";
+import { revalidateTag } from "next/cache";
 
 interface ClientSchemaType {
   individual: () => z.ZodObject<{
@@ -52,6 +53,7 @@ export const updateClient = async (
       data: clientData,
     });
 
+    revalidateTag('allClients')
     return { success: "Данные клиента успешно обновлены!", client: updatedClient };
   } catch (error) {
     console.error("Error updating client:", error);
@@ -101,7 +103,7 @@ export const updateService = async (
         category: { connect: { id: finalCategoryId } },
       },
     });
-
+    revalidateTag('allServiceAndCategory');
     return { success: "Данные услуги успешно обновлены!", service: updatedService };
   } catch (error) {
     console.error("Error updating service:", error);
@@ -128,7 +130,7 @@ export const updateCategory = async (categoryId: string, updatedData: z.infer<ty
         name,
       },
     });
-
+    revalidateTag('allServiceAndCategory');
     return { success: "Category successfully updated!", category: updatedCategory };
   } catch (error) {
     console.error("Error updating client:", error);
@@ -201,6 +203,7 @@ export const updateOrder = async (orderId: string, userIdEdit: string, updatedDa
       },
     });
 
+    revalidateTag('allOrders');
     return { success: "Данные заказа успешно обновлены!", order: updatedOrder, execution: newExecution };
   } catch (error) {
     console.error("Error updating order:", error);
@@ -227,7 +230,7 @@ export const updateStage = async (stageId: string, updatedData: z.infer<typeof S
         color,
       },
     });
-
+    revalidateTag('allStages');
     return { success: "Stage successfully updated!", stage: updatedStage };
   } catch (error) {
     console.error("Error updating stage:", error);

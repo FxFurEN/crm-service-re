@@ -1,63 +1,20 @@
-"use client";
+import { getAllEmployees } from "@/actions/data-load";
+import EmployeesPage from "./page.client"; 
+import { cache } from "react";
+import { revalidatePath } from "next/cache";
+import AccessPage from "@/components/access.denied";
+import { currentRole } from "@/lib/auth";
 
-import { useEffect, useState } from 'react';
-import CustomTable, { TableColumn } from '@/components/data-table';
-import { Employee } from '@/types/employee';
-import useRedirectIfUser from '@/hooks/use-redirect-User';
-import { getAllEmployees } from '@/actions/data-load';
+const ServerEmployeesPage = cache(async () => {
+  const employees = await getAllEmployees();
+  const userRole = await currentRole();
 
-
-const employeeColumns: TableColumn<Employee>[] = [
-  {
-    accessorKey: "email",
-    header: "Почта",
-    cell: ({ row }) => <div>{row.getValue("email")}</div>,
-  },
-  {
-    accessorKey: "name",
-    header: "Имя",
-    cell: ({ row }) => <div>{row.getValue("name")}</div>,
-  },
-  {
-    accessorKey: "role",
-    header: "Должность",
-    cell: ({ row }) => (
-      <div>
-        {row.getValue("role") === "ADMIN" ? "Администратор" : "Сотрудник"}
-      </div>
-    ),
+  if (userRole !== 'ADMIN') {
+    return <AccessPage />;
   }
-  
-];
 
-const EmployeesPage = () => {
-  const [employees, setEmployees] = useState<Employee[]>([]);
-  useRedirectIfUser();
+  revalidatePath('/settings/employees')
+  return <EmployeesPage employees={employees} />;
+});
 
-  useEffect(() => {
-    const fetchEmployees = async () => {
-      const data = await getAllEmployees();
-      if (data) {
-        setEmployees(data);
-      }
-    };
-    fetchEmployees();
-  }, []);
-
-  return ( 
-    <>
-      <p className="text-2xl font-semibold text-center">
-        Сотрудники
-      </p>
-      <div>
-        <CustomTable<Employee> 
-          data={employees} 
-          columns={employeeColumns} 
-          searchableColumns={["email"]} 
-        />
-      </div>
-    </>
-  );
-}
-
-export default EmployeesPage;
+export default ServerEmployeesPage;

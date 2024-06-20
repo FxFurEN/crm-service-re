@@ -4,6 +4,7 @@ import * as z from "zod";
 import { db } from "@/lib/db";
 import { CategorySchema, ClientSchema, ExecutionSchema, OrderSchema, ServiceSchema, StageSchema } from "@/schemas";
 import { checkClientExistsByEmail } from "@/data/client-validaton"; 
+import { revalidateTag } from "next/cache";
 
 interface ClientSchemaType {
   individual: () => z.ZodObject<{
@@ -52,6 +53,7 @@ export const addClient = async (values: z.infer<ReturnType<ClientSchemaType["ind
       data: clientData,
     });
 
+    revalidateTag('allClients')
     return { success: "Клиент успешно добавлен!", client: newClient };
   } catch (error) {
     console.error("Error adding client:", error);
@@ -83,7 +85,7 @@ export const addService = async ({ name, price, categoryId }: { name: string, pr
         category: { connect: { id: existingCategory ? categoryId.toString() : category?.id } },
       },
     });
-
+    revalidateTag('allServiceAndCategory');
     return { success: 'Услуга успешно добавлена!', service };
   } catch (error) {
     console.error('Error adding service:', error);
@@ -105,7 +107,7 @@ export const addCategory = async (values: z.infer<typeof CategorySchema>) => {
         name,
       },
     });
-
+    revalidateTag('allServiceAndCategory');
     return { success: "Category added!", client: newCategory };
   } catch (error) {
     console.error("Error adding client:", error);
@@ -164,6 +166,7 @@ export const addOrder = async (values: z.infer<typeof OrderSchema>) => {
         execution: true
       }
     });
+    revalidateTag('allOrders');
 
     return { success: "Order added!", order: newOrder };
   } catch (error) {
@@ -192,10 +195,10 @@ export const addStage = async (values: z.infer<typeof StageSchema>) => {
         color,
       },
     });
-  
+    revalidateTag('allStages');
     return { success: "Stage added!", stage: newStage };
   } catch (error) {
-    console.error("Error adding client:", error);
+    console.error("Error adding stage:", error);
     return { error: "What's wrong" };
   }
 };
@@ -217,8 +220,8 @@ export const addExecution = async (orderId: string, userId: string, values: z.in
         orderId,
         stageId,
       },
-    });
-
+    });;
+    revalidateTag('allHistory');
     return { success: "Execution added!", execution: newExecution };
   } catch (error) {
     console.error("Error adding execution:", error);

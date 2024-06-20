@@ -10,7 +10,7 @@ interface StageListProps {
   onEditSuccess: () => void;
 }
 
-const StagesList: React.FC<StageListProps> = ({ data, onSuccess }) => {
+const StagesList: React.FC<StageListProps> = ({ data }) => {
   const [openDialog, setOpenDialog] = useState<boolean>(false);
   const [currentStage, setCurrentStage] = useState<Stage | null>(null);
 

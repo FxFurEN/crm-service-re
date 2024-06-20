@@ -10,6 +10,7 @@ import { getUserByEmail, getUserById } from "@/data/user";
 import { currentUser } from "@/lib/auth";
 import { generateVerificationToken } from "@/lib/tokens";
 import { sendVerificationEmail } from "@/lib/mail";
+import { revalidatePath } from "next/cache";
 
 export const settings = async (
   values: z.infer<typeof SettingsSchema>
@@ -82,6 +83,8 @@ export const settings = async (
       role: updatedUser.role,
     }
   });
-
+  revalidatePath('/services')
+  revalidatePath('/settings/employees')
+  revalidatePath('/settings/stages')
   return { success: "Settings Updated!" }
 }
