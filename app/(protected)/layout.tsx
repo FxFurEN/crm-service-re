@@ -1,3 +1,4 @@
+import Providers from "@/components/progress-provider";
 import Navbar from "./_components/navbar";
 import { Navheader } from "./_components/navheader";
 
@@ -10,7 +11,7 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
     <div className="h-full w-full flex flex-col gap-y-10">
       <Navbar/>
         <main  className="sm:ml-20">
-        {children}
+        <Providers>{children}</Providers>
         </main>
     </div>
    );
