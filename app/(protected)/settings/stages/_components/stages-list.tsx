@@ -45,7 +45,6 @@ const StagesList: React.FC<StageListProps> = ({ data }) => {
         <EditStageDialog 
           open={openDialog} 
           onOpenChange={setOpenDialog} 
-          onSuccess={onSuccess}
           stageData={currentStage} 
         />
       )}
