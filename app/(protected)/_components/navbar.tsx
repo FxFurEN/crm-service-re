@@ -23,6 +23,7 @@ import { usePathname } from "next/navigation";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { UserButton } from "@/components/auth/user-button";
+import { BreadcrumbDemo } from "@/components/breadcrumb";
 
 interface ButtonData {
     icon: React.ElementType;
@@ -135,6 +136,9 @@ export default function Navbar() {
                         </nav>
                     </SheetContent>
                 </Sheet>
+                <div className="flex-1 sm:ml-16">
+                    <BreadcrumbDemo />
+                </div>
                 <div className="ml-auto sm:mt-2">
                     <UserButton />
                 </div>
