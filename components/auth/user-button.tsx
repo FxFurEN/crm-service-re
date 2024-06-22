@@ -1,9 +1,8 @@
 "use client";
 
 import { FaUser } from "react-icons/fa";
-import { ExitIcon } from "@radix-ui/react-icons"
-import { useRouter } from "next/navigation";
-
+import { ExitIcon } from "@radix-ui/react-icons";
+import Link from "next/link";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,11 +23,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 export const UserButton = () => {
   const [loading, setLoading] = useState(true); 
   const user = useCurrentUser();
-  const router = useRouter();
-  
-  const redirectToProfile = () => {
-    router.push("/settings/profile");
-  };
 
   useEffect(() => {
     if (user) setLoading(false);
@@ -39,7 +33,6 @@ export const UserButton = () => {
       <DropdownMenuTrigger>
         <Avatar>
           {loading ? ( 
-
             <Skeleton className="h-12 w-12 rounded-full" />
           ) : (
             <>
@@ -55,14 +48,18 @@ export const UserButton = () => {
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-40" align="end">
-        <DropdownMenuItem onClick={redirectToProfile}>
-            <User className="h-4 w-4 mr-2"/>
-            Профиль
+        <DropdownMenuItem asChild>
+          <Link href="/settings/profile">
+            <div className="flex items-center">
+              <User className="h-4 w-4 mr-2"/>
+              Профиль
+            </div>
+          </Link>
         </DropdownMenuItem>
         <LogoutButton>
           <DropdownMenuItem>
             <ExitIcon className="h-4 w-4 mr-2" />
-            Logout
+            Выйти
           </DropdownMenuItem>
         </LogoutButton>
       </DropdownMenuContent>
