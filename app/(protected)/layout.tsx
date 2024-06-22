@@ -1,6 +1,5 @@
 import Providers from "@/components/progress-provider";
 import Navbar from "./_components/navbar";
-import { Navheader } from "./_components/navheader";
 
 interface ProtectedLayoutProps {
   children: React.ReactNode;
