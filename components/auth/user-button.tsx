@@ -25,16 +25,6 @@ export const UserButton = () => {
   const [loading, setLoading] = useState(true); 
   const user = useCurrentUser();
   const router = useRouter();
-
-  const getInitials = (name: string) => {
-    if (!name) return '';
-    const names = name.split(' ');
-    if (names.length === 1) {
-      return names[0].charAt(0).toUpperCase();
-    } else {
-      return names[0].charAt(0).toUpperCase() + names[1].charAt(0).toUpperCase();
-    }
-  };
   
   const redirectToProfile = () => {
     router.push("/settings/profile");
@@ -56,7 +46,9 @@ export const UserButton = () => {
               {user?.image ? (
                 <AvatarImage src={user.image} alt="User avatar" />
               ) : (
-                <AvatarFallback style={{ backgroundColor: 'white' }}>{getInitials(user.name)}</AvatarFallback>
+                <AvatarFallback>
+                  {user?.name?.split(' ').map(n => n[0]).join('') ?? 'Default Name'}
+                </AvatarFallback>
               )}
             </>
           )}
