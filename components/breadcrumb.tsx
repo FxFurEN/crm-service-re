@@ -9,6 +9,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import React from "react";
+import Link from "next/link";
 
 const pathTranslations: {
     [key: string]: string;
@@ -36,9 +37,9 @@ export function BreadcrumbDemo() {
             {index > 0 && <BreadcrumbSeparator />}
             <BreadcrumbItem>
               {index < pathSegments.length - 1 ? (
-                <BreadcrumbLink href={`/${pathSegments.slice(0, index + 1).join("/")}`}>
+                <Link href={`/${pathSegments.slice(0, index + 1).join("/")}`}>
                   {pathTranslations[segment] || segment}
-                </BreadcrumbLink>
+                </Link>
               ) : (
                 <BreadcrumbPage>{pathTranslations[segment] || segment}</BreadcrumbPage>
               )}
