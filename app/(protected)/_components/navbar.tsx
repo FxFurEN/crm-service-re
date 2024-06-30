@@ -142,7 +142,9 @@ export default function Navbar() {
                 <div className="ml-auto sm:mt-2">
                     <UserButton />
                 </div>
-            </header>                          
+            </header> 
+            <div className="hidden sm:block border-b-2 border-gray-200" style={{ marginTop: '-2.3rem' }}></div>
+                         
         </>
         
     );
