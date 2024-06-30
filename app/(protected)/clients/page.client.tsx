@@ -164,12 +164,14 @@ const ClientsPage = ({ clients }) => {
       dataIndex: 'email',
       key: 'email',
       ...getColumnSearchProps('email'),
+      responsive: ['md'],
     },
     {
       title: 'Телефон',
       dataIndex: 'phone',
       key: 'phone',
       ...getColumnSearchProps('phone'),
+      responsive: ['md'],
     },
     {
       title: 'Тип клиента',
