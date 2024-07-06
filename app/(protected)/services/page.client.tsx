@@ -40,10 +40,6 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ initialServices, initialCat
   const [searchedColumn, setSearchedColumn] = useState('');
   const searchInput = useRef<InputRef>(null);
 
-  const handleRowClick = (id: string) => {
-    router.push(`/services/${id}`);
-  };
-
   const handleFloatButtonClick = () => {
     setOpen(true);
     setMode("add");
@@ -226,9 +222,6 @@ const ServicesPage: React.FC<ServicesPageProps> = ({ initialServices, initialCat
           columns={columns}
           dataSource={initialServices}
           rowKey="id"
-          onRow={(record) => ({
-            onClick: () => handleRowClick(record.id),
-          })}
           size="small"
           scroll={{ x: 'max-content' }}
           className='lg:ml-5'
