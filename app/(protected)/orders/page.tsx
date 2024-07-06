@@ -3,7 +3,7 @@ import OrdersPage from "./page.client";
 import { cache } from "react";
 import { revalidateTag } from "next/cache";
 
-const OrderPage = async () => {
+const OrderPage = cache(async () => {
   const orders = await getAllOrders();
   
   const transformedOrders = orders?.map(order => ({
@@ -16,6 +16,6 @@ const OrderPage = async () => {
   revalidateTag('allOrders');
   
   return <OrdersPage orders={transformedOrders}/>;
-};
+});
 
 export default OrderPage;

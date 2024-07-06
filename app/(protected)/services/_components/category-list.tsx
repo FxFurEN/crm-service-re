@@ -19,7 +19,7 @@ const CategoryList: React.FC<CategoryListProps> = ({ categories, onEditCategory,
           <Plus size={15}/>
         </Button>
       </h4>
-      <ScrollArea className="h-72 w-[350px] rounded-md border">
+      <ScrollArea className="lg:h-[30rem] h-72 lg:w-[350px] mb-5 rounded-md border">
         {categories.length > 0 ? (
           <div className="p-4">
             {categories.map((category, index) => (

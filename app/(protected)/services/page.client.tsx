@@ -1,40 +1,48 @@
 "use client";
 
+import React, { useRef, useState } from 'react';
+import { Table, Tag, Space } from 'antd';
+import type { InputRef, TableColumnType } from 'antd';
+import Highlighter from 'react-highlight-words';
 import { useRouter } from 'next/navigation';
-import { UserRole } from "@prisma/client";
-import { useCurrentRole } from "@/hooks/use-current-role";
-import CustomTable, { TableColumn } from '@/components/data-table';
-import { Service } from '@/types/services';
-import React, { useEffect } from 'react';
+import { format } from 'date-fns';
+import { Toaster, toast } from 'sonner';
 import FloatButton from '@/components/float-button';
 import { DialogModal } from '@/components/services/dialog-modal-service';
 import DeleteConfirmationDialog from '@/components/alert-dialog-confirm';
 import { deleteService } from '@/actions/del-data';
-import { toast } from 'sonner';
-import { Toaster } from '@/components/ui/sonner';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { DotsHorizontalIcon } from '@radix-ui/react-icons';
+import { Pencil, Search, Trash2 } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Category } from '@/types/category';
+import { Service } from '@/types/services';
 import { DialogModalCategory } from '@/components/services/dialog-modal-category';
 import CategoryList from './_components/category-list';
 import { Skeleton } from '@/components/ui/skeleton';
 
-const serviceColumns: TableColumn<Service>[] = [
-  { accessorKey: "name", header: "Наименование", cell: ({ row }) => <div>{row.getValue("name")}</div> },
-  { accessorKey: "price", header: "Цена, BYN", cell: ({ row }) => <div>{row.getValue("price")}</div> },
-  { accessorKey: "categoryName", header: "Категория", cell: ({ row }) => <div>{row.getValue("categoryName")}</div> },
-];
+interface ServicesPageProps {
+  initialServices: Service[];
+  initialCategories: Category[];
+}
 
-const ServicesPage = ({ initialServices, initialCategories }) => {
+const ServicesPage: React.FC<ServicesPageProps> = ({ initialServices, initialCategories }) => {
   const router = useRouter();
-  const role = useCurrentRole();
-  let services = initialServices;
-  let categories = initialCategories;
-  const [open, setOpen] = React.useState(false);
-  const [openCategory, setOpenCategory] = React.useState(false);
-  const [serviceData, setServiceData] = React.useState<Service | null>(null);
-  const [categoryData, setCategoryData] = React.useState<Service | null>(null);
-  const [mode, setMode] = React.useState<"edit" | "add">("add");
-  const [isDeleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
-  const [deleteRowId, setDeleteRowId] = React.useState<string | null>(null);
+  const [open, setOpen] = useState(false);
+  const [openCategory, setOpenCategory] = useState(false);
+  const [serviceData, setServiceData] = useState<Service | null>(null);
+  const [categoryData, setCategoryData] = useState<Category | null>(null);
+  const [mode, setMode] = useState<"edit" | "add">("add");
+  const [isDeleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deleteRowId, setDeleteRowId] = useState<string | null>(null);
+  const [searchText, setSearchText] = useState('');
+  const [searchedColumn, setSearchedColumn] = useState('');
+  const searchInput = useRef<InputRef>(null);
 
+  const handleRowClick = (id: string) => {
+    router.push(`/services/${id}`);
+  };
 
   const handleFloatButtonClick = () => {
     setOpen(true);
@@ -47,21 +55,21 @@ const ServicesPage = ({ initialServices, initialCategories }) => {
   };
 
   const handleEdit = (id: string) => {
-    const selectedService = services.find((service) => service.id === id);
+    const selectedService = initialServices.find((service) => service.id === id);
     setOpen(true);
-    setServiceData(selectedService);
+    setServiceData(selectedService || null);
     setMode("edit");
   };
 
   const handleEditCategory = (id: string) => {
-    const selectedCategory = categories.find((category) => category.id === id);
+    const selectedCategory = initialCategories.find((category) => category.id === id);
     setOpenCategory(true);
-    setCategoryData(selectedCategory);
+    setCategoryData(selectedCategory || null);
     setMode("edit");
   };
 
   const handleDelete = (id: string) => {
-    setDeleteRowId(id); 
+    setDeleteRowId(id);
     setDeleteDialogOpen(true);
   };
 
@@ -70,41 +78,164 @@ const ServicesPage = ({ initialServices, initialCategories }) => {
       if (deleteRowId) {
         const response = await deleteService(deleteRowId);
         if (response.success) {
-          toast.success(response.success); 
-          services = services.filter(service => service.id !== deleteRowId);
+          toast.success(response.success);
+          initialServices = initialServices.filter(service => service.id !== deleteRowId);
         }
       }
       setDeleteRowId(null);
       setDeleteDialogOpen(false);
     } catch (error) {
-      toast.error("Что-то пошло не так"); 
+      toast.error("Что-то пошло не так");
     }
   };
 
   const handleDeleteCancel = () => {
-    setDeleteRowId(null); 
-    setDeleteDialogOpen(false); 
+    setDeleteRowId(null);
+    setDeleteDialogOpen(false);
   };
 
+  const handleSearch = (
+    selectedKeys: string[],
+    confirm: () => void,
+    dataIndex: keyof Service,
+  ) => {
+    confirm();
+    setSearchText(selectedKeys[0]);
+    setSearchedColumn(dataIndex);
+  };
 
-  return ( 
+  const handleReset = (clearFilters: () => void) => {
+    clearFilters();
+    setSearchText('');
+  };
+
+  const getColumnSearchProps = (dataIndex: keyof Service): TableColumnType<Service> => ({
+    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }) => (
+      <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
+        <Input
+          ref={searchInput}
+          placeholder={`Поиск`}
+          value={selectedKeys[0]}
+          onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+          onPressEnter={() => handleSearch(selectedKeys as string[], confirm, dataIndex)}
+          style={{ marginBottom: 8, display: 'block' }}
+        />
+        <Space>
+          <Button
+            onClick={() => handleSearch(selectedKeys as string[], confirm, dataIndex)}
+          >
+            <Search className="h-4 w-4 mr-2" /> Поиск
+          </Button>
+          <Button
+            variant="link"
+            onClick={() => {
+              clearFilters && handleReset(clearFilters)
+              confirm();
+            }}
+            style={{ width: 90 }}
+          >
+            Сбросить
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: (filtered: boolean) => (
+      <Search className="h-4 w-4" />
+    ),
+    onFilter: (value, record) =>
+      record[dataIndex]
+        .toString()
+        .toLowerCase()
+        .includes((value as string).toLowerCase()),
+    onFilterDropdownOpenChange: (visible) => {
+      if (visible) {
+        setTimeout(() => searchInput.current?.select(), 100);
+      }
+    },
+    render: (text: string) =>
+      searchedColumn === dataIndex ? (
+        <Highlighter
+          highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+          searchWords={[searchText]}
+          autoEscape
+          textToHighlight={text ? text.toString() : ''}
+        />
+      ) : (
+        text
+      ),
+  });
+
+  const columns: TableColumnType<Service>[] = [
+    {
+      title: 'Наименование',
+      dataIndex: 'name',
+      key: 'name',
+      ...getColumnSearchProps('name'),
+    },
+    {
+      title: 'Цена, BYN',
+      dataIndex: 'price',
+      key: 'price', 
+      sorter: (a, b) => a.price - b.price,
+      responsive: ['md'],
+    },
+    {
+      title: 'Категория',
+      dataIndex: 'categoryName',
+      key: 'categoryName',
+      ...getColumnSearchProps('categoryName'),
+      responsive: ['md'],
+    },
+    {
+      title: 'Действия',
+      key: 'actions',
+      render: (_, record) => (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              className="h-8 w-8 p-0"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <span className="sr-only">Open menu</span>
+              <DotsHorizontalIcon className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleEdit(record.id); }}>
+              <Pencil size={20} className="mr-2"/>Редактировать
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleDelete(record.id); }}>
+              <Trash2 size={20} color="#ff0000" className="mr-2"/>Удалить
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      ),
+    }
+  ];
+
+  return (
     <div className="flex mr-5 ml-5 flex-col md:flex-row">
-      {!categories.length ? ( 
+      {!initialCategories.length ? (
         <Skeleton className="h-[340px] w-[220px]" />
       ) : (
-        <CategoryList categories={categories} onEditCategory={handleEditCategory} onCategoryButtonClick={handleCategoryButtonClick} />
+        <CategoryList categories={initialCategories} onEditCategory={handleEditCategory} onCategoryButtonClick={handleCategoryButtonClick} />
       )}
       <div className="w-full">
-        <CustomTable<Service>
-          data={services}
-          columns={serviceColumns}
-          searchableColumns={["name"]}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
+        <Table
+          columns={columns}
+          dataSource={initialServices}
+          rowKey="id"
+          onRow={(record) => ({
+            onClick: () => handleRowClick(record.id),
+          })}
+          size="small"
+          scroll={{ x: 'max-content' }}
+          className='lg:ml-5'
         />
         <FloatButton onClick={handleFloatButtonClick} />
-        <DialogModal open={open} onOpenChange={setOpen} mode={mode} serviceData={serviceData}/>
-        <DialogModalCategory open={openCategory} onOpenChange={setOpenCategory} mode={mode} categoryData={categoryData}/>
+        <DialogModal open={open} onOpenChange={setOpen} mode={mode} serviceData={serviceData} />
+        <DialogModalCategory open={openCategory} onOpenChange={setOpenCategory} mode={mode} categoryData={categoryData} />
         <DeleteConfirmationDialog
           open={isDeleteDialogOpen}
           onOpenChange={setDeleteDialogOpen}
@@ -112,7 +243,7 @@ const ServicesPage = ({ initialServices, initialCategories }) => {
           onCancel={handleDeleteCancel}
         />
       </div>
-      <Toaster richColors  />
+      <Toaster richColors />
     </div>
   );
 }
