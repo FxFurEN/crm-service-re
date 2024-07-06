@@ -22,7 +22,7 @@ const StagesList: React.FC<StageListProps> = ({ data }) => {
 
   return (
     <div className="w-full md:flex-shrink-0 mt-7">
-      <ScrollArea className="h-72 w-full md:w-full rounded-md border">
+      <ScrollArea className="max-h-[34rem] w-full md:w-full rounded-md border">
         {data.length > 0 ? (
           <div className="p-4">
             {data.map((stage, index) => (
