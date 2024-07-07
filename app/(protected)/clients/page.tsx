@@ -1,19 +1,23 @@
-import { getAllClients } from "@/actions/data-load";
-import ClientsСomponentPage from "./page.client";
-import { cache } from "react";
-import { revalidateTag } from "next/cache";
+import { getAllClients } from '@/actions/data-load'
+import { Metadata } from 'next'
+import { revalidateTag } from 'next/cache'
+import { cache } from 'react'
+import ClientsСomponentPage from './page.client'
+
+export const metadata: Metadata = {
+	title: 'Клиенты',
+}
 
 const ClientsPage = cache(async () => {
-  const clients = await getAllClients();
-  const transformedClients = clients?.map(client => ({
-    ...client,
-    name: client.name ? client.name : client.initials,
-  }));
+	const clients = await getAllClients()
+	const transformedClients = clients?.map(client => ({
+		...client,
+		name: client.name ? client.name : client.initials,
+	}))
 
-  revalidateTag('allClients');
+	revalidateTag('allClients')
 
-  return  <ClientsСomponentPage clients={transformedClients} />;;
- 
-});
+	return <ClientsСomponentPage clients={transformedClients} />
+})
 
-export default ClientsPage;
+export default ClientsPage
