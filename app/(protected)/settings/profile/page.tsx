@@ -25,15 +25,10 @@ import { useCurrentUser } from '@/hooks/use-current-user'
 import { SettingsSchema } from '@/schemas'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { UserRole } from '@prisma/client'
-import { Metadata } from 'next'
 import { useSession } from 'next-auth/react'
 import { useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
-
-export const metadata: Metadata = {
-	title: 'Профиль',
-}
 
 const SettingsPage = () => {
 	const user = useCurrentUser()

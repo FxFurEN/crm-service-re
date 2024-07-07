@@ -3,12 +3,8 @@
 import { RoleGate } from '@/components/auth/role-gate'
 import { Button } from '@/components/ui/button'
 import { UserRole } from '@prisma/client'
-import { Metadata } from 'next'
 import Link from 'next/link'
 
-export const metadata: Metadata = {
-	title: 'Настройки',
-}
 
 const SettingsPage = () => {
 	return (
