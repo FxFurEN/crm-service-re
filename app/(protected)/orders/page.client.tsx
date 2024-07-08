@@ -347,6 +347,7 @@ const ClientOrdersPage = ({ orders }) => {
 				rowKey='id'
 				onRow={record => ({
 					onClick: () => handleRowClick(record.id),
+					className: 'cursor-pointer',
 				})}
 				size='small'
 				scroll={{ x: 'max-content' }}
