@@ -8,7 +8,11 @@ interface OrdersCount {
 
 export const getAllClients = async () => {
 	try {
-		const clients = await db.clients.findMany()
+		const clients = await db.clients.findMany({
+			where: {
+				deletedAt: null,
+			},
+		})
 
 		return clients
 	} catch (error) {
@@ -24,6 +28,7 @@ export const getClientById = async (clientId: string) => {
 		const client = await db.clients.findUnique({
 			where: {
 				id: clientId,
+				deletedAt: null,
 			},
 		})
 
@@ -37,6 +42,9 @@ export const getClientById = async (clientId: string) => {
 export const getAllServices = async () => {
 	try {
 		const services = await db.service.findMany({
+			where: {
+				deletedAt: null,
+			},
 			include: {
 				category: {
 					select: {
@@ -62,7 +70,11 @@ export const getAllServices = async () => {
 
 export const getAllCategories = async () => {
 	try {
-		const services = await db.category.findMany()
+		const services = await db.category.findMany({
+			where: {
+				deletedAt: null,
+			},
+		})
 
 		return services
 	} catch (error) {
@@ -75,7 +87,11 @@ export const getAllCategories = async () => {
 
 export const getAllEmployees = async () => {
 	try {
-		const employees = await db.user.findMany()
+		const employees = await db.user.findMany({
+			where: {
+				deletedAt: null,
+			},
+		})
 		return employees
 	} catch (error) {
 		console.error('Error fetching employees:', error)
@@ -88,6 +104,9 @@ export const getAllEmployees = async () => {
 export const getAllOrders = async () => {
 	try {
 		const orders = await db.orders.findMany({
+			where: {
+				deletedAt: null,
+			},
 			include: {
 				service: { select: { name: true } },
 				user: { select: { name: true } },
@@ -114,6 +133,7 @@ export const getOrderById = async (orderId: string) => {
 		const order = await db.orders.findUnique({
 			where: {
 				id: orderId,
+				deletedAt: null,
 			},
 			include: {
 				service: {
@@ -135,6 +155,7 @@ export const getOrderById = async (orderId: string) => {
 						email: true,
 						sign: true,
 						unp: true,
+						deletedAt: true,
 					},
 				},
 			},
@@ -175,7 +196,11 @@ export const getOrderExecutionHistory = async (orderId: string) => {
 
 export const getAllStages = async () => {
 	try {
-		const stages = await db.stage.findMany()
+		const stages = await db.stage.findMany({
+			where: {
+				deletedAt: null,
+			},
+		})
 
 		return stages
 	} catch (error) {
@@ -204,6 +229,7 @@ export const getOrdersLast7Days = async () => {
 		}
 		const orders = await db.orders.findMany({
 			where: {
+				deletedAt: null,
 				createdAt: {
 					gte: startDate,
 					lte: endDate,
@@ -215,7 +241,8 @@ export const getOrdersLast7Days = async () => {
 			const formattedOrderDate = `${String(orderDate.getDate()).padStart(
 				2,
 				'0'
-			)}.${String(orderDate.getMonth() + 1).padStart(2, '0')}` // Форматируем дату
+			)}.${String(orderDate.getMonth() + 1).padStart(2, '0')}`
+
 			ordersCountByDay[formattedOrderDate]++
 		})
 
@@ -236,6 +263,9 @@ export const getOrdersLast7Days = async () => {
 export const getOrdersByStatus = async () => {
 	try {
 		const ordersByStatus = await db.orders.findMany({
+			where: {
+				deletedAt: null,
+			},
 			include: {
 				execution: {
 					select: {
@@ -256,6 +286,9 @@ export const getOrdersByStatus = async () => {
 export const getOrdersByEmployee = async () => {
 	try {
 		const ordersByEmployee = await db.user.findMany({
+			where: {
+				deletedAt: null,
+			},
 			include: {
 				orders: true,
 			},
@@ -295,6 +328,7 @@ export const getOverdueOrdersCount = async () => {
 						},
 					},
 				},
+				deletedAt: null,
 				leadTime: {
 					lt: yesterday,
 				},
@@ -314,6 +348,7 @@ export const getClientOrders = async (clientId: string) => {
 	try {
 		const clientOrders = await db.orders.findMany({
 			where: {
+				deletedAt: null,
 				clientId: clientId,
 			},
 			include: {
@@ -347,6 +382,7 @@ export const getOrdersByPeriod = async (
 			case 'today':
 				orders = await db.orders.findMany({
 					where: {
+						deletedAt: null,
 						createdAt: {
 							gte: new Date(new Date().setHours(0, 0, 0, 0)),
 							lt: new Date(new Date().setHours(23, 59, 59, 999)),
@@ -363,6 +399,7 @@ export const getOrdersByPeriod = async (
 				yesterday.setDate(yesterday.getDate() - 1)
 				orders = await db.orders.findMany({
 					where: {
+						deletedAt: null,
 						createdAt: {
 							gte: new Date(yesterday.setHours(0, 0, 0, 0)),
 							lt: new Date(yesterday.setHours(23, 59, 59, 999)),
@@ -379,6 +416,7 @@ export const getOrdersByPeriod = async (
 				lastWeek.setDate(lastWeek.getDate() - 7)
 				orders = await db.orders.findMany({
 					where: {
+						deletedAt: null,
 						createdAt: {
 							gte: new Date(lastWeek.setHours(0, 0, 0, 0)),
 							lt: new Date(),
@@ -395,6 +433,7 @@ export const getOrdersByPeriod = async (
 				lastMonth.setMonth(lastMonth.getMonth() - 1)
 				orders = await db.orders.findMany({
 					where: {
+						deletedAt: null,
 						createdAt: {
 							gte: new Date(lastMonth.setHours(0, 0, 0, 0)),
 							lt: new Date(),
@@ -409,6 +448,7 @@ export const getOrdersByPeriod = async (
 			case 'manual':
 				orders = await db.orders.findMany({
 					where: {
+						deletedAt: null,
 						createdAt: {
 							gte: startDate,
 							lt: endDate,
@@ -489,7 +529,9 @@ export const getOrdersByEmployeeAndPeriod = async (
 						},
 					},
 				],
+				deletedAt: null,
 			},
+
 			include: {
 				service: { select: { name: true } },
 			},
