@@ -1,7 +1,6 @@
-// prisma/schema.prisma
 datasource db {
   provider  = "postgresql"
-  url  	    = env("DATABASE_URL")
+  url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
 
@@ -15,50 +14,52 @@ enum UserRole {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String      @id @default(cuid())
   name          String?
-  email         String?   @unique
+  email         String?     @unique
   emailVerified DateTime?
   image         String?
   password      String?
-  role          UserRole @default(USER)
+  role          UserRole    @default(USER)
   accounts      Account[]
-  execution     Execution[] 
-  orders        Orders[]  
+  execution     Execution[]
+  orders        Orders[]
+  deletedAt     DateTime?
 }
 
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?  @db.Text
-  access_token       String?  @db.Text
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?  @db.Text
-  session_state      String?
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id])
+  deletedAt DateTime?
 
   @@unique([provider, providerAccountId])
 }
 
 model VerificationToken {
-  id String @id @default(cuid())
-  email String
-  token String @unique
+  id      String   @id @default(cuid())
+  email   String
+  token   String   @unique
   expires DateTime
 
   @@unique([email, token])
 }
 
 model PasswordResetToken {
-  id String @id @default(cuid())
-  email String
-  token String @unique
+  id      String   @id @default(cuid())
+  email   String
+  token   String   @unique
   expires DateTime
 
   @@unique([email, token])
@@ -70,55 +71,61 @@ model Clients {
   phone     String?   @db.VarChar(255)
   sign      Boolean   @default(false)
   initials  String?   @db.VarChar(255)
-  unp       String?   @db.VarChar(255) @unique
+  unp       String?   @unique @db.VarChar(255)
   name      String?   @db.VarChar(255)
-  orders    Orders[]  
+  orders    Orders[]
+  deletedAt DateTime?
 }
 
 model Service {
-  id          String    @id @default(cuid())
-  name        String?   @db.VarChar(255)
-  price       Decimal?  @db.Decimal(10, 2)
-  category    Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  categoryId  String
-  orders      Orders[]  
+  id         String    @id @default(cuid())
+  name       String?   @db.VarChar(255)
+  price      Decimal?  @db.Decimal(10, 2)
+  category   Category  @relation(fields: [categoryId], references: [id], onDelete: SetDefault)
+  categoryId String    @default("-")
+  orders     Orders[]
+  deletedAt  DateTime?
 }
 
 model Category {
   id        String    @id @default(cuid())
   name      String?   @db.VarChar(255)
   service   Service[]
+  deletedAt DateTime?
 }
 
 model Orders {
-  id          String    @id @default(cuid())
-  createdAt   DateTime  @default(now())
-  comments    String?   @db.VarChar(255)
-  leadTime    DateTime  @default(now())
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId      String
-  service     Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
-  client      Clients  @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  clientId    String
-  serviceId   String
-  execution   Execution[] 
+  id        String      @id @default(cuid())
+  createdAt DateTime    @default(now())
+  comments  String?     @db.VarChar(255)
+  leadTime  DateTime    @default(now())
+  user      User        @relation(fields: [userId], references: [id], onDelete: SetDefault)
+  userId    String      @default("-")
+  service   Service     @relation(fields: [serviceId], references: [id], onDelete: SetDefault)
+  client    Clients     @relation(fields: [clientId], references: [id], onDelete: SetDefault)
+  clientId  String      @default("-")
+  serviceId String      @default("-")
+  execution Execution[]
+  deletedAt DateTime?
 }
 
 model Stage {
-  id          String    @id @default(cuid())
-  name        String   @db.VarChar(255)
-  color       String    @db.VarChar(255)
-  execution   Execution[] 
+  id        String      @id @default(cuid())
+  name      String      @db.VarChar(255)
+  color     String      @db.VarChar(255)
+  execution Execution[]
+  deletedAt DateTime?
 }
 
 model Execution {
-  id              String    @id @default(cuid())
-  name            String   @db.VarChar(255)
-  executionDate   DateTime  @default(now())
-  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId          String
-  order           Orders  @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  orderId         String
-  stage           Stage  @relation(fields: [stageId], references: [id], onDelete: Cascade)
-  stageId         String
+  id            String    @id @default(cuid())
+  name          String    @db.VarChar(255)
+  executionDate DateTime  @default(now())
+  user          User?     @relation(fields: [userId], references: [id], onDelete: SetDefault)
+  userId        String?   @default("-")
+  order         Orders?   @relation(fields: [orderId], references: [id], onDelete: SetDefault)
+  orderId       String?   @default("-")
+  stage         Stage?    @relation(fields: [stageId], references: [id], onDelete: SetDefault)
+  stageId       String?   @default("-")
+  deletedAt     DateTime?
 }
